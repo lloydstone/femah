@@ -15,7 +15,7 @@ namespace Femah.Core.FeatureSwitchTypes
     /// If no cookie exists the state is chosen at random (weighted according to the percentage), 
     /// and then stored in a cookie.
     /// </summary>
-    public class PercentageFeatureSwitch : IFeatureSwitch
+    public class PercentageFeatureSwitch : FeatureSwitchBase
     {
         private Random _random;
         private Func<double> _randomGenerator = null;
@@ -46,13 +46,7 @@ namespace Femah.Core.FeatureSwitchTypes
 
         #region IFeatureSwitch members
 
-        public bool IsEnabled {get;set;}
-
-        public string Name { get;set;}
-
-        public string FeatureType { get; set; }
-
-        public bool IsOn(IFemahContext context)
+        public override bool IsOn(IFemahContext context)
         {
             bool isOn;
 
@@ -82,12 +76,13 @@ namespace Femah.Core.FeatureSwitchTypes
             return isOn;
         }
 
-        public void RenderUI(HtmlTextWriter writer)
+        public override void RenderUI(HtmlTextWriter writer)
         {
+            writer.Write("Percentage: <input type='text' name='percentage' value='{0}'/>", this.PercentageOn);
             return;
         }
 
-        public void SetCustomAttributes(NameValueCollection values)
+        public override void SetCustomAttributes(NameValueCollection values)
         {
             string percentage = values["percentage"];
             int percentageValue;

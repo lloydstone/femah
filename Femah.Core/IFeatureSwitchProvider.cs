@@ -6,13 +6,16 @@ using System.Threading.Tasks;
 
 namespace Femah.Core
 {
+    /// <summary>
+    /// Persists/loads feature switches.
+    /// </summary>
     public interface IFeatureSwitchProvider
     {
         /// <summary>
         /// Initialise the provider, given the names of the feature switches.
         /// </summary>
         /// <param name="featureSwitches">Names of the feature switches in the application.</param>
-        void Initialise(List<string> featureSwitches);
+        void Initialise(IEnumerable<string> featureSwitches);
 
         /// <summary>
         /// Get a feature switch.

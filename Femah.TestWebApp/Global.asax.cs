@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Web;
 using System.Web.Http;
@@ -7,6 +8,7 @@ using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 using Femah.Core;
+using Femah.Core.Providers;
 using Femah.TestWebApp.Code;
 
 namespace Femah.TestWebApp
@@ -25,7 +27,16 @@ namespace Femah.TestWebApp
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
-            FeatureSwitching.Initialise(null, new CustomFemahContextFactory());
+            FeatureSwitching.Initialise();
+
+            //var provider = new SqlServerProvider();
+            //provider.Configure(ConfigurationManager.ConnectionStrings["SqlServerConnection"].ConnectionString);
+
+            //FeatureSwitching.Configure()
+            //    .ContextFactory(new CustomFemahContextFactory())
+            //    .AdditionalSwitchTypesFromAssembly( typeof(FiftyFiftyFeatureSwitch).Assembly )
+            //    .FeatureSwitchEnum( typeof(FemahFeatureSwitches) )
+            //    .Initialise();
         }
     }
 }
