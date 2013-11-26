@@ -28,7 +28,7 @@ namespace Femah.Ui
                         bool doEnable;
                         if (name != null && enabled != null && Boolean.TryParse(enabled, out doEnable))
                         {
-                            FeatureSwitching.SetFeature(name, doEnable);
+                            FeatureSwitching.EnableFeature(name, doEnable);
                         }
                         break;
 

@@ -10,7 +10,6 @@ namespace Femah.Core.Tests
     [TestClass]
     public class PercentageFeatureSwitchTests
     {
-        private PercentageFeatureSwitch _featureSwitch;
         private HttpCookieCollection _cookies;
         private FemahContext _femahContext;
 

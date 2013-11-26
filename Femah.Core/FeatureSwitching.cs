@@ -10,37 +10,43 @@ using System.Collections.Specialized;
 
 namespace Femah.Core
 {
-    public class FeatureSwitching
+    public sealed class FeatureSwitching
     {
+        private static bool _initialised = false;
         private static IFeatureSwitchProvider _provider = null;
         private static Dictionary<int,string> _switches = null;
         private static List<Type> _switchTypes = null;
 
         private static IFemahContextFactory _contextFactory { get; set; }
 
+        #region Public Methods
+
         /// <summary>
         /// Initialise the feature switching engine.
         /// </summary>
         /// <param name="provider">The feature switch provider to use to persist feature switches.</param>
-        public static void Initialise(IFeatureSwitchProvider provider = null, IFemahContextFactory contextFactory = null)
+        public static void Initialise(FemahConfiguration config = null)
         {
+            if (config == null)
+            {
+                config = new FemahConfiguration();
+            }
+
+            // Save context factory.
+            _contextFactory = config.ContextFactory ?? new FemahContextFactory();
+
             // Save provider.
-            _provider = provider ?? new DefaultFeatureSwitchProvider();
+            _provider = config.Provider ?? new InProcProvider();
 
-            // Scan assemblies for feature switches.
-            _switches = FeatureSwitching.LoadFeatureSwitchesFromAssembly(Assembly.GetCallingAssembly());
-
-            // Scan assemblies for feature switch types.
             _switchTypes = FeatureSwitching.LoadFeatureSwitchTypesFromAssembly(Assembly.GetExecutingAssembly());
-            _switchTypes.AddRange(FeatureSwitching.LoadFeatureSwitchTypesFromAssembly(Assembly.GetCallingAssembly()));
+            _switchTypes.AddRange(config.CustomSwitchTypes);
+
+            _switches = FeatureSwitching.LoadFeatureSwitchList(config.FeatureSwitchEnumType, Assembly.GetCallingAssembly());
 
             // Inialise the provider.
             _provider.Initialise(_switches.Values.ToList());
 
-            if (contextFactory != null)
-                _contextFactory = contextFactory;
-            else
-                _contextFactory = new FemahContextFactory();
+            _initialised = true;
 
             return;
         }
@@ -52,28 +58,48 @@ namespace Femah.Core
         /// <returns></returns>
         public static bool IsFeatureOn( int id )
         {
+            if (!_initialised)
+            {
+                throw new FemahException("FEMAH isn't initialised.  Call FeatureSwitching.Initialise() first.");
+            }
+
             if (!_switches.ContainsKey(id))
+            {
                 return false;
+            }
 
-            // Load feature switch.
-            var name = _switches[id];
-            var featureSwitch = _provider.Get(name);
+            var featureSwitchName = _switches[id];
+            var featureSwitch = _provider.Get(featureSwitchName);
 
-            // Generate context.
-           // var context = new FemahContext(new HttpContextWrapper(HttpContext.Current));
+            if (!featureSwitch.IsEnabled)
+            {
+                return false;
+            }
+
             var context = _contextFactory.GenerateContext();
-
-            return featureSwitch.IsEnabled && featureSwitch.IsOn(context);
+            return featureSwitch.IsOn(context);
         }
+
+        /// <summary>
+        /// Configure Femah fluently.
+        /// </summary>
+        /// <returns>A fluen configuration object.</returns>
+        public static FemahFluentConfiguration Configure()
+        {
+            return new FemahFluentConfiguration();
+        }
+
+        #endregion
+
+        #region Internal Methods
 
         /// <summary>
         /// Enable/disable a feature switch.
         /// </summary>
-        /// <param name="name"></param>
-        /// <param name="enabled"></param>
-        public static void SetFeature(string name, bool enabled)
+        /// <param name="name">Name of the feature switch.</param>
+        /// <param name="enabled">True to enable the feature switch, false to disable.</param>
+        internal static void EnableFeature(string name, bool enabled)
         {
-            // Load feature switch.
             var featureSwitch = _provider.Get(name);
             if (featureSwitch != null)
             {
@@ -82,7 +108,12 @@ namespace Femah.Core
             }
         }
 
-        public static void SetSwitchType(string name, string typeName)
+        /// <summary>
+        /// Set the type of a feature switch.
+        /// </summary>
+        /// <param name="name">Name of the feature switch.</param>
+        /// <param name="typeName">Name of the type of the feature switch type.</param>
+        internal static void SetSwitchType(string name, string typeName)
         {
             // Load feature switch.
             var featureSwitch = _provider.Get(name);
@@ -108,23 +139,30 @@ namespace Femah.Core
             _provider.Save(newFeatureSwitch);
         }
 
-        public static List<IFeatureSwitch> AllFeatures()
+        /// <summary>
+        /// Get a list of all available feature switches.
+        /// </summary>
+        /// <returns></returns>
+        internal static List<IFeatureSwitch> AllFeatures()
         {
             return _provider.All();
         }
 
-        public static List<Type> AllSwitchTypes()
+        /// <summary>
+        /// Get a list of all available feature switch types.
+        /// </summary>
+        /// <returns></returns>
+        internal static List<Type> AllSwitchTypes()
         {
             return _switchTypes;
-        
         }
 
-        public static IFeatureSwitch GetFeature(string featureName)
+        internal static IFeatureSwitch GetFeature(string featureName)
         {
             return _provider.Get(featureName);
         }
 
-        public static void SetFeatureAttributes(string featureName, NameValueCollection values)
+        internal static void SetFeatureAttributes(string featureName, NameValueCollection values)
         {
             var feature = _provider.Get(featureName);
             if (feature != null)
@@ -134,23 +172,44 @@ namespace Femah.Core
             }
         }
 
+        #endregion
+
         #region Private Methods
 
-        private static Dictionary<int,string> LoadFeatureSwitchesFromAssembly(Assembly assembly)
+        /// <summary>
+        /// Load the list of feature switch names from the specified type or, if that is null, 
+        /// scan the specified assembly for an enum called "FemahFeatureSwitches"
+        /// </summary>
+        /// <param name="config"></param>
+        /// <param name="assembly"></param>
+        /// <returns></returns>
+        private static Dictionary<int,string> LoadFeatureSwitchList(Type type, Assembly assembly)
         {
             var featureList = new Dictionary<int,string>();
 
-            // Build a list of feature switch names.
-            var types = assembly.GetExportedTypes();
-            var featureSwitches = types.FirstOrDefault(t => String.Equals(t.Name, "FemahFeatureSwitches", StringComparison.InvariantCulture));
-            if (featureSwitches != null)
+            if (type != null)
             {
-                var names = Enum.GetNames(featureSwitches);
-                var values = Enum.GetValues(featureSwitches);
+                var names = Enum.GetNames(type);
+                var values = Enum.GetValues(type);
 
                 for (int i = 0; i < names.Count(); i++)
                 {
                     featureList.Add((int)(values.GetValue(i)), names[i]);
+                }
+            }
+            else
+            {
+                var types = assembly.GetExportedTypes();
+                var featureSwitches = types.FirstOrDefault(t => String.Equals(t.Name, "FemahFeatureSwitches", StringComparison.InvariantCulture));
+                if (featureSwitches != null)
+                {
+                    var names = Enum.GetNames(featureSwitches);
+                    var values = Enum.GetValues(featureSwitches);
+
+                    for (int i = 0; i < names.Count(); i++)
+                    {
+                        featureList.Add((int)(values.GetValue(i)), names[i]);
+                    }
                 }
             }
 

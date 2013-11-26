@@ -11,7 +11,6 @@ namespace Femah.Core.Tests
     [TestClass]
     public class RoleBasedFeatureSwitchTests
     {
-        private RoleBasedFeatureSwitch _featureSwitch;
         private FemahContext _femahContext;
         private const string _testUserRole = "testrole";
 

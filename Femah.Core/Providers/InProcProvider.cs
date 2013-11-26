@@ -7,15 +7,24 @@ using Femah.Core.FeatureSwitchTypes;
 
 namespace Femah.Core
 {
-    public class DefaultFeatureSwitchProvider : IFeatureSwitchProvider
+    /// <summary>
+    /// A feature switch provider that stores switches in memory on the web server.
+    /// </summary>
+    public class InProcProvider : IFeatureSwitchProvider
     {
         static List<IFeatureSwitch> _featureSwitches = new List<IFeatureSwitch>();
 
-        public void Initialise( List<string> featureSwitches )
+        /// <summary>
+        /// Initialise the feature switches in the provider.
+        /// </summary>
+        /// <param name="featureSwitches"></param>
+        public void Initialise( IEnumerable<string> featureSwitches )
         {
+            _featureSwitches.Clear();
+
             foreach (var featureSwitch in featureSwitches)
             {
-                _featureSwitches.Add(new DefaultFeatureSwitch { Name = featureSwitch, IsEnabled = false, FeatureType = featureSwitch.GetType().Name});
+                _featureSwitches.Add(new SimpleFeatureSwitch { Name = featureSwitch, IsEnabled = false, FeatureType = featureSwitch.GetType().Name});
             }
 
             return;

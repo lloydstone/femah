@@ -7,20 +7,19 @@ using System.Threading.Tasks;
 
 namespace Femah.Core.FeatureSwitchTypes
 {
-    public class RoleBasedFeatureSwitch : IFeatureSwitch
+    public class RoleBasedFeatureSwitch : FeatureSwitchBase
     {
         public RoleBasedFeatureSwitch()
         {
             AcceptedRoles = new List<string>();
         }
 
-        public bool IsEnabled { get;set;}
-
-        public string Name { get; set; }
-
-        public string FeatureType { get; set; }
-
-        public bool IsOn(IFemahContext context)
+        /// <summary>
+        /// Determine if feature is on or off, according to the current user's roles.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns>True if feature is on, false otherwise.</returns>
+        public override bool IsOn(IFemahContext context)
         {
             if (context.HttpContext == null || context.HttpContext.User == null)
             {
@@ -43,14 +42,13 @@ namespace Femah.Core.FeatureSwitchTypes
             return false;
         }
 
-        public void RenderUI(System.Web.UI.HtmlTextWriter writer)
+        public override void RenderUI(System.Web.UI.HtmlTextWriter writer)
         {
-
             writer.Write(String.Format("Roles: <input type='text' name='roles' value='{0}' /><input type='submit' value='update'/>", String.Join(",",AcceptedRoles.ToArray())));
             return;
         }
 
-        public void SetCustomAttributes(NameValueCollection values)
+        public override void SetCustomAttributes(NameValueCollection values)
         {
             this.AcceptedRoles.Clear();
 
