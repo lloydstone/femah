@@ -20,17 +20,17 @@ namespace Femah.Core.ExtensionMethods
 
                 return Encoding.UTF8.GetString(stream.ToArray());
             }
-            catch (System.Runtime.Serialization.InvalidDataContractException exception)
+            catch (System.Runtime.Serialization.InvalidDataContractException)
             {
                 //Add logging
                 throw;
             }
-            catch (System.Runtime.Serialization.SerializationException exception)
+            catch (System.Runtime.Serialization.SerializationException)
             {
                 //Add logging
                 throw;
             }
-            catch (Exception exception)
+            catch (Exception)
             {
                 throw;
             }

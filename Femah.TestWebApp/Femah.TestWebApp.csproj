@@ -126,6 +126,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Code\CustomFemahContext.cs" />
     <Compile Include="Code\CustomFemahContextFactory.cs" />
+    <Compile Include="Code\ExceptionThrowingFeatureSwitch.cs" />
     <Compile Include="Code\FemahFeatureSwitches.cs" />
     <Compile Include="Code\FiftyFiftyFeatureSwitch.cs" />
     <Compile Include="Controllers\HomeController.cs" />
