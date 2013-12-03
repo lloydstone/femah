@@ -45,6 +45,8 @@ namespace Femah.Core.Api
                                     context.Response.StatusCode = (int)HttpStatusCode.OK;
 
                                     //TODO: Argh, is there anyway to Json serialise a List<Type> with the DataContractJsonSerializer?
+                                    //Let's not try and do that, rather, take the approach of implementing a TolerantReader http://martinfowler.com/bliki/TolerantReader.html
+                                    //in the client.
                                     jsonResponse = switchTypes.ToJson();
                                 }
                                 else
