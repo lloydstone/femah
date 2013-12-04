@@ -224,7 +224,7 @@ namespace Femah.Core
             var types = assembly.GetExportedTypes();
             foreach (var t in types)
             {
-                if (t.GetInterfaces().Contains(typeof(IFeatureSwitch)))
+                if (t.GetInterfaces().Contains(typeof(IFeatureSwitch)) && !t.IsAbstract)
                 {
                     typeList.Add(t);
                 }
