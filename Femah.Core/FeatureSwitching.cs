@@ -220,7 +220,6 @@ namespace Femah.Core
         {
             var typeList = new List<Type>();
 
-            // Get all feature switch types from the Femah assembly.
             var types = assembly.GetExportedTypes();
             foreach (var t in types)
             {
