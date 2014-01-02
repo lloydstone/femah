@@ -28,13 +28,14 @@ namespace Femah.TestWebApp
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
             // Simplest way to initialise FEMAH:
-            //FeatureSwitching.Initialise();
+            FeatureSwitching.Initialise();
 
             // When custom configuration is required:
-            FeatureSwitching.Configure()
-                .AdditionalSwitchTypesFromAssembly(typeof(ExceptionThrowingFeatureSwitch).Assembly)
-                .FeatureSwitchEnum( typeof(FemahFeatureSwitches) )
-                .Initialise();
+            //FeatureSwitching.Configure()
+            //    .FeatureSwitchEnum(typeof(FemahFeatureSwitches))
+            //    .AdditionalSwitchTypesFromAssembly(typeof(FiftyFiftyFeatureSwitch).Assembly)
+            //    .ContextFactory(new CustomFemahContextFactory())
+            //    .Initialise();
 
             //var provider = new SqlServerProvider();
             //provider.Configure(ConfigurationManager.ConnectionStrings["SqlServerConnection"].ConnectionString);
