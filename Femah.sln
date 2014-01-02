@@ -7,13 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Femah.Core", "Femah.Core\Fe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Femah.TestWebApp", "Femah.TestWebApp\Femah.TestWebApp.csproj", "{ECD716F1-1004-4C50-B299-E7565C87BF88}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{BB2062E4-30C7-4E23-B3CC-A38511EDE7B4}"
-	ProjectSection(SolutionItems) = preProject
-		.nuget\NuGet.Config = .nuget\NuGet.Config
-		.nuget\NuGet.exe = .nuget\NuGet.exe
-		.nuget\NuGet.targets = .nuget\NuGet.targets
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Femah.Core.Tests", "Femah.Core.Tests\Femah.Core.Tests.csproj", "{E0AA5C2C-6102-4237-8492-72B2C1EDB6DC}"
 EndProject
 Global
