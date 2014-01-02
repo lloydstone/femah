@@ -1,19 +1,18 @@
 ﻿using System;
 using System.Web;
 using Femah.Core.FeatureSwitchTypes;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using NUnit.Framework;
 using Shouldly;
 
 namespace Femah.Core.Tests
 {
-    [TestClass]
     public class PercentageFeatureSwitchTests
     {
         private HttpCookieCollection _cookies;
         private FemahContext _femahContext;
 
-        [TestInitialize]
+        [SetUp]
         public void Initialize()
         {
             // Initialise cookie collection.
@@ -28,7 +27,7 @@ namespace Femah.Core.Tests
             _femahContext = new FemahContext(httpContextMock.Object);
         }
 
-        [TestMethod]
+        [Test]
         public void UsesValueFromCookieWhenCookieExists()
         {
            var featureSwitch = new PercentageFeatureSwitch()
@@ -47,7 +46,7 @@ namespace Femah.Core.Tests
             result.ShouldBe(false);
         }
 
-        [TestMethod]
+        [Test]
         public void SetsCookieWhenNoCookieExists()
         {
             var featureSwitch = new PercentageFeatureSwitch()
@@ -63,7 +62,7 @@ namespace Femah.Core.Tests
             _cookies[0].Value.ShouldBe(result.ToString());
         }
 
-        [TestMethod]
+        [Test]
         public void IsOnIffRandomNumberBelowThreshold()
         {
             // Random number below threshold (should be on).

@@ -27,7 +27,15 @@ namespace Femah.TestWebApp
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
+            // Simplest way to initialise FEMAH:
             FeatureSwitching.Initialise();
+
+            // When custom configuration is required:
+            //FeatureSwitching.Configure()
+            //    .FeatureSwitchEnum(typeof(FemahFeatureSwitches))
+            //    .AdditionalSwitchTypesFromAssembly(typeof(FiftyFiftyFeatureSwitch).Assembly)
+            //    .ContextFactory(new CustomFemahContextFactory())
+            //    .Initialise();
 
             //var provider = new SqlServerProvider();
             //provider.Configure(ConfigurationManager.ConnectionStrings["SqlServerConnection"].ConnectionString);

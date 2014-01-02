@@ -16,6 +16,7 @@ namespace Femah.Core
         private static IFeatureSwitchProvider _provider = null;
         private static Dictionary<int,string> _switches = null;
         private static List<Type> _switchTypes = null;
+        private static Dictionary<string, List<Exception>> _capturedExceptions = new Dictionary<string, List<Exception>>();
 
         private static IFemahContextFactory _contextFactory { get; set; }
 
@@ -75,9 +76,18 @@ namespace Femah.Core
             {
                 return false;
             }
-
+ 
             var context = _contextFactory.GenerateContext();
-            return featureSwitch.IsOn(context);
+
+            try
+            {
+                return featureSwitch.IsOn(context);
+            }
+            catch (Exception e)
+            {
+                LogException(featureSwitchName, e);
+                return false;
+            }
         }
 
         /// <summary>
@@ -157,11 +167,21 @@ namespace Femah.Core
             return _switchTypes;
         }
 
+        /// <summary>
+        /// Get a feature switch by name.
+        /// </summary>
+        /// <param name="featureName">Name of the feature switch.</param>
+        /// <returns>An IFeatureSwitch for the feature switch.</returns>
         internal static IFeatureSwitch GetFeature(string featureName)
         {
             return _provider.Get(featureName);
         }
 
+        /// <summary>
+        /// Set the attributes for a feature switch.
+        /// </summary>
+        /// <param name="featureName">Name of the feature switch.</param>
+        /// <param name="values">A list of name-value pairs that represent the attributes.</param>
         internal static void SetFeatureAttributes(string featureName, NameValueCollection values)
         {
             var feature = _provider.Get(featureName);
@@ -170,6 +190,23 @@ namespace Femah.Core
                 feature.SetCustomAttributes(values);
                 _provider.Save(feature);
             }
+        }
+
+        /// <summary>
+        /// Return a list of captured exceptions associated with a feature switch.
+        /// </summary>
+        /// <param name="featureName">Name of the feature switch</param>
+        /// <returns>A List of Exception objects, possibly empty.</returns>
+        internal static List<Exception> GetFeatureSwitchExceptions(string featureName)
+        {
+            var exceptionList = new List<Exception>();
+            
+            if ( _capturedExceptions.ContainsKey(featureName) )
+            {
+                exceptionList = _capturedExceptions[featureName];
+            }
+
+            return exceptionList;
         }
 
         #endregion
@@ -230,6 +267,23 @@ namespace Femah.Core
             }
 
             return typeList;
+        }
+
+       
+        /// <summary>
+        /// Log that an exception was thrown while testing if a particular feature switch was on.
+        /// </summary>
+        /// <param name="feature">Name of the feature switch</param>
+        /// <param name="e">The exception that was thrown.</param>
+        private static void LogException( string feature, Exception e )
+        {
+            if ( _capturedExceptions.ContainsKey(feature))
+            {
+                _capturedExceptions[feature].Add(e);
+            }
+            else{
+                _capturedExceptions.Add(feature, new List<Exception> { e });
+            }
         }
 
         #endregion

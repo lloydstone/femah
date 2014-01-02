@@ -2,19 +2,18 @@
 using System.Web;
 using Femah.Core;
 using Femah.Core.FeatureSwitchTypes;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using NUnit.Framework;
 using Shouldly;
 
 namespace Femah.Core.Tests
 {
-    [TestClass]
     public class RoleBasedFeatureSwitchTests
     {
         private FemahContext _femahContext;
         private const string _testUserRole = "testrole";
 
-        [TestInitialize]
+        [SetUp]
         public void Initialize()
         {
             // Mock out the HttpContext - mock uses our local cookie collection.
@@ -28,7 +27,7 @@ namespace Femah.Core.Tests
             _femahContext = new FemahContext(httpContextMock.Object);
         }
 
-        [TestMethod]
+        [Test]
         public void ReturnsTrueWhenUserInRole()
         {
             var featureSwitch = new RoleBasedFeatureSwitch
@@ -42,7 +41,7 @@ namespace Femah.Core.Tests
             result.ShouldBe(true);
         }
 
-        [TestMethod]
+        [Test]
         public void ReturnsFalseWhenUserNotInRole()
         {
             var featureSwitch = new RoleBasedFeatureSwitch
@@ -56,7 +55,7 @@ namespace Femah.Core.Tests
             result.ShouldBe(false);
         }
 
-        [TestMethod]
+        [Test]
         public void ReturnsFalseWhenNoRoles()
         {
             var featureSwitch = new RoleBasedFeatureSwitch
@@ -69,7 +68,7 @@ namespace Femah.Core.Tests
             result.ShouldBe(false);
         }
         
-        [TestMethod]
+        [Test]
         public void ReturnsTrueWhenUserInOneOfManyRoles()
         {
             var featureSwitch = new RoleBasedFeatureSwitch
