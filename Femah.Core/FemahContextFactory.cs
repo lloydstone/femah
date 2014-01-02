@@ -11,7 +11,14 @@ namespace Femah.Core
     {
         public IFemahContext GenerateContext()
         {
-            return new FemahContext(new HttpContextWrapper(HttpContext.Current));
+            HttpContextWrapper contextWrapper = null;
+
+            if (HttpContext.Current != null)
+            {
+                contextWrapper = new HttpContextWrapper(HttpContext.Current);
+            }
+
+            return new FemahContext(contextWrapper);
         }
     }
 }

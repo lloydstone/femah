@@ -16,8 +16,6 @@ namespace Femah.Core
         private static IFeatureSwitchProvider _provider = null;
         private static Dictionary<int,string> _switches = null;
         private static List<Type> _switchTypes = null;
-        private static Dictionary<string, List<Exception>> _capturedExceptions = new Dictionary<string, List<Exception>>();
-
         private static IFemahContextFactory _contextFactory { get; set; }
 
         #region Public Methods
@@ -61,7 +59,8 @@ namespace Femah.Core
         {
             if (!_initialised)
             {
-                throw new FemahException("FEMAH isn't initialised.  Call FeatureSwitching.Initialise() first.");
+                // TODO: Log an exception to indicate Femah wasn't initialised.
+                return false;
             }
 
             if (!_switches.ContainsKey(id))
@@ -70,17 +69,18 @@ namespace Femah.Core
             }
 
             var featureSwitchName = _switches[id];
-            var featureSwitch = _provider.Get(featureSwitchName);
-
-            if (!featureSwitch.IsEnabled)
-            {
-                return false;
-            }
- 
-            var context = _contextFactory.GenerateContext();
 
             try
             {
+                var featureSwitch = _provider.Get(featureSwitchName);
+
+                if (!featureSwitch.IsEnabled)
+                {
+                    return false;
+                }
+
+                IFemahContext context = _contextFactory.GenerateContext();
+            
                 return featureSwitch.IsOn(context);
             }
             catch (Exception e)
@@ -192,23 +192,6 @@ namespace Femah.Core
             }
         }
 
-        /// <summary>
-        /// Return a list of captured exceptions associated with a feature switch.
-        /// </summary>
-        /// <param name="featureName">Name of the feature switch</param>
-        /// <returns>A List of Exception objects, possibly empty.</returns>
-        internal static List<Exception> GetFeatureSwitchExceptions(string featureName)
-        {
-            var exceptionList = new List<Exception>();
-            
-            if ( _capturedExceptions.ContainsKey(featureName) )
-            {
-                exceptionList = _capturedExceptions[featureName];
-            }
-
-            return exceptionList;
-        }
-
         #endregion
 
         #region Private Methods
@@ -277,13 +260,7 @@ namespace Femah.Core
         /// <param name="e">The exception that was thrown.</param>
         private static void LogException( string feature, Exception e )
         {
-            if ( _capturedExceptions.ContainsKey(feature))
-            {
-                _capturedExceptions[feature].Add(e);
-            }
-            else{
-                _capturedExceptions.Add(feature, new List<Exception> { e });
-            }
+            // TODO - Log exceptions according to feature name.
         }
 
         #endregion
