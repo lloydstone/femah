@@ -43,7 +43,7 @@
   <ItemGroup>
     <Compile Include="Api\FemahApiHttpHandler.cs" />
     <Compile Include="ExtensionMethods\StringExtensions.cs" />
-    <Compile Include="FeatureSwitchBase.cs" />
+    <Compile Include="FeatureSwitchTypes\FeatureSwitchBase.cs" />
     <Compile Include="FeatureSwitchTypes\SimpleFeatureSwitch.cs" />
     <Compile Include="FeatureSwitchTypes\PercentageFeatureSwitch.cs" />
     <Compile Include="FeatureSwitchTypes\RoleBasedFeatureSwitch.cs" />

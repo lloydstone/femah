@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Femah.Core
+namespace Femah.Core.FeatureSwitchTypes
 {
     /// <summary>
     /// A generic base class, implementing default behaviour for the IFeatureSwitch interface.
