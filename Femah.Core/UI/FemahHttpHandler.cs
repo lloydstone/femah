@@ -171,15 +171,6 @@ namespace Femah.Ui
             writer.RenderEndTag(/* Form*/);
             writer.RenderEndTag(/* Td */);
 
-            // Exceptions associated with feature switch.
-            writer.RenderBeginTag(HtmlTextWriterTag.Td);
-            var exceptionList = FeatureSwitching.GetFeatureSwitchExceptions(feature.Name);
-            if (exceptionList.Count > 0)
-            {
-                writer.Write(String.Format("{0} exception(s) have been thrown by this feature switch.", exceptionList.Count));
-            } 
-            writer.RenderEndTag(/* Td */);
-
             writer.RenderEndTag(/* Tr */);
         }
     }
