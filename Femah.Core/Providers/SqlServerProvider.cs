@@ -218,7 +218,7 @@ namespace Femah.Core.Providers
                 var switchObj = Activator.CreateInstance(assemblyName, typeName);
                 featureSwitch = switchObj.Unwrap() as IFeatureSwitch;
             }
-            catch (TypeLoadException ex)
+            catch (TypeLoadException)
             {
                 // Unable to load type.  Possibly the type in the db no longer exists.
                 return null;
