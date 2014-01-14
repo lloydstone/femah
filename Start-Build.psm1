@@ -8,7 +8,7 @@ function Invoke-Compile{
 .NOTES
     Author: Lloyd Holman
 	Requirements: Copy this module to any location found in $env:PSModulePath
-.PARAMETER msbuild
+.PARAMETER msbuildPath
 	Optional. The full path to the msbuild.exe to compile with.  Defaults to "C:\Windows\Microsoft.NET\Framework\v4.0.30319\msbuild.exe"
 .PARAMETER configMode
 	Optional. The config mode to build the solution in
@@ -29,7 +29,7 @@ function Invoke-Compile{
 			[Parameter(
 				Position = 0,
 				Mandatory = $False )]
-				[string]$msbuild = "C:\Windows\Microsoft.NET\Framework\v4.0.30319\msbuild.exe",
+				[string]$msbuildPath = "C:\Windows\Microsoft.NET\Framework\v4.0.30319\msbuild.exe",
 			[Parameter(
 				Position = 1,
 				Mandatory = $False )]
@@ -77,7 +77,7 @@ function Invoke-Compile{
 						
 						#Compile
 						Write-Host "Building solution: $solutionFile in $configMode mode"
-						& $msbuild $solutionFile /t:ReBuild /t:Clean /p:Configuration=$configMode /p:PlatformTarget=x64 /m
+						& $msbuildPath $solutionFile /t:ReBuild /t:Clean /p:Configuration=$configMode /p:PlatformTarget=x64 /m
 						
 						#Run Unit Tests
 						Import-Module "$baseModulePath\Invoke-NUnitTestsForProject.psm1"
