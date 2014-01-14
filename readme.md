@@ -38,7 +38,7 @@ Add the following to your web applications web.config (as a child of the <config
 ```
 
 ####3. Initialise Femah within your app####
-Initialise feature switching within the Global.asax code behind of your web application, using ```FeatureSwitching.Initialise();```
+Initialise feature switching within the Global.asax code behind of your web application, using ```Femah.Initialise();```
 
 Example
 ```
@@ -59,7 +59,7 @@ namespace Femah.TestWebApp
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
             // Simplest way to initialise FEMAH:
-            FeatureSwitching.Initialise();
+            Femah.Initialise();
         }
     }
 }
@@ -103,7 +103,7 @@ Example given within a Razor view
 
 	<p>Ordinary stuff here.</p>
 
-	@if ( FeatureSwitching.IsFeatureOn((int)FemahFeatureSwitches.ImprovedCheckout)) {
+	@if ( Femah.IsFeatureOn((int)FemahFeatureSwitches.ImprovedCheckout)) {
 	<h3>Feature switch enabled.</h3>
 	}
 ```
