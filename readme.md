@@ -108,5 +108,21 @@ Example given within a Razor view
 	}
 ```
 
-## License
+###Building Femah###
+1. [Setup Git](http://help.github.com/win-set-up-git/)
+
+1. Get Femah source by cloning the github repo
+
+		$ git clone git@github.com:lloydstone/Femah.git
+
+1. Build Femah (versions, compiles, executes Unit Tests and creates NuGet package) 
+
+		C:\Femah>Start-Build.bat
+		
+###Contributing###
+1. Check out the current [Issues](https://github.com/lloydstone/femah/issues) 
+1. Start a conversation by raising a new issue for anything you feel we should be working on
+
+		
+### License ###
 Femah is released under the [MIT license](http://opensource.org/licenses/MIT)
