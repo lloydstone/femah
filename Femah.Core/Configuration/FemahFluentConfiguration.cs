@@ -45,7 +45,7 @@ namespace Femah.Core
 
         public void Initialise()
         {
-            FeatureSwitching.Initialise(_config);
+            Femah.Initialise(_config);
         }
     }
 }

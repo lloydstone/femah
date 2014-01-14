@@ -58,7 +58,7 @@
     <Compile Include="IFemahContext.cs" />
     <Compile Include="IFemahContextFactory.cs" />
     <Compile Include="Providers\InProcProvider.cs" />
-    <Compile Include="FeatureSwitching.cs" />
+    <Compile Include="Femah.cs" />
     <Compile Include="UI\FemahHttpHandler.cs" />
     <Compile Include="IFeatureSwitch.cs" />
     <Compile Include="IFeatureSwitchProvider.cs" />

@@ -28,7 +28,7 @@ namespace Femah.TestWebApp
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
             // Simplest way to initialise FEMAH:
-            FeatureSwitching.Initialise();
+            Femah.Initialise();
 
             // When custom configuration is required:
             //FeatureSwitching.Configure()
