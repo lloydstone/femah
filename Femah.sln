@@ -1,13 +1,16 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
-MinimumVisualStudioVersion = 10.0.40219.1
+# Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Femah.Core", "Femah.Core\Femah.Core.csproj", "{78EEA5A4-52BF-4B8D-9750-F87D76FA5107}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Femah.TestWebApp", "Femah.TestWebApp\Femah.TestWebApp.csproj", "{ECD716F1-1004-4C50-B299-E7565C87BF88}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Femah.Core.Tests", "Femah.Core.Tests\Femah.Core.Tests.csproj", "{E0AA5C2C-6102-4237-8492-72B2C1EDB6DC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{87C7847D-9B8E-4CE6-B24C-C5487E44D286}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\packages.config = .nuget\packages.config
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
