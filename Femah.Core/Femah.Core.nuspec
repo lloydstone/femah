@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Femah.Core</id>
+    <version>1.0.0</version>
+    <authors>Lloyd Holman, Matt Hotstone</authors>
+    <owners>Lloyd Holman, Matt Hotstone</owners>
+    <licenseUrl>http://github.com/lloydstone/femah</licenseUrl>
+    <projectUrl>http://github.com/lloydstone/femah</projectUrl>
+    <iconUrl>http://github.com/lloydstone/femah</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <summary>Femah is a feature switching/toggling library, requiring minimal configuration.  Enable stable mainline development.</summary>
+	<description>Femah is a feature switching/toggling library, requiring minimal configuration.  Designed from day 1 to be enterprise scalable, our intention is to provide a robust and extensible framework to enable the .NET community to embrace the stable mainline (trunk) method of development and realise Continuous Delivery.</description>	
+    <releaseNotes></releaseNotes>
+    <copyright>Copyright 2014</copyright>
+    <dependencies>
+<!--     <dependency id="Newtonsoft.Json" version="5.0.8" />-->
+    </dependencies>
+  </metadata>
+  <files>
+	<file src="BuildOutput\**\*.*" target="\lib\Net40"/>
+  </files>
+</package>
