@@ -108,4 +108,5 @@ Example given within a Razor view
 	}
 ```
 
-
+## License
+Femah is released under the [MIT license](http://opensource.org/licenses/MIT)
