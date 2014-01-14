@@ -39,7 +39,7 @@ namespace Femah.Core.Api
                         {
                             case ApiRequest.ApiCollection.FeatureSwitchTypes:
 
-                                var switchTypes = FeatureSwitching.AllSwitchTypes();
+                                var switchTypes = Femah.AllSwitchTypes();
                                 if (switchTypes != null)
                                 {
                                     context.Response.StatusCode = (int)HttpStatusCode.OK;
@@ -75,7 +75,7 @@ namespace Femah.Core.Api
                         {
                             case ApiRequest.ApiCollection.FeatureSwitch:
                             
-                                var featureSwitch = FeatureSwitching.GetFeature(apiRequest.Member);
+                                var featureSwitch = Femah.GetFeature(apiRequest.Member);
                                 if (featureSwitch != null)
                                 {
                                     //var featureSwitch = FeatureSwitching.AllFeatures();

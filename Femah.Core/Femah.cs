@@ -7,10 +7,11 @@ using System.Reflection;
 using System.Diagnostics;
 using System.Web;
 using System.Collections.Specialized;
+using Femah.Core;
 
-namespace Femah.Core
+namespace Femah
 {
-    public sealed class FeatureSwitching
+    public sealed class Femah
     {
         private static bool _initialised = false;
         private static IFeatureSwitchProvider _provider = null;
@@ -37,10 +38,10 @@ namespace Femah.Core
             // Save provider.
             _provider = config.Provider ?? new InProcProvider();
 
-            _switchTypes = FeatureSwitching.LoadFeatureSwitchTypesFromAssembly(Assembly.GetExecutingAssembly());
+            _switchTypes = Femah.LoadFeatureSwitchTypesFromAssembly(Assembly.GetExecutingAssembly());
             _switchTypes.AddRange(config.CustomSwitchTypes);
 
-            _switches = FeatureSwitching.LoadFeatureSwitchList(config.FeatureSwitchEnumType, Assembly.GetCallingAssembly());
+            _switches = Femah.LoadFeatureSwitchList(config.FeatureSwitchEnumType, Assembly.GetCallingAssembly());
 
             // Inialise the provider.
             _provider.Initialise(_switches.Values.ToList());

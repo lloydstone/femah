@@ -50,7 +50,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FeatureSwitchingTests.cs" />
+    <Compile Include="FemahTests.cs" />
     <Compile Include="PercentageFeatureSwitchTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RoleBasedFeatureSwitchTests.cs" />

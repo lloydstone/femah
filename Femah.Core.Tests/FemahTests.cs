@@ -8,7 +8,7 @@ using Shouldly;
 
 namespace Femah.Core.Tests
 {
-    public class FeatureSwitchingTests
+    public class FemahTests
     {
         public enum FeatureSwitches
         {
@@ -20,7 +20,7 @@ namespace Femah.Core.Tests
         [Test]
         public void InvokingWithoutInitialisingDoesntThrowException()
         {
-            FeatureSwitching.IsFeatureOn((int)FeatureSwitches.SomeNewFeature);
+            Femah.IsFeatureOn((int)FeatureSwitches.SomeNewFeature);
         }
 
         [Test]
@@ -30,12 +30,12 @@ namespace Femah.Core.Tests
             providerMock.Setup(p => p.Get(It.IsAny<string>()))
                 .Throws(new Exception("Exception thrown by provider."));
 
-            FeatureSwitching.Configure()
+            Femah.Configure()
                 .Provider(providerMock.Object)
                 .FeatureSwitchEnum(typeof(FeatureSwitches))
                 .Initialise();
 
-            FeatureSwitching.IsFeatureOn((int)FeatureSwitches.SomeNewFeature);            
+            Femah.IsFeatureOn((int)FeatureSwitches.SomeNewFeature);            
         }
 
         [Test]
@@ -50,13 +50,13 @@ namespace Femah.Core.Tests
             contextFactoryMock.Setup(f => f.GenerateContext())
                 .Throws(new Exception("Exception thrown by context factory."));
 
-            FeatureSwitching.Configure()
+            Femah.Configure()
                 .Provider(providerMock.Object)
                 .ContextFactory(contextFactoryMock.Object)
                 .FeatureSwitchEnum(typeof(FeatureSwitches))
                 .Initialise();
 
-            FeatureSwitching.IsFeatureOn((int)FeatureSwitches.SomeNewFeature);
+            Femah.IsFeatureOn((int)FeatureSwitches.SomeNewFeature);
         }
 
         [Test]
@@ -74,13 +74,13 @@ namespace Femah.Core.Tests
             contextFactoryMock.Setup(f => f.GenerateContext())
                 .Returns(contextMock.Object);
 
-            FeatureSwitching.Configure()
+            Femah.Configure()
                 .Provider(providerMock.Object)
                 .ContextFactory(contextFactoryMock.Object)
                 .FeatureSwitchEnum(typeof(FeatureSwitches))
                 .Initialise();
 
-            FeatureSwitching.IsFeatureOn((int)FeatureSwitches.SomeNewFeature);
+            Femah.IsFeatureOn((int)FeatureSwitches.SomeNewFeature);
         }
 
         [Test]
@@ -95,22 +95,22 @@ namespace Femah.Core.Tests
             providerMock.Setup(p => p.Get(It.IsAny<string>()))
                 .Returns(featureSwitchMock.Object);
 
-            FeatureSwitching.Configure()
+            Femah.Configure()
                 .FeatureSwitchEnum(typeof(FeatureSwitches))
                 .Provider(providerMock.Object)
                 .Initialise();
 
-            FeatureSwitching.IsFeatureOn((int)FeatureSwitches.SomeNewFeature);
+            Femah.IsFeatureOn((int)FeatureSwitches.SomeNewFeature);
         }
 
         [Test]
         public void InvokingWithInvalidFeatureSwitchIdDoesntThrowException()
         {
-            FeatureSwitching.Configure()
+            Femah.Configure()
                 .FeatureSwitchEnum(typeof(FeatureSwitches))
                 .Initialise();
 
-            var result = FeatureSwitching.IsFeatureOn(100);
+            var result = Femah.IsFeatureOn(100);
 
             result.ShouldBe(false);
         }
