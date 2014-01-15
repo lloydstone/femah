@@ -30,6 +30,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.5.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
@@ -41,13 +45,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Api\ApiRequest.cs" />
     <Compile Include="Api\FemahApiHttpHandler.cs" />
     <Compile Include="ExtensionMethods\StringExtensions.cs" />
     <Compile Include="FeatureSwitchTypes\FeatureSwitchBase.cs" />
     <Compile Include="FeatureSwitchTypes\SimpleFeatureSwitch.cs" />
     <Compile Include="FeatureSwitchTypes\PercentageFeatureSwitch.cs" />
     <Compile Include="FeatureSwitchTypes\RoleBasedFeatureSwitch.cs" />
-    <Compile Include="FemahApiHttpHandlerFactory.cs" />
     <Compile Include="Configuration\FemahConfiguration.cs" />
     <Compile Include="FemahContext.cs" />
     <Compile Include="FemahContextFactory.cs" />
@@ -63,6 +67,9 @@
     <Compile Include="IFeatureSwitch.cs" />
     <Compile Include="IFeatureSwitchProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -2,23 +2,20 @@ using System;
 using System.IO;
 using System.Runtime.Serialization.Json;
 using System.Text;
+using Newtonsoft.Json;
 
 namespace Femah.Core.ExtensionMethods
 {
     static internal class StringExtensions
     {
 
-        public static string ToJson<T> (this T obj)
+        public static string ToJson<T>(this T obj)
         {
-            var stream = new MemoryStream();
-
             try
             {
-                Type concreteType = obj.GetType();
-                var serializer = new DataContractJsonSerializer(concreteType);
-                serializer.WriteObject(stream, obj);
+                //Type concreteType = obj.GetType();
 
-                return Encoding.UTF8.GetString(stream.ToArray());
+                return JsonConvert.SerializeObject(obj);
             }
             catch (System.Runtime.Serialization.InvalidDataContractException)
             {
@@ -36,8 +33,6 @@ namespace Femah.Core.ExtensionMethods
             }
             finally
             {
-                stream.Close();
-                stream.Dispose();
             }
         }
     }
