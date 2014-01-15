@@ -1,19 +1,105 @@
 ﻿using System;
-using System.Runtime.Remoting.Contexts;
+using System.Collections.Generic;
 using System.Web;
+using Femah.Core.Api;
 using Femah.Core.FeatureSwitchTypes;
 using Moq;
 using NUnit.Framework;
 using Shouldly;
+using Newtonsoft.Json;
 
 namespace Femah.Core.Tests
 {
+    public class TestableFemahApiHttpHandler : FemahApiHttpHandler
+    {
+        public static TestableFemahApiHttpHandler Create()
+        {
+            return new TestableFemahApiHttpHandler();
+        }
+    }
+
+    public class TestObject
+    {
+        public string Name { get; set; }
+        public List<String> Children { get; set; }
+    }
+
     public class FemahTests
     {
+        private readonly TestObject _testObject = new TestObject();
+
         public enum FeatureSwitches
         {
             SomeNewFeature = 1
         }
+
+        #region Api Tests
+
+        [Test]
+        public void ApiGetResponseSetsCorrectContentType()
+        {
+            //Arrange
+            var testable = new TestableFemahApiHttpHandler();
+            var context = new Mock<HttpContextBase>();
+            context.Setup(x => x.Request.Url)
+                .Returns(new Uri("http://example.com/femah.axd/api/featureswitchtypes"));
+            var response = new Mock<HttpResponseBase>();
+            response.SetupProperty(x => x.ContentType);
+            context.Setup(x => x.Response).Returns(response.Object);
+
+            //Act
+            testable.ProcessRequest(context.Object);
+
+            Assert.AreEqual("application/json", response.Object.ContentType);
+        }
+
+        [Test] public void ApiGetResponseReturns500IfCollectionInvalid()
+        {
+            //Arrange
+            var testable = new TestableFemahApiHttpHandler();
+            var context = new Mock<HttpContextBase>();
+            context.Setup(x => x.Request.Url)
+                .Returns(new Uri("http://example.com/femah.axd/api/unknowncollectionbla"));
+            var response = new Mock<HttpResponseBase>();
+            response.SetupProperty(x => x.StatusCode);
+            context.Setup(x => x.Response).Returns(response.Object);
+
+            //Act
+            testable.ProcessRequest(context.Object);
+
+            Assert.AreEqual(500, response.Object.StatusCode);
+        }
+
+        [Test]
+        public void ApiGetResponseReturns200AndCollectionOfFeatureSwitchTypes()
+        {
+            //Arrange
+            var testable = new TestableFemahApiHttpHandler();
+            var context = new Mock<HttpContextBase>();
+            context.Setup(x => x.Request.Url)
+                .Returns(new Uri("http://example.com/femah.axd/api/featureswitchtypes"));
+            context.SetupGet(x => x.Request.HttpMethod).Returns("GET");
+
+            var response = new Mock<HttpResponseBase>();
+            response.SetupProperty(x => x.StatusCode);
+            context.Setup(x => x.Response).Returns(response.Object);
+
+            var providerMock = new Mock<IFeatureSwitchProvider>();
+            Femah.Configure()
+                .Provider(providerMock.Object)
+                .FeatureSwitchEnum(typeof(FeatureSwitches))
+                .Initialise();
+
+            //Act
+            testable.ProcessRequest(context.Object);
+
+            Assert.AreEqual(200, response.Object.StatusCode);
+            
+            //How do we get the JSON response here?
+            Assert.IsNotNull(response.Object);
+        }
+
+        #endregion 
 
         #region Exception Handling Tests
 
@@ -116,5 +202,65 @@ namespace Femah.Core.Tests
         }
 
         #endregion
+
+        #region Tolerant Json Reader Tests
+        
+        [Test]
+        public void ReadsValidJsonMatchingDeserialisedType()
+        {
+            //Arrange
+            string json = @"{
+                  'Name': 'Some Test Object',
+                  'Children': [
+                    'First Child',
+                    'Second'
+                  ]
+                }";
+
+            //Act
+            var obj = JsonConvert.DeserializeObject<TestObject>(json);
+
+            Assert.AreEqual("Some Test Object", obj.Name);
+        }
+
+        [Test]
+        public void ReadsValidJsonWithExtraFieldNotPresentTargetType()
+        {
+            //Arrange
+            string json = @"{
+                  'Name': 'Some Test Object',
+                  'Name2': 'Annoyingly added field',
+                  'Children': [
+                    'First Child',
+                    'Second'
+                  ]
+                }";
+
+            //Act
+            var obj = JsonConvert.DeserializeObject<TestObject>(json);
+
+            Assert.AreEqual("Some Test Object", obj.Name);
+        }
+
+
+        [Test]
+        public void ReadsValidJsonWithMissingFieldFromTargetType()
+        {
+            //Arrange
+            string json = @"{
+                  'Children': [
+                    'First Child',
+                    'Second'
+                  ]
+                }";
+
+            //Act
+            var obj = JsonConvert.DeserializeObject<TestObject>(json);
+
+            Assert.IsNotNull(obj);
+        }
+
+        #endregion
     }
 }
+
