@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Reflection;
-using System.Diagnostics;
-using System.Web;
 using System.Collections.Specialized;
-using Femah.Core;
+using System.Linq;
+using System.Reflection;
+using Femah.Core.Providers;
 
-namespace Femah
+namespace Femah.Core
 {
     public sealed class Femah
     {
