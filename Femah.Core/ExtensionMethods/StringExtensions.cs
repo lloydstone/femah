@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace Femah.Core.ExtensionMethods
 {
-    static internal class StringExtensions
+    static public class StringExtensions
     {
 
         public static string ToJson<T>(this T obj)

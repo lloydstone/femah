@@ -1,14 +1,12 @@
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Text;
 using System.Web;
 using Femah.Core.Api;
+using Femah.Core.ExtensionMethods;
 using Femah.Core.FeatureSwitchTypes;
 using Moq;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Schema;
 using NUnit.Framework;
 
 namespace Femah.Core.Tests
@@ -115,69 +113,57 @@ namespace Femah.Core.Tests
         public void ApiGetResponseReturnsValidCollectionOfFeatureSwitches()
         {
             //Arrange
-            var testable = new TestableFemahApiHttpHandler();
+                var testable = new TestableFemahApiHttpHandler();
 
-            var httpContextMock = new Mock<HttpContextBase>();
-            httpContextMock.Setup(x => x.Request.Url)
-                .Returns(new Uri("http://example.com/femah.axd/api/featureswitches"));
-            httpContextMock.SetupGet(x => x.Request.HttpMethod).Returns("GET");
+                var httpContextMock = new Mock<HttpContextBase>();
+                httpContextMock.Setup(x => x.Request.Url)
+                    .Returns(new Uri("http://example.com/femah.axd/api/featureswitches"));
+                httpContextMock.SetupGet(x => x.Request.HttpMethod).Returns("GET");
 
-            var response = new Mock<HttpResponseBase>();
-            response.SetupProperty(x => x.StatusCode);
-            httpContextMock.Setup(x => x.Response).Returns(response.Object);
+                var response = new Mock<HttpResponseBase>();
+                response.SetupProperty(x => x.StatusCode);
+                httpContextMock.Setup(x => x.Response).Returns(response.Object);
 
-            var featureSwitches = new List<IFeatureSwitch>
-                {
-                    (new SimpleFeatureSwitch
+                var featureSwitches = new List<IFeatureSwitch>
                     {
-                        Name = "TestFeatureSwitch",
-                        IsEnabled = false,
-                        FeatureType = "SimpleFeatureSwitch"
-                    })
-                };
+                        (new SimpleFeatureSwitch
+                        {
+                            Name = "TestFeatureSwitch1",
+                            IsEnabled = false,
+                            FeatureType = "SimpleFeatureSwitch"
+                        }),
+                        (new SimpleFeatureSwitch
+                        {
+                            Name = "TestFeatureSwitch2",
+                            IsEnabled = false,
+                            FeatureType = "SimpleFeatureSwitch"
+                        })
+                    };
 
-            var providerMock = new Mock<IFeatureSwitchProvider>();
-            providerMock.Setup(p => p.All())
-                .Returns(featureSwitches);
+                //Serialise for comparing what we get back from the API
+                //using our extension method
+                var featureSwitchesJson = featureSwitches.ToJson();
+                //or directly with JSON.NET?
+                //var featureSwitchesJson = JsonConvert.SerializeObject(featureSwitches);
 
-            Femah.Configure()
-                .FeatureSwitchEnum(typeof(FeatureSwitches))
-                .Provider(providerMock.Object)
-                .Initialise();
+                var providerMock = new Mock<IFeatureSwitchProvider>();
+                providerMock.Setup(p => p.All())
+                    .Returns(featureSwitches);
 
+                Femah.Configure()
+                    .FeatureSwitchEnum(typeof(FeatureSwitches))
+                    .Provider(providerMock.Object)
+                    .Initialise();
 
-            //Get the JSON response by intercepting the call to context.Response.Write
-            string responseContent = string.Empty;
-            response.Setup(x => x.Write(It.IsAny<string>())).Callback((string r) => { responseContent = r; });
+                //Get the JSON response by intercepting the call to context.Response.Write
+                string responseContent = string.Empty;
+                response.Setup(x => x.Write(It.IsAny<string>())).Callback((string r) => { responseContent = r; });
 
             //Act
-            testable.ProcessRequest(httpContextMock.Object);
+                testable.ProcessRequest(httpContextMock.Object);
 
-            //Assert
-                Assert.AreEqual(200, response.Object.StatusCode);
-
-                //Are we getting valid Json back?
-                JsonSchema schema = JsonSchema.Parse(@"{
-                        'description': '',
-                        'type': 'array',
-                        'properties': {
-                            'IsEnabled': {
-                                'type': 'boolean', 'required':true
-                            },
-                            'Name': {
-                                'type': 'string', 'required':true
-                            },
-                            'FeatureType': {
-                                'type': 'string', 'required':true
-                            }
-                        },
-                        'additionalProperties': false
-                    }");
-
-                JArray switchTypes = JArray.Parse(responseContent);
-
-                bool valid = switchTypes.IsValid(schema);
-                Assert.IsTrue(valid);
+            //Asert
+                Assert.AreEqual(responseContent, featureSwitchesJson);
 
         }
 

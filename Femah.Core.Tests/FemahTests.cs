@@ -148,6 +148,31 @@ namespace Femah.Core.Tests
             var obj = JsonConvert.DeserializeObject<TestObject>(json);
 
             Assert.AreEqual("Some Test Object", obj.Name);
+
+            //Note.. As we discussed I'd like to validate the serialised/deserialised JSON in a more structured way using something like the below
+            //Assert
+            //Are we getting valid Json back?
+            //                JsonSchema schema = JsonSchema.Parse(@"{
+            //                        'description': '',
+            //                        'type': 'array',
+            //                        'properties': {
+            //                            'IsEnabled': {
+            //                                'type': 'boolean', 'required':true
+            //                            },
+            //                            'Name': {
+            //                                'type': 'string', 'required':true
+            //                            },
+            //                            'FeatureType': {
+            //                                'type': 'string', 'required':true
+            //                            }
+            //                        },
+            //                        'additionalProperties': false
+            //                    }");
+            //
+            //                JArray switchTypes = JArray.Parse(responseContent);
+            //
+            //                bool valid = switchTypes.IsValid(schema);
+            //                Assert.IsTrue(valid);
         }
 
         [Test]
