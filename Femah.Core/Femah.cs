@@ -24,7 +24,7 @@ namespace Femah
         /// <summary>
         /// Initialise the feature switching engine.
         /// </summary>
-        /// <param name="provider">The feature switch provider to use to persist feature switches.</param>
+        /// <param name="config">The configuration settings for Femah.</param>
         public static void Initialise(FemahConfiguration config = null)
         {
             if (config == null)
@@ -54,7 +54,7 @@ namespace Femah
         /// <summary>
         /// Is a feature switch turned on?
         /// </summary>
-        /// <param name="name"></param>
+        /// <param name="id">The ID of the feature switch to check</param>
         /// <returns></returns>
         public static bool IsFeatureOn( int id )
         {
