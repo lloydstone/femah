@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Reflection;
-using System.Diagnostics;
-using System.Web;
 using System.Collections.Specialized;
 using Femah.Core;
 
@@ -201,8 +197,8 @@ namespace Femah
         /// Load the list of feature switch names from the specified type or, if that is null, 
         /// scan the specified assembly for an enum called "FemahFeatureSwitches"
         /// </summary>
-        /// <param name="config"></param>
-        /// <param name="assembly"></param>
+        /// <param name="type">An enum containing the names of featureswitches</param>
+        /// <param name="assembly">The assembly to search for an appropriately named enum</param>
         /// <returns></returns>
         private static Dictionary<int,string> LoadFeatureSwitchList(Type type, Assembly assembly)
         {
@@ -237,20 +233,16 @@ namespace Femah
             return featureList;
         }
 
+        /// <summary>
+        /// Load any valid types that implement the IFeatureSwitch interface from the given assembly.
+        /// </summary>
+        /// <param name="assembly">The assembly to scan</param>
+        /// <returns>A list of types</returns>
         private static List<Type> LoadFeatureSwitchTypesFromAssembly(Assembly assembly)
         {
-            var typeList = new List<Type>();
-
             var types = assembly.GetExportedTypes();
-            foreach (var t in types)
-            {
-                if (t.GetInterfaces().Contains(typeof(IFeatureSwitch)) && !t.IsAbstract)
-                {
-                    typeList.Add(t);
-                }
-            }
 
-            return typeList;
+            return types.Where(t => t.GetInterfaces().Contains(typeof (IFeatureSwitch)) && !t.IsAbstract).ToList();
         }
 
        
