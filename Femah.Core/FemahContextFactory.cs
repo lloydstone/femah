@@ -1,14 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web;
+﻿using System.Web;
 
 namespace Femah.Core
 {
+    /// <summary>
+    /// A default factory for generating FemahContexts.
+    /// </summary>
     public class FemahContextFactory : IFemahContextFactory
     {
+        /// <summary>
+        /// Generate a FemahContext to be passed to a FeatureSwitch's IsOn method.
+        /// </summary>
+        /// <returns>A FemahContext object.</returns>
         public IFemahContext GenerateContext()
         {
             HttpContextWrapper contextWrapper = null;
