@@ -106,7 +106,7 @@ function Invoke-Compile{
 					{
 						Write-Host "Undoing AssemblyInfo.cs file changes"
 						Import-Module "$baseModulePath\Undo-GitFileModifications.psm1"
-						Undo-GitFileModifications -fileName AssemblyInfo.cs
+						Undo-GitFileModifications -fileName AssemblyInfo.cs -gitPath $gitPath
 						Remove-Module Undo-GitFileModifications
 					}
 					

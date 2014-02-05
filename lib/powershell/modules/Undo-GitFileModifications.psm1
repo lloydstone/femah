@@ -31,7 +31,7 @@ function Undo-GitFileModifications{
 			[Parameter(
 				Position = 1,
 				Mandatory = $False )]
-				[string]$gitPath = "git.exe"
+				[string]$gitPath
 			)
 	Begin {
 			$DebugPreference = "Continue"
@@ -39,6 +39,12 @@ function Undo-GitFileModifications{
 	Process {
 				Try 
 				{
+					if ($gitPath -eq "")
+					{
+						$gitPath = "git.exe"
+					}
+					Write-Warning "Setting Git path to: $gitPath"
+					
 					Write-Host "Undoing all Git file modifications to $fileName files"
 					#Performs a Git CHECKOUT on the files modified during Set-BuildNumber
 					#A modules executing path is that of the calling script so this *should* always work. 
