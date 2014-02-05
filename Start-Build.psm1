@@ -81,7 +81,7 @@ function Invoke-Compile{
 						
 						#Compile
 						Write-Host "Building solution: $solutionFile in $configMode mode"
-						& $msbuildPath $solutionFile /t:ReBuild /t:Clean /p:Configuration=$configMode /p:PlatformTarget=x64 /m
+						& $msbuildPath $solutionFile /t:ReBuild /t:Clean /p:Configuration=$configMode /p:PlatformTarget=AnyCPU /m
 						
 						#Run Unit Tests
 						Import-Module "$baseModulePath\Invoke-NUnitTestsForProject.psm1"

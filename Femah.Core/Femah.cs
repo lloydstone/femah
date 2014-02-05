@@ -20,7 +20,7 @@ namespace Femah.Core
         /// <summary>
         /// Initialise the feature switching engine.
         /// </summary>
-        /// <param name="provider">The feature switch provider to use to persist feature switches.</param>
+        /// <param name="config">The configuration settings for Femah.</param>
         public static void Initialise(FemahConfiguration config = null)
         {
             if (config == null)
@@ -50,7 +50,7 @@ namespace Femah.Core
         /// <summary>
         /// Is a feature switch turned on?
         /// </summary>
-        /// <param name="name"></param>
+        /// <param name="id">The ID of the feature switch to check</param>
         /// <returns></returns>
         public static bool IsFeatureOn( int id )
         {
@@ -197,8 +197,8 @@ namespace Femah.Core
         /// Load the list of feature switch names from the specified type or, if that is null, 
         /// scan the specified assembly for an enum called "FemahFeatureSwitches"
         /// </summary>
-        /// <param name="config"></param>
-        /// <param name="assembly"></param>
+        /// <param name="type">An enum containing the names of featureswitches</param>
+        /// <param name="assembly">The assembly to search for an appropriately named enum</param>
         /// <returns></returns>
         private static Dictionary<int,string> LoadFeatureSwitchList(Type type, Assembly assembly)
         {
@@ -233,20 +233,16 @@ namespace Femah.Core
             return featureList;
         }
 
+        /// <summary>
+        /// Load any valid types that implement the IFeatureSwitch interface from the given assembly.
+        /// </summary>
+        /// <param name="assembly">The assembly to scan</param>
+        /// <returns>A list of types</returns>
         private static List<Type> LoadFeatureSwitchTypesFromAssembly(Assembly assembly)
         {
-            var typeList = new List<Type>();
-
             var types = assembly.GetExportedTypes();
-            foreach (var t in types)
-            {
-                if (t.GetInterfaces().Contains(typeof(IFeatureSwitch)) && !t.IsAbstract)
-                {
-                    typeList.Add(t);
-                }
-            }
 
-            return typeList;
+            return types.Where(t => t.GetInterfaces().Contains(typeof (IFeatureSwitch)) && !t.IsAbstract).ToList();
         }
 
        

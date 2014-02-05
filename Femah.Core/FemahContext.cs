@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web;
+﻿using System.Web;
 
 namespace Femah.Core
 {
+    /// <summary>
+    /// Default FemahContext.
+    /// </summary>
     public class FemahContext : IFemahContext
     {
         public HttpContextBase HttpContext { get; private set; }
