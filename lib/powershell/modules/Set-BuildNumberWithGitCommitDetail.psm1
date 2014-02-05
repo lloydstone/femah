@@ -52,7 +52,7 @@ function Set-BuildNumberWithGitCommitDetail{
 			[Parameter(
 				Position = 4,
 				Mandatory = $False )]
-				[string]$gitPath = "git.exe",	
+				[string]$gitPath,	
 			[Parameter(
 				Position = 5,
 				Mandatory = $False )]
@@ -67,8 +67,15 @@ function Set-BuildNumberWithGitCommitDetail{
 				if ($gitRepoPath -eq "")
 				{
 					$gitRepoPath = Resolve-Path .
-					Write-Host "Setting Git repo path to the calling scripts path (using Resolve-Path .): $gitRepoPath"
+					Write-Warning "Setting Git repo path to the calling scripts path (using Resolve-Path .): $gitRepoPath"
 				}
+				
+				if ($gitPath -eq "")
+				{
+					$gitPath = "git.exe"
+				}
+				Write-Warning "Setting Git path to: $gitPath"
+
 				#Set sensible defaults for revision and branchName in case we can't determine them
 				$revision = "0"
 				$branchName = "unknown"
