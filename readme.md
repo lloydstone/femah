@@ -1,6 +1,6 @@
 #Femah#
 
-<a href="http://teamcity.codebetter.com/viewType.html?buildTypeId=bt972&guest=1"><img src="http://teamcity.codebetter.com/app/rest/builds/buildType:(id:bt972)/statusIcon" alt="teamcity.codebetter AutoBot build status"/></a>
+<a href="http://teamcity.jetbrains.com/viewType.html?buildTypeId=NetCommunityProjects_Femah_Femah&guest=1"><img src="http://teamcity.jetbrains.com/app/rest/builds/buildType:(id:NetCommunityProjects_Femah_Femah)/statusIcon" alt="teamcity.jetbrains Femah build status"/></a>
 
 ##Introduction##
 Femah is a feature switching/toggling library requiring minimal configuration.  Designed from day 1 to be enterprise scalable, our intention is to provide a robust and extensible library to enable the .NET community to embrace the [stable trunk method of development](http://paulhammant.com/2013/04/05/what-is-trunk-based-development/) and realise Continuous Delivery.
@@ -10,7 +10,7 @@ Femah is a feature switching/toggling library requiring minimal configuration.  
 * Provide ability to extend with custom feature switch types
 * Provide a UI for controlling feature state
 * Provide a full API for automation
-* Completely failsafe - host app stability is never compromised
+* Completely fail-safe, host app stability is never compromised
 
 ###Femah Enables###
 * A/B style testing and canary releases
