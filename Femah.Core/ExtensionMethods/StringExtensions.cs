@@ -1,20 +1,16 @@
 using System;
-using System.IO;
-using System.Runtime.Serialization.Json;
-using System.Text;
 using Newtonsoft.Json;
 
 namespace Femah.Core.ExtensionMethods
 {
-    static internal class StringExtensions
+    static public class StringExtensions
     {
 
         public static string ToJson<T>(this T obj)
         {
             try
             {
-                //Type concreteType = obj.GetType();
-
+                
                 return JsonConvert.SerializeObject(obj);
             }
             catch (System.Runtime.Serialization.InvalidDataContractException)
@@ -35,5 +31,6 @@ namespace Femah.Core.ExtensionMethods
             {
             }
         }
+
     }
 }

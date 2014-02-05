@@ -50,6 +50,7 @@ namespace Femah.Core.Api
 
                 if (!string.IsNullOrEmpty(jsonResponse))
                 {
+                    context.Response.StatusCode = (int)HttpStatusCode.OK;
                     context.Response.Write(jsonResponse);
                 }
                 else
@@ -89,6 +90,27 @@ namespace Femah.Core.Api
                             return jsonResponse;
                         }
                         
+                        context.Response.StatusCode = (int) HttpStatusCode.NotFound;
+                        jsonResponse = string.Format("{{\"Error\":\"No member named: '{0}' found in: '{1}' collection\"}}",
+                            apiRequest.Member, apiRequest.Collection);
+                        return jsonResponse;
+                    
+                    case ApiRequest.ApiCollection.FeatureSwitches:
+                        var featureSwitches = Femah.AllFeatures();
+                        if (featureSwitches != null)
+                        {
+                            try
+                            {
+                                jsonResponse = featureSwitches.ToJson();
+                            }
+                            catch (Exception)
+                            {
+                                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                                throw;
+                            }
+                            context.Response.StatusCode = (int)HttpStatusCode.OK;
+                            return jsonResponse;
+                        }
                         context.Response.StatusCode = (int) HttpStatusCode.NotFound;
                         jsonResponse = string.Format("{{\"Error\":\"No member named: '{0}' found in: '{1}' collection\"}}",
                             apiRequest.Member, apiRequest.Collection);

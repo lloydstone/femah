@@ -28,7 +28,7 @@ namespace Femah.Ui
                         bool doEnable;
                         if (name != null && enabled != null && Boolean.TryParse(enabled, out doEnable))
                         {
-                            Femah.EnableFeature(name, doEnable);
+                            Core.Femah.EnableFeature(name, doEnable);
                         }
                         break;
 
@@ -37,13 +37,13 @@ namespace Femah.Ui
                         var switchType = context.Request.QueryString["switchtype"];
                         if (name != null && switchType != null)
                         {
-                            Femah.SetSwitchType(name, switchType);
+                            Core.Femah.SetSwitchType(name, switchType);
                         }
                         break;
 
                     case _setCustomAttributesAction:
                         name = context.Request.QueryString["name"];
-                        Femah.SetFeatureAttributes(name, context.Request.QueryString);
+                        Core.Femah.SetFeatureAttributes(name, context.Request.QueryString);
                         break;
                 }
 
@@ -87,7 +87,7 @@ namespace Femah.Ui
             writer.RenderEndTag(/* H1 */);
 
             // Render all feature switches.
-            var features = Femah.AllFeatures();
+            var features = Core.Femah.AllFeatures();
             if (features.Count == 0)
             {
                 writer.RenderBeginTag(HtmlTextWriterTag.P);
@@ -127,7 +127,7 @@ namespace Femah.Ui
             writer.RenderBeginTag(HtmlTextWriterTag.Td);
             writer.Write(feature.GetType().Name);
 
-            var switchTypes = Femah.AllSwitchTypes();
+            var switchTypes = Core.Femah.AllSwitchTypes();
             if ( switchTypes.Count >= 2 )
             {
                 writer.AddAttribute("action", "/femah.axd");

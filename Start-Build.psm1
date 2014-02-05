@@ -41,7 +41,11 @@ function Invoke-Compile{
 			[Parameter(
 				Position = 3,
 				Mandatory = $False )]
-				[string]$buildCounter = "0"
+				[string]$buildCounter = "0",
+			[Parameter(
+				Position = 4,
+				Mandatory = $False )]
+				[string]$gitPath					
 			)
 			
 	Begin {
@@ -72,7 +76,7 @@ function Invoke-Compile{
 						
 						#Set build number
 						Import-Module "$baseModulePath\Set-BuildNumberWithGitCommitDetail.psm1"
-						$assemblyInformationalVersion = Set-BuildNumberWithGitCommitDetail -major $major -minor $minor -buildCounter $buildCounter
+						$assemblyInformationalVersion = Set-BuildNumberWithGitCommitDetail -major $major -minor $minor -buildCounter $buildCounter -gitPath $gitPath
 						Remove-Module Set-BuildNumberWithGitCommitDetail
 						
 						#Compile

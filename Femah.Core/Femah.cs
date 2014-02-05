@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Reflection;
-using System.Collections.Specialized;
-using Femah.Core;
+using Femah.Core.Providers;
 
-namespace Femah
+namespace Femah.Core
 {
     public sealed class Femah
     {

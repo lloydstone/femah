@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Femah.Core.FeatureSwitchTypes;
 
-namespace Femah.Core
+namespace Femah.Core.Providers
 {
     /// <summary>
     /// A feature switch provider that stores switches in memory on the web server.
@@ -26,8 +24,6 @@ namespace Femah.Core
             {
                 _featureSwitches.Add(new SimpleFeatureSwitch { Name = featureSwitch, IsEnabled = false, FeatureType = featureSwitch.GetType().Name});
             }
-
-            return;
         }
 
         /// <summary>
