@@ -1,5 +1,9 @@
-##Femah##
-Femah is a feature switching/toggling library, requiring minimal configuration.  Designed from day 1 to be enterprise scalable, our intention is to provide a robust and extensible framework to enable the .NET community to embrace the stable mainline (trunk) method of development and realise Continuous Delivery.
+#Femah#
+
+<a href="http://teamcity.codebetter.com/viewType.html?buildTypeId=bt972&guest=1"><img src="http://teamcity.codebetter.com/app/rest/builds/buildType:(id:bt972)/statusIcon" alt="teamcity.codebetter AutoBot build status"/></a>
+
+##Introduction##
+Femah is a feature switching/toggling library requiring minimal configuration.  Designed from day 1 to be enterprise scalable, our intention is to provide a robust and extensible library to enable the .NET community to embrace the [stable trunk method of development](http://paulhammant.com/2013/04/05/what-is-trunk-based-development/) and realise Continuous Delivery.
 
 ###MVP Goals###
 * Provide common feature switch types for majority of typical scenarios out of the box
