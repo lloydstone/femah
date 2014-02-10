@@ -37,7 +37,7 @@ namespace Femah.Core.Providers
     {
         private string _connectionString;
         private string _tableName = "femahSwitches";
-
+        static List<Type> _featureSwitchtypes = null;
 
         /// <summary>
         /// Configure the SqlServerProvider.
@@ -54,7 +54,8 @@ namespace Femah.Core.Providers
         /// Initialise the provider, given the names of the feature switches.
         /// </summary>
         /// <param name="featureSwitches">Names of the feature switches in the application.</param>
-        public void Initialise(IEnumerable<string> featureSwitches)
+        /// <param name="featureSwitchTypes">The feature switch types in the application.</param>
+        public void Initialise(IEnumerable<string> featureSwitches, List<Type> featureSwitchTypes)
         {
             using (var conn = new SqlConnection(_connectionString))
             {
@@ -74,7 +75,11 @@ namespace Femah.Core.Providers
                 // Remove any feature switches from database that aren't valid feature switches.
                 DeleteUnlistedSwitches(featureSwitches, conn);
             }
+
+            _featureSwitchtypes.Clear();
+            _featureSwitchtypes = featureSwitchTypes;
         }
+
 
         /// <summary>
         /// Get a feature switch.
@@ -111,7 +116,7 @@ namespace Femah.Core.Providers
         /// Return all feature switches.
         /// </summary>
         /// <returns>A list of zero or more instances of IFeatureSwitch</returns>
-        public List<IFeatureSwitch> All()
+        public List<IFeatureSwitch> AllFeatureSwitches()
         {
             List<IFeatureSwitch> featureSwitches;
 
@@ -122,6 +127,11 @@ namespace Femah.Core.Providers
             }
 
             return featureSwitches;
+        }
+
+        public List<Type> AllFeatureSwitchTypes()
+        {
+            return _featureSwitchtypes;
         }
 
         #endregion
