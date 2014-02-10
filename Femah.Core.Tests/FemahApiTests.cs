@@ -142,7 +142,7 @@ namespace Femah.Core.Tests
 
                 //Serialise for comparing what we get back from the API
                 //using our extension method
-                //var featureSwitchesJson = featureSwitches.ToJson();
+                var featureSwitchesJson = featureSwitches.ToJson();
                 //or directly with JSON.NET?
                 //var featureSwitchesJson = JsonConvert.SerializeObject(featureSwitches);
 
@@ -163,10 +163,7 @@ namespace Femah.Core.Tests
                 testable.ProcessRequest(httpContextMock.Object);
 
             //Asert
-                //var deserialisedFeatureSwitches = JsonConvert.DeserializeObject <List<FeatureSwitchBase>>(responseContent);
-                //var deserialisedFeatureSwitches = JsonConvert.DeserializeObject(responseContent, typeof(List<FeatureSwitchBase>), new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Objects });
-                var deserialisedFeatureSwitches = (List<SimpleFeatureSwitch>)JsonConvert.DeserializeObject(responseContent, typeof(List<SimpleFeatureSwitch>));
-                Assert.AreEqual(featureSwitches, deserialisedFeatureSwitches);
+                Assert.AreEqual(responseContent, featureSwitchesJson);
 
         }
 
