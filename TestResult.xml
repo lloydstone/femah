@@ -1,39 +1,59 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <!--This file represents the results of running a test suite-->
-<test-results name="C:\Development\GitHub\femah\Femah.Core.Tests\BuildOutput\Femah.Core.Tests.dll" total="13" errors="0" failures="0" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2014-01-14" time="12:58:34">
+<test-results name="C:\Development\GitHub\femah\Femah.Core.Tests\BuildOutput\Femah.Core.Tests.dll" total="20" errors="0" failures="1" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2014-02-05" time="22:23:54">
   <environment nunit-version="2.6.3.13283" clr-version="2.0.50727.7905" os-version="Microsoft Windows NT 6.2.9200.0" platform="Win32NT" cwd="C:\Development\GitHub\femah" machine-name="R9-FV2Z5-VM1" user="LHolman1" user-domain="HITACHICC" />
   <culture-info current-culture="en-GB" current-uiculture="en-GB" />
-  <test-suite type="Assembly" name="C:\Development\GitHub\femah\Femah.Core.Tests\BuildOutput\Femah.Core.Tests.dll" executed="True" result="Success" success="True" time="1.238" asserts="0">
+  <test-suite type="Assembly" name="C:\Development\GitHub\femah\Femah.Core.Tests\BuildOutput\Femah.Core.Tests.dll" executed="True" result="Failure" success="False" time="2.430" asserts="0">
     <results>
-      <test-suite type="Namespace" name="Femah" executed="True" result="Success" success="True" time="1.215" asserts="0">
+      <test-suite type="Namespace" name="Femah" executed="True" result="Failure" success="False" time="2.402" asserts="0">
         <results>
-          <test-suite type="Namespace" name="Core" executed="True" result="Success" success="True" time="1.212" asserts="0">
+          <test-suite type="Namespace" name="Core" executed="True" result="Failure" success="False" time="2.400" asserts="0">
             <results>
-              <test-suite type="Namespace" name="Tests" executed="True" result="Success" success="True" time="1.209" asserts="0">
+              <test-suite type="Namespace" name="Tests" executed="True" result="Failure" success="False" time="2.396" asserts="0">
                 <results>
-                  <test-suite type="TestFixture" name="FemahTests" executed="True" result="Success" success="True" time="0.728" asserts="0">
+                  <test-suite type="TestFixture" name="FemahApiTests" executed="True" result="Failure" success="False" time="1.987" asserts="0">
                     <results>
-                      <test-case name="Femah.Core.Tests.FemahTests.ExceptionsThrownByContextAreSwallowed" executed="True" result="Success" success="True" time="0.623" asserts="0" />
-                      <test-case name="Femah.Core.Tests.FemahTests.ExceptionsThrownByContextFactoryAreSwallowed" executed="True" result="Success" success="True" time="0.003" asserts="0" />
-                      <test-case name="Femah.Core.Tests.FemahTests.ExceptionsThrownByFeatureSwitchesAreSwallowed" executed="True" result="Success" success="True" time="0.025" asserts="0" />
+                      <test-case name="Femah.Core.Tests.FemahApiTests.ApiGetResponseReturns200IfCollectionValid" executed="True" result="Success" success="True" time="1.763" asserts="1" />
+                      <test-case name="Femah.Core.Tests.FemahApiTests.ApiGetResponseReturnsValidCollectionOfFeatureSwitches" executed="True" result="Failure" success="False" time="0.157" asserts="1">
+                        <failure>
+                          <message><![CDATA[  Expected is <System.Collections.Generic.List`1[Femah.Core.IFeatureSwitch]> with 2 elements, actual is <System.Collections.Generic.List`1[Femah.Core.FeatureSwitchTypes.SimpleFeatureSwitch]> with 2 elements
+  Values differ at index [0]
+  Expected: <Femah.Core.FeatureSwitchTypes.SimpleFeatureSwitch>
+  But was:  <Femah.Core.FeatureSwitchTypes.SimpleFeatureSwitch>
+]]></message>
+                          <stack-trace><![CDATA[]]></stack-trace>
+                        </failure>
+                      </test-case>
+                      <test-case name="Femah.Core.Tests.FemahApiTests.ApiResponseReturns500IfCollectionInvalid" executed="True" result="Success" success="True" time="0.010" asserts="1" />
+                      <test-case name="Femah.Core.Tests.FemahApiTests.ApiResponseSetsCorrectContentTypeAndEncoding" executed="True" result="Success" success="True" time="0.023" asserts="2" />
+                    </results>
+                  </test-suite>
+                  <test-suite type="TestFixture" name="FemahTests" executed="True" result="Success" success="True" time="0.172" asserts="0">
+                    <results>
+                      <test-case name="Femah.Core.Tests.FemahTests.ExceptionsThrownByContextAreSwallowed" executed="True" result="Success" success="True" time="0.019" asserts="0" />
+                      <test-case name="Femah.Core.Tests.FemahTests.ExceptionsThrownByContextFactoryAreSwallowed" executed="True" result="Success" success="True" time="0.004" asserts="0" />
+                      <test-case name="Femah.Core.Tests.FemahTests.ExceptionsThrownByFeatureSwitchesAreSwallowed" executed="True" result="Success" success="True" time="0.026" asserts="0" />
                       <test-case name="Femah.Core.Tests.FemahTests.ExceptionsThrownByProviderAreSwallowed" executed="True" result="Success" success="True" time="0.003" asserts="0" />
-                      <test-case name="Femah.Core.Tests.FemahTests.InvokingWithInvalidFeatureSwitchIdDoesntThrowException" executed="True" result="Success" success="True" time="0.041" asserts="0" />
-                      <test-case name="Femah.Core.Tests.FemahTests.InvokingWithoutInitialisingDoesntThrowException" executed="True" result="Success" success="True" time="0.007" asserts="0" />
+                      <test-case name="Femah.Core.Tests.FemahTests.InvokingWithInvalidFeatureSwitchIdDoesntThrowException" executed="True" result="Success" success="True" time="0.065" asserts="0" />
+                      <test-case name="Femah.Core.Tests.FemahTests.InvokingWithoutInitialisingDoesntThrowException" executed="True" result="Success" success="True" time="0.002" asserts="0" />
+                      <test-case name="Femah.Core.Tests.FemahTests.ReadsValidJsonMatchingDeserialisedType" executed="True" result="Success" success="True" time="0.011" asserts="1" />
+                      <test-case name="Femah.Core.Tests.FemahTests.ReadsValidJsonWithExtraFieldNotPresentTargetType" executed="True" result="Success" success="True" time="0.005" asserts="1" />
+                      <test-case name="Femah.Core.Tests.FemahTests.ReadsValidJsonWithMissingFieldFromTargetType" executed="True" result="Success" success="True" time="0.011" asserts="1" />
                     </results>
                   </test-suite>
-                  <test-suite type="TestFixture" name="PercentageFeatureSwitchTests" executed="True" result="Success" success="True" time="0.426" asserts="0">
+                  <test-suite type="TestFixture" name="PercentageFeatureSwitchTests" executed="True" result="Success" success="True" time="0.174" asserts="0">
                     <results>
-                      <test-case name="Femah.Core.Tests.PercentageFeatureSwitchTests.IsOnIffRandomNumberBelowThreshold" executed="True" result="Success" success="True" time="0.358" asserts="0" />
-                      <test-case name="Femah.Core.Tests.PercentageFeatureSwitchTests.SetsCookieWhenNoCookieExists" executed="True" result="Success" success="True" time="0.030" asserts="0" />
-                      <test-case name="Femah.Core.Tests.PercentageFeatureSwitchTests.UsesValueFromCookieWhenCookieExists" executed="True" result="Success" success="True" time="0.034" asserts="0" />
+                      <test-case name="Femah.Core.Tests.PercentageFeatureSwitchTests.IsOnIffRandomNumberBelowThreshold" executed="True" result="Success" success="True" time="0.096" asserts="0" />
+                      <test-case name="Femah.Core.Tests.PercentageFeatureSwitchTests.SetsCookieWhenNoCookieExists" executed="True" result="Success" success="True" time="0.041" asserts="0" />
+                      <test-case name="Femah.Core.Tests.PercentageFeatureSwitchTests.UsesValueFromCookieWhenCookieExists" executed="True" result="Success" success="True" time="0.030" asserts="0" />
                     </results>
                   </test-suite>
-                  <test-suite type="TestFixture" name="RoleBasedFeatureSwitchTests" executed="True" result="Success" success="True" time="0.043" asserts="0">
+                  <test-suite type="TestFixture" name="RoleBasedFeatureSwitchTests" executed="True" result="Success" success="True" time="0.047" asserts="0">
                     <results>
                       <test-case name="Femah.Core.Tests.RoleBasedFeatureSwitchTests.ReturnsFalseWhenNoRoles" executed="True" result="Success" success="True" time="0.023" asserts="0" />
-                      <test-case name="Femah.Core.Tests.RoleBasedFeatureSwitchTests.ReturnsFalseWhenUserNotInRole" executed="True" result="Success" success="True" time="0.005" asserts="0" />
-                      <test-case name="Femah.Core.Tests.RoleBasedFeatureSwitchTests.ReturnsTrueWhenUserInOneOfManyRoles" executed="True" result="Success" success="True" time="0.004" asserts="0" />
-                      <test-case name="Femah.Core.Tests.RoleBasedFeatureSwitchTests.ReturnsTrueWhenUserInRole" executed="True" result="Success" success="True" time="0.005" asserts="0" />
+                      <test-case name="Femah.Core.Tests.RoleBasedFeatureSwitchTests.ReturnsFalseWhenUserNotInRole" executed="True" result="Success" success="True" time="0.006" asserts="0" />
+                      <test-case name="Femah.Core.Tests.RoleBasedFeatureSwitchTests.ReturnsTrueWhenUserInOneOfManyRoles" executed="True" result="Success" success="True" time="0.005" asserts="0" />
+                      <test-case name="Femah.Core.Tests.RoleBasedFeatureSwitchTests.ReturnsTrueWhenUserInRole" executed="True" result="Success" success="True" time="0.006" asserts="0" />
                     </results>
                   </test-suite>
                 </results>
