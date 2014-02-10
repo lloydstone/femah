@@ -1,5 +1,7 @@
 #Femah#
 
+<a href="https://github.com/lloydstone/femah"><img src="https://f.cloud.github.com/assets/362197/2124054/b67ee748-9237-11e3-8b44-ff2bd7fba50c.png" alt="Femah project home logo"/></a>
+
 <a href="http://teamcity.jetbrains.com/viewType.html?buildTypeId=NetCommunityProjects_Femah_Femah&guest=1"><img src="http://teamcity.jetbrains.com/app/rest/builds/buildType:(id:NetCommunityProjects_Femah_Femah)/statusIcon" alt="teamcity.jetbrains Femah build status"/></a>
 
 ##Introduction##

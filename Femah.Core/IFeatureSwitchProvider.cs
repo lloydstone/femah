@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Femah.Core
 {
@@ -11,7 +12,8 @@ namespace Femah.Core
         /// Initialise the provider, given the names of the feature switches.
         /// </summary>
         /// <param name="featureSwitches">Names of the feature switches in the application.</param>
-        void Initialise(IEnumerable<string> featureSwitches);
+        /// <param name="featureSwitchTypes">The feature switch types in the application.</param>
+        void Initialise(IEnumerable<string> featureSwitches, List<Type> featureSwitchTypes );
 
         /// <summary>
         /// Get a feature switch.
@@ -30,6 +32,8 @@ namespace Femah.Core
         /// Return all feature switches.
         /// </summary>
         /// <returns>A list of zero or more instances of IFeatureSwitch</returns>
-        List<IFeatureSwitch> All();
+        List<IFeatureSwitch> AllFeatureSwitches();
+
+        List<Type> AllFeatureSwitchTypes();
     }
 }

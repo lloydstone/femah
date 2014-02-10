@@ -40,7 +40,7 @@ namespace Femah.Core
             _switches = Femah.LoadFeatureSwitchList(config.FeatureSwitchEnumType, Assembly.GetCallingAssembly());
 
             // Inialise the provider.
-            _provider.Initialise(_switches.Values.ToList());
+            _provider.Initialise(_switches.Values.ToList(), _switchTypes);
 
             _initialised = true;
 
@@ -152,7 +152,7 @@ namespace Femah.Core
         /// <returns></returns>
         internal static List<IFeatureSwitch> AllFeatures()
         {
-            return _provider.All();
+            return _provider.AllFeatureSwitches();
         }
 
         /// <summary>
@@ -161,7 +161,8 @@ namespace Femah.Core
         /// <returns></returns>
         internal static List<Type> AllSwitchTypes()
         {
-            return _switchTypes;
+            //return _switchTypes;
+            return _provider.AllFeatureSwitchTypes();
         }
 
         /// <summary>
