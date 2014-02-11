@@ -190,8 +190,8 @@ namespace Femah.Core.Tests
             //var featureSwitchesJson = JsonConvert.SerializeObject(featureSwitches);
 
             var providerMock = new Mock<IFeatureSwitchProvider>();
-            providerMock.Setup(p => p.AllFeatureSwitchTypes())
-                .Returns(featureSwitchTypes);
+            //providerMock.Setup(p => p.AllFeatureSwitchTypes())
+            //    .Returns(featureSwitchTypes);
 
             Femah.Configure()
                 .Provider(providerMock.Object)

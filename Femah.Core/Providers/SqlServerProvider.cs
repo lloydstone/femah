@@ -54,8 +54,7 @@ namespace Femah.Core.Providers
         /// Initialise the provider, given the names of the feature switches.
         /// </summary>
         /// <param name="featureSwitches">Names of the feature switches in the application.</param>
-        /// <param name="featureSwitchTypes">The feature switch types in the application.</param>
-        public void Initialise(IEnumerable<string> featureSwitches, List<Type> featureSwitchTypes)
+        public void Initialise(IEnumerable<string> featureSwitches)
         {
             using (var conn = new SqlConnection(_connectionString))
             {
@@ -75,9 +74,6 @@ namespace Femah.Core.Providers
                 // Remove any feature switches from database that aren't valid feature switches.
                 DeleteUnlistedSwitches(featureSwitches, conn);
             }
-
-            _featureSwitchtypes.Clear();
-            _featureSwitchtypes = featureSwitchTypes;
         }
 
 

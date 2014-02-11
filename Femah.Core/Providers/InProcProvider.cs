@@ -17,8 +17,7 @@ namespace Femah.Core.Providers
         /// Initialise the feature switches in the provider.
         /// </summary>
         /// <param name="featureSwitches"></param>
-        /// <param name="featureSwitchTypes">The feature switch types in the application.</param>
-        public void Initialise( IEnumerable<string> featureSwitches, List<Type> featureSwitchTypes )
+        public void Initialise( IEnumerable<string> featureSwitches)
         {
             _featureSwitches.Clear();
 
@@ -26,9 +25,6 @@ namespace Femah.Core.Providers
             {
                 _featureSwitches.Add(new SimpleFeatureSwitch { Name = featureSwitch, IsEnabled = false, FeatureType = featureSwitch.GetType().Name});
             }
-
-            _featureSwitchtypes = featureSwitchTypes;
-
         }
 
         /// <summary>
