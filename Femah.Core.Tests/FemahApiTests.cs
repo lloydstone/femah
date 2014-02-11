@@ -181,20 +181,15 @@ namespace Femah.Core.Tests
             response.SetupProperty(x => x.StatusCode);
             httpContextMock.Setup(x => x.Response).Returns(response.Object);
 
-            var featureSwitchTypes = new List<Type> {typeof (SimpleFeatureSwitch)};
+            const int numberOfSwitchTypes = 1;
+            var featureSwitchTypes = new Type[numberOfSwitchTypes];
+            featureSwitchTypes[0] = typeof (SimpleFeatureSwitch);
 
             //Serialise for comparing what we get back from the API
-            //using our extension method
-            var featureSwitcheTypesJson = featureSwitchTypes.ToJson();
-            //or directly with JSON.NET?
-            //var featureSwitchesJson = JsonConvert.SerializeObject(featureSwitches);
-
-            var providerMock = new Mock<IFeatureSwitchProvider>();
-            //providerMock.Setup(p => p.AllFeatureSwitchTypes())
-            //    .Returns(featureSwitchTypes);
+            var featureSwitchTypesJson = featureSwitchTypes.ToJson();
 
             Femah.Configure()
-                .Provider(providerMock.Object)
+                .WithSelectedFeatureSwitchTypes(featureSwitchTypes)
                 .Initialise();
 
             //Get the JSON response by intercepting the call to context.Response.Write
@@ -205,8 +200,8 @@ namespace Femah.Core.Tests
             testable.ProcessRequest(httpContextMock.Object);
 
             //Assert
-            //Assert.AreEqual(200, response.Object.StatusCode);
-            //Assert.AreEqual(responseContent, featureSwitcheTypesJson);
+            Assert.AreEqual(200, response.Object.StatusCode);
+            Assert.AreEqual(featureSwitchTypesJson, responseContent);
 
         }
     }
