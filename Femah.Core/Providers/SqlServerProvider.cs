@@ -37,7 +37,7 @@ namespace Femah.Core.Providers
     {
         private string _connectionString;
         private string _tableName = "femahSwitches";
-
+        static List<Type> _featureSwitchtypes = null;
 
         /// <summary>
         /// Configure the SqlServerProvider.
@@ -76,6 +76,7 @@ namespace Femah.Core.Providers
             }
         }
 
+
         /// <summary>
         /// Get a feature switch.
         /// </summary>
@@ -111,7 +112,7 @@ namespace Femah.Core.Providers
         /// Return all feature switches.
         /// </summary>
         /// <returns>A list of zero or more instances of IFeatureSwitch</returns>
-        public List<IFeatureSwitch> All()
+        public List<IFeatureSwitch> AllFeatureSwitches()
         {
             List<IFeatureSwitch> featureSwitches;
 
@@ -122,6 +123,11 @@ namespace Femah.Core.Providers
             }
 
             return featureSwitches;
+        }
+
+        public List<Type> AllFeatureSwitchTypes()
+        {
+            return _featureSwitchtypes;
         }
 
         #endregion

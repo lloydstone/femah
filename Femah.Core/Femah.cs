@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Reflection;
+using Femah.Core.Configuration;
 using Femah.Core.Providers;
 
 namespace Femah.Core
@@ -34,7 +35,13 @@ namespace Femah.Core
             // Save provider.
             _provider = config.Provider ?? new InProcProvider();
 
-            _switchTypes = Femah.LoadFeatureSwitchTypesFromAssembly(Assembly.GetExecutingAssembly());
+            if (config.StandardSwitchTypes.Count == 0)
+                _switchTypes = LoadFeatureSwitchTypesFromAssembly(Assembly.GetExecutingAssembly());
+            else
+            {
+                _switchTypes = new List<Type>();
+                _switchTypes.AddRange(config.StandardSwitchTypes);
+            }
             _switchTypes.AddRange(config.CustomSwitchTypes);
 
             _switches = Femah.LoadFeatureSwitchList(config.FeatureSwitchEnumType, Assembly.GetCallingAssembly());
@@ -152,7 +159,7 @@ namespace Femah.Core
         /// <returns></returns>
         internal static List<IFeatureSwitch> AllFeatures()
         {
-            return _provider.All();
+            return _provider.AllFeatureSwitches();
         }
 
         /// <summary>

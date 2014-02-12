@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Femah.Core
 {
@@ -30,6 +31,7 @@ namespace Femah.Core
         /// Return all feature switches.
         /// </summary>
         /// <returns>A list of zero or more instances of IFeatureSwitch</returns>
-        List<IFeatureSwitch> All();
+        List<IFeatureSwitch> AllFeatureSwitches();
+
     }
 }

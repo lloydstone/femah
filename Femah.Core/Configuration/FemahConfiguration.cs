@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Femah.Core
+namespace Femah.Core.Configuration
 {
     public class FluentAssemblyConfiguration : FemahFluentConfiguration
     {
@@ -31,10 +28,12 @@ namespace Femah.Core
         public FemahConfiguration()
         {
             CustomSwitchTypes = new List<Type>();
+            StandardSwitchTypes = new List<Type>();
         }
 
         public IFemahContextFactory ContextFactory { get; set; }
         public IFeatureSwitchProvider Provider { get; set; }
+        public List<Type> StandardSwitchTypes { get; set; }
         public List<Type> CustomSwitchTypes { get; set; }
         public Type FeatureSwitchEnumType { get; set; }
     }

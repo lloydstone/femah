@@ -11,12 +11,13 @@ namespace Femah.Core.Providers
     public class InProcProvider : IFeatureSwitchProvider
     {
         static List<IFeatureSwitch> _featureSwitches = new List<IFeatureSwitch>();
+        static List<Type> _featureSwitchtypes = null;
 
         /// <summary>
         /// Initialise the feature switches in the provider.
         /// </summary>
         /// <param name="featureSwitches"></param>
-        public void Initialise( IEnumerable<string> featureSwitches )
+        public void Initialise( IEnumerable<string> featureSwitches)
         {
             _featureSwitches.Clear();
 
@@ -55,9 +56,14 @@ namespace Femah.Core.Providers
         /// Return all feature switches in the provider.
         /// </summary>
         /// <returns></returns>
-        public List<IFeatureSwitch> All()
+        public List<IFeatureSwitch> AllFeatureSwitches()
         {
             return _featureSwitches;
+        }
+
+        public List<Type> AllFeatureSwitchTypes()
+        {
+            return _featureSwitchtypes;
         }
     }
 }
