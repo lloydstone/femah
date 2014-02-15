@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Web;
 using System.Web.UI;
 
@@ -86,7 +85,7 @@ namespace Femah.Core.FeatureSwitchTypes
         {
             string percentage = values["percentage"];
             int percentageValue;
-            if (!String.IsNullOrWhiteSpace(percentage) && int.TryParse(percentage, out percentageValue) )
+            if (!String.IsNullOrEmpty(percentage) && int.TryParse(percentage, out percentageValue) )
             {
                 this.PercentageOn = percentageValue;
             }

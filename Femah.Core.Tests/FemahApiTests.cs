@@ -6,7 +6,6 @@ using Femah.Core.Api;
 using Femah.Core.ExtensionMethods;
 using Femah.Core.FeatureSwitchTypes;
 using Moq;
-using Newtonsoft.Json;
 using NUnit.Framework;
 
 namespace Femah.Core.Tests
@@ -163,7 +162,7 @@ namespace Femah.Core.Tests
             testable.ProcessRequest(httpContextMock.Object);
 
             //Asert
-            Assert.AreEqual(responseContent, featureSwitchesJson);
+            Assert.AreEqual(featureSwitchesJson, responseContent);
 
         }
 

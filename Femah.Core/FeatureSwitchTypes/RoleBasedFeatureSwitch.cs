@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Femah.Core.FeatureSwitchTypes
 {
@@ -53,7 +52,7 @@ namespace Femah.Core.FeatureSwitchTypes
             this.AcceptedRoles.Clear();
 
             string roleList = values["roles"];
-            if (!String.IsNullOrWhiteSpace(roleList))
+            if (!String.IsNullOrEmpty(roleList))
             {
                 foreach (var role in roleList.Split(','))
                 {

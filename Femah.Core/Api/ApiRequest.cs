@@ -9,10 +9,10 @@
 
         public enum ApiCollection
         {
-            FeatureSwitch,
-            FeatureSwitches,
-            FeatureSwitchType,
-            FeatureSwitchTypes
+            featureswitch,
+            featureswitches,
+            featureswitchtype,
+            featureswitchtypes
         }
     }
 }
