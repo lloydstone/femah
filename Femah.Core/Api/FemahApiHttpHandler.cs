@@ -1,8 +1,6 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
 using System.Net;
-using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Web;
 using Femah.Core.ExtensionMethods;
@@ -72,7 +70,7 @@ namespace Femah.Core.Api
 
                 switch (apiRequest.Collection)
                 {
-                    case ApiRequest.ApiCollection.FeatureSwitchTypes:
+                    case ApiRequest.ApiCollection.featureswitchtypes:
 
                         var switchTypes = Femah.AllSwitchTypes();
                         if (switchTypes != null)
@@ -95,7 +93,7 @@ namespace Femah.Core.Api
                             apiRequest.Member, apiRequest.Collection);
                         return jsonResponse;
                     
-                    case ApiRequest.ApiCollection.FeatureSwitches:
+                    case ApiRequest.ApiCollection.featureswitches:
                         var featureSwitches = Femah.AllFeatures();
                         if (featureSwitches != null)
                         {
@@ -129,7 +127,7 @@ namespace Femah.Core.Api
 
             switch (apiRequest.Collection)
             {
-                case ApiRequest.ApiCollection.FeatureSwitch:
+                case ApiRequest.ApiCollection.featureswitch:
 
                     var featureSwitch = Femah.GetFeature(apiRequest.Member);
                     if (featureSwitch != null)
@@ -164,19 +162,6 @@ namespace Femah.Core.Api
             return string.Empty;
         }
 
-        public static T Deserialise<T>(string json)
-        {
-            var obj = Activator.CreateInstance<T>();
-            using (var memoryStream = new MemoryStream(Encoding.Unicode.GetBytes(json)))
-            {
-                var serializer = new DataContractJsonSerializer(obj.GetType());
-                obj = (T) serializer.ReadObject(memoryStream);
-                return obj;
-            }
-
-
-        }
-
         private static ApiRequest BuildApiRequest(HttpRequestBase request)
         {
             var apiRequest = new ApiRequest();
@@ -197,7 +182,7 @@ namespace Femah.Core.Api
                 string collection = uriSegments[3].ToLower().Replace("/", "");
                 
                 ApiRequest.ApiCollection apiCollection;
-                if (Enum.TryParse(collection, true, out apiCollection))
+                if (EnumExtensions.TryParse(collection, out apiCollection))
                 {
                     if (Enum.IsDefined(typeof (ApiRequest.ApiCollection), apiCollection))
                         apiRequest.Collection = apiCollection;

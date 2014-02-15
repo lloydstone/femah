@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Web;
-using Femah.Core;
 using Femah.Core.FeatureSwitchTypes;
 using Moq;
 using NUnit.Framework;
