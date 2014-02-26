@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
-using System.Text;
 using System.Web;
 using System.Web.UI;
 
@@ -92,6 +90,16 @@ namespace Femah.Core.FeatureSwitchTypes
         }
 
         #endregion
+        public override string Description
+        {
+
+            get { return "A simple feature switch that is on for a set percentage of users. The state of the switch is persisted in the user's cookies.If no cookie exists the state is chosen at random (weighted according to the percentage), and then stored in a cookie."; }
+        }
+
+        public override string ConfigurationInstructions
+        {
+            get { return "Set PercentageOn to the percentage of users who should see this feature. Eg. 10 means the feature is on for 10% of users."; }
+        }
 
     }
 }

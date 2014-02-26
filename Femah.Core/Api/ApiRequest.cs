@@ -2,12 +2,12 @@
 {
     public class ApiRequest
     {
-        public ApiCollection Collection { get; set; }
-        public string Member { get; set; }
+        public ApiService? Service { get; set; }
+        public string Parameter { get; set; }
         public string HttpMethod { get; set; }
         public string ErrorMessage { get; set; }
 
-        public enum ApiCollection
+        public enum ApiService
         {
             featureswitch,
             featureswitches,
