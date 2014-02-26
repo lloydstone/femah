@@ -26,140 +26,108 @@ namespace Femah.Core.Api
 
             // Great article on verbs to use in API design http://stackoverflow.com/questions/2001773/understanding-rest-verbs-error-codes-and-authentication/2022938#2022938
             
-            string jsonResponse = string.Empty;
-            ApiRequest apiRequest = BuildApiRequest(context.Request);
+            var apiRequest = BuildApiRequest(context.Request);
+            var apiResponse = new ApiResponse();
+
             if (!string.IsNullOrEmpty(apiRequest.ErrorMessage))
             {
-                context.Response.StatusCode = (int) HttpStatusCode.InternalServerError;
-                jsonResponse = apiRequest.ErrorMessage;
-                context.Response.Write(jsonResponse);
+                using (var apiResponseBuilder = new ApiResponseBuilder())
+                {
+                    apiResponse = apiResponseBuilder.WithBody(
+                            string.Format(apiRequest.ErrorMessage))
+                            .WithHttpStatusCode(HttpStatusCode.InternalServerError);
+                }
             }
             else
             {
                 switch (apiRequest.HttpMethod)
                 {
                     case "GET":
-                        jsonResponse = ProcessApiGetRequest(context, apiRequest);
+                        apiResponse = ProcessApiGetRequest(context, apiRequest);
                         break;
                     case "PUT":
-                        jsonResponse = ProcessApiPutRequest(context, apiRequest);
+                        apiResponse = ProcessApiPutRequest(context, apiRequest);
                         break;
                 }
 
-                if (!string.IsNullOrEmpty(jsonResponse))
+                if (apiResponse == null)
                 {
-                    context.Response.StatusCode = (int)HttpStatusCode.OK;
-                    context.Response.Write(jsonResponse);
-                }
-                else
-                {
-                    context.Response.StatusCode = (int) HttpStatusCode.NotFound;
-                    context.Response.Write("<h1>FEMAH API</h1>");
-                }
-            }
-
-        }
-
-        private static string ProcessApiGetRequest(HttpContextBase context, ApiRequest apiRequest)
-        {
-            string jsonResponse;
-            if (string.IsNullOrEmpty(apiRequest.Member))
-            {
-                //GET: http://example.com/femah.axd/api/featureswitches - Lists all Feature Switches FeatureSwitching.AllFeatures()
-                //GET: http://example.com/femah.axd/api/featureswitchtypes - Lists all Feature Switch Types FeatureSwitching.AllSwitchTypes()
-
-                switch (apiRequest.Collection)
-                {
-                    case ApiRequest.ApiCollection.featureswitchtypes:
-
-                        var switchTypes = Femah.AllSwitchTypes();
-                        if (switchTypes != null)
-                        {
-                            try
-                            {
-                                jsonResponse = switchTypes.ToJson();
-                            }
-                            catch (Exception)
-                            {
-                                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                                throw;
-                            }
-                            context.Response.StatusCode = (int)HttpStatusCode.OK;
-                            return jsonResponse;
-                        }
-                        
-                        context.Response.StatusCode = (int) HttpStatusCode.NotFound;
-                        jsonResponse = string.Format("{{\"Error\":\"No member named: '{0}' found in: '{1}' collection\"}}",
-                            apiRequest.Member, apiRequest.Collection);
-                        return jsonResponse;
-                    
-                    case ApiRequest.ApiCollection.featureswitches:
-                        var featureSwitches = Femah.AllFeatures();
-                        if (featureSwitches != null)
-                        {
-                            try
-                            {
-                                jsonResponse = featureSwitches.ToJson();
-                            }
-                            catch (Exception)
-                            {
-                                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                                throw;
-                            }
-                            context.Response.StatusCode = (int)HttpStatusCode.OK;
-                            return jsonResponse;
-                        }
-                        context.Response.StatusCode = (int) HttpStatusCode.NotFound;
-                        jsonResponse = string.Format("{{\"Error\":\"No member named: '{0}' found in: '{1}' collection\"}}",
-                            apiRequest.Member, apiRequest.Collection);
-                        return jsonResponse;
-
-                    default:
-                        context.Response.StatusCode = (int) HttpStatusCode.InternalServerError;
-                        jsonResponse = string.Format("{{\"Error\":\"Unknown collection attribute in url: '{0}' \"}}",
-                            apiRequest.Collection);
-                        return jsonResponse;
-                }
-
-            }
-
-            //GET: http://example.com/femah.axd/api/featureswitch/improvedcheckout - Retrieve the Feature Switch ImprovedCheckout with it's asscoiated Feature Switch Type FeatureSwitching.GetFeature()
-
-            switch (apiRequest.Collection)
-            {
-                case ApiRequest.ApiCollection.featureswitch:
-
-                    var featureSwitch = Femah.GetFeature(apiRequest.Member);
-                    if (featureSwitch != null)
+                    using (var apiResponseBuilder = new ApiResponseBuilder())
                     {
-                        try
-                        {
-                            jsonResponse = featureSwitch.ToJson();
-                        }
-                        catch (Exception)
-                        {
-                            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                            throw;
-                        }
-                        context.Response.StatusCode = (int)HttpStatusCode.OK;
-                        return jsonResponse;
+                        apiResponse = apiResponseBuilder.WithBody(
+                                string.Format("Error: API GET request returned NULL"))
+                                .WithHttpStatusCode(HttpStatusCode.InternalServerError);
                     }
-                    context.Response.StatusCode = (int) HttpStatusCode.NotFound;
-                    jsonResponse = string.Format("{{\"Error\":\"No member named: '{0}' found in: '{1}' collection\"}}",
-                        apiRequest.Member, apiRequest.Collection);
-                    return jsonResponse;
+                }
+            }
 
-                default:
-                    context.Response.StatusCode = (int) HttpStatusCode.NotFound;
-                    jsonResponse = string.Format("{{\"Error\":\"Unknown collection attribute in url: '{0}' \"}}",
-                        apiRequest.Collection);
-                    return jsonResponse;
+            context.Response.StatusCode = apiResponse.HttpStatusCode;
+            context.Response.Write(apiResponse.Body);
+        }
+
+        /// <summary>
+        /// Responsible for processing all HTTP GET requests in to the femah API. Orchestrates and hands off to appropriate builders 
+        /// to create request and response objects.
+        /// </summary>
+        /// <param name="context" type="HttpContextBase">The current http context, required to allow us to write the API response back on the response object.</param>
+        /// <param name="apiRequest" type="ApiRequest">A custom request object built predominantly from the http context request object, contains everything we need to route the API request appropriately.</param>
+        /// <returns type="ApiResponse">The complete response to the GET request from the API, including body and HTTP status code.</returns>
+        private static ApiResponse ProcessApiGetRequest(HttpContextBase context, ApiRequest apiRequest)
+        {
+            using (var apiResponseBuilder = new ApiResponseBuilder())
+            {
+                ApiResponse response;
+                if (string.IsNullOrEmpty(apiRequest.Parameter))
+                {
+                    //Example GET: http://example.com/femah.axd/api/featureswitches - Lists all Feature Switches FeatureSwitching.AllFeatures()
+                    //Example GET: http://example.com/femah.axd/api/featureswitchtypes - Lists all Feature Switch Types FeatureSwitching.AllSwitchTypes()
+
+                    switch (apiRequest.Service)
+                    {
+                        case ApiRequest.ApiService.featureswitches:
+                            response = apiResponseBuilder.CreateWithFeatureSwitches(Femah.AllFeatures())
+                                .WithApiRequest(apiRequest);
+                            break;
+                        case ApiRequest.ApiService.featureswitchtypes:
+                            response = apiResponseBuilder.CreateWithFeatureSwitchTypes(Femah.AllSwitchTypes())
+                                .WithApiRequest(apiRequest);
+                            break;
+                        default:
+                            response = apiResponseBuilder.WithBody(string.Empty)
+                                .WithHttpStatusCode(HttpStatusCode.NotFound);
+                            break;
+                    }
+                    return response;
+                }
+
+                //Example GET: http://example.com/femah.axd/api/featureswitch/improvedcheckout - Retrieve the Feature Switch ImprovedCheckout
+                switch (apiRequest.Service)
+                {
+                    case ApiRequest.ApiService.featureswitch:
+
+                        var featureSwitch = Femah.GetFeature(apiRequest.Parameter);
+                        if (featureSwitch != null)
+                        {
+                            response = apiResponseBuilder.CreateWithFeatureSwitches(featureSwitch)
+                                .WithApiRequest(apiRequest);
+                            break;
+                        }
+                        response = apiResponseBuilder.WithBody(string.Empty)
+                                .WithHttpStatusCode(HttpStatusCode.NotFound);
+                            break;
+                    default:
+                        response = apiResponseBuilder.WithBody(
+                                string.Format("Error: Service '{0}' does not support parameter querying.", apiRequest.Service))
+                                .WithHttpStatusCode(HttpStatusCode.MethodNotAllowed);
+                            break;
+                }
+                return response;
             }
         }
 
-        private static string ProcessApiPutRequest(HttpContextBase context, ApiRequest apiRequest)
+        private static ApiResponse ProcessApiPutRequest(HttpContextBase context, ApiRequest apiRequest)
         {
-            return string.Empty;
+            throw new NotImplementedException();
         }
 
         private static ApiRequest BuildApiRequest(HttpRequestBase request)
@@ -167,8 +135,7 @@ namespace Femah.Core.Api
             var apiRequest = new ApiRequest();
             if (request.Url == null)
             {
-                apiRequest.ErrorMessage =
-                    "{{\"Error\":\"Uri does not match expected format /femah.axd/api/[collection]/[member]\"}}";
+                apiRequest.ErrorMessage = string.Format("Error: The requested Url '{0}' is null.", request.Url);
                 return apiRequest;
             }
 
@@ -177,38 +144,44 @@ namespace Femah.Core.Api
             try
             {
                 apiRequest.HttpMethod = request.HttpMethod;
-
-                //Retrieve the collection passed in on the Url, collection is mandatory so any failure here is thrown back as an HTTP 500.
-                string collection = uriSegments[3].ToLower().Replace("/", "");
                 
-                ApiRequest.ApiCollection apiCollection;
-                if (EnumExtensions.TryParse(collection, out apiCollection))
+                if (uriSegments.Count() < 4 || uriSegments.Count()> 5)
                 {
-                    if (Enum.IsDefined(typeof (ApiRequest.ApiCollection), apiCollection))
-                        apiRequest.Collection = apiCollection;
-                }
-                else
-                {
-                    apiRequest.ErrorMessage = string.Format("{{\"Error\":\"{0} is not a valid API collection object\"}}", collection);
+                    apiRequest.ErrorMessage = string.Format("Error: The requested Url '{0}' does not match the expected format /femah.axd/api/[service]/[parameter].", request.Url);
                     return apiRequest;
                 }
 
+                //Retrieve the service passed in on the Url, service is mandatory.
+                string service = uriSegments[3].ToLower().Replace("/", "");
 
-                if (uriSegments.Count() >= 5)
+                ApiRequest.ApiService apiService;
+                if (EnumExtensions.TryParse(service, out apiService))
                 {
-                    //Retrieve the member of the collection passed in on the Url, this is optional so handle this a little better.
-                    string member = uriSegments[4].ToLower().Replace("/", "");
-                    apiRequest.Member = member;
+                    if (Enum.IsDefined(typeof (ApiRequest.ApiService), apiService))
+                        apiRequest.Service = apiService;
                 }
-                
+                else
+                {
+                    apiRequest.Service = null;
+                }
+
+                if (uriSegments.Count() == 5)
+                {
+                    //Retrieve the optional parameter of the service passed in on the Url, this is optional so handle this a little better.
+                    string member = uriSegments[4].ToLower().Replace("/", "");
+                    apiRequest.Parameter = member;
+                }
+
             }
             catch (IndexOutOfRangeException)
             {
-                apiRequest.ErrorMessage = "{{\"Error\":\"Uri does not match expected format /femah.axd/api/[collection]/[member]\"}}";
+                apiRequest.ErrorMessage = string.Format("Error: The requested Url '{0}' does not match the expected format /femah.axd/api/[service]/[parameter].", request.Url);
             }
 
             return apiRequest;
-            
         }
+
+
     }
+
 }

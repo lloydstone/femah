@@ -48,5 +48,16 @@ namespace Femah.Core.FeatureSwitchTypes
         {
             return;
         }
+
+        public virtual string Description
+        {
+
+            get { return "Define a short description of the feature switch type here."; }
+        }
+
+        public virtual string ConfigurationInstructions
+        {
+            get { return "Add configuration context and instructions to be displayed in the admin UI"; }
+        }
     }
 }

@@ -35,5 +35,9 @@ namespace Femah.Core
         /// </summary>
         /// <param name="values">A collection of key-value pairs.</param>
         void SetCustomAttributes(NameValueCollection values);
+
+        string Description { get; }
+
+        string ConfigurationInstructions { get; }
     }
 }
