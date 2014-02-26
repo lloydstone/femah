@@ -50,6 +50,12 @@ function Invoke-NUnitTestsForProject{
 					Write-Host "Executing Tests for project: $projectPath"
 					$projectPath = "$basePath\$projectPath"
 					
+					if (Test-Path "$basePath\TestResult.xml")
+					{
+						Write-Warning "Removing previous test results from: $basePath\TestResult.xml"
+						Remove-Item "$basePath\TestResult.xml" -Force -ErrorAction SilentlyContinue
+					}
+
 					& $nUnitPath $projectPath
 				}
 				catch [Exception] {

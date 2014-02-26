@@ -6,3 +6,4 @@ _ReSharper.*/
 build/
 BuildOutput/
 *TestResult.xml
+TestResult.xml
