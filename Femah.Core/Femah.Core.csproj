@@ -46,11 +46,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Api\ApiFeatureSwitchType.cs" />
+    <Compile Include="Api\ApiRequestBuilder.cs" />
     <Compile Include="Api\ApiResponseBuilder.cs" />
     <Compile Include="Api\ApiRequest.cs" />
     <Compile Include="Api\ApiResponse.cs" />
     <Compile Include="Api\FemahApiHttpHandler.cs" />
+    <Compile Include="Api\ProcessApiRequest.cs" />
     <Compile Include="ExtensionMethods\EnumExtensions.cs" />
+    <Compile Include="ExtensionMethods\GenericExtensions.cs" />
     <Compile Include="ExtensionMethods\StringExtensions.cs" />
     <Compile Include="FeatureSwitchTypes\FeatureSwitchBase.cs" />
     <Compile Include="FeatureSwitchTypes\SimpleFeatureSwitch.cs" />
