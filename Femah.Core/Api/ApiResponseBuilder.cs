@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using Femah.Core.ExtensionMethods;
+using Newtonsoft.Json;
 
 namespace Femah.Core.Api
 {
@@ -35,6 +36,13 @@ namespace Femah.Core.Api
         public ApiResponseBuilder CreateWithFeatureSwitches(IFeatureSwitch featureSwitch)
         {
             var fs = new List<IFeatureSwitch> {featureSwitch};
+            _featureSwitches = fs;
+            return this;
+        }
+
+        public ApiResponseBuilder CreateWithUpdatedFeatureSwitch(IFeatureSwitch featureSwitch)
+        {
+            var fs = new List<IFeatureSwitch> { featureSwitch };
             _featureSwitches = fs;
             return this;
         }
@@ -133,6 +141,8 @@ namespace Femah.Core.Api
             //TODO: Use JSON.NET to validate if the Body is JSON??
             return new ApiResponse { Body = body, HttpStatusCode = (int)httpStatusCode };
         }
+
+
 
 
     }
