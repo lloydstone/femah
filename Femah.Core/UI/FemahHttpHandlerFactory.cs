@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Web;
-using Femah.Core;
+﻿using System.Web;
 
-namespace Femah.Ui
+namespace Femah.Core.UI
 {
     public class FemahHttpHandlerFactory : IHttpHandlerFactory
     {

@@ -186,7 +186,7 @@ namespace Femah.Core
         /// </summary>
         /// <param name="featureName">Name of the feature switch.</param>
         /// <param name="values">A list of name-value pairs that represent the attributes.</param>
-        internal static void SetFeatureAttributes(string featureName, NameValueCollection values)
+        internal static void SetFeatureAttributes(string featureName, Dictionary<string, string> values)
         {
             var feature = _provider.Get(featureName);
             if (feature != null)

@@ -29,12 +29,10 @@ namespace Femah.Core.Api
                     switch (apiRequest.Service)
                     {
                         case ApiRequest.ApiService.featureswitches:
-                            response = apiResponseBuilder.CreateWithFeatureSwitches(Femah.AllFeatures())
-                                .WithApiRequest(apiRequest);
+                            response = apiResponseBuilder.CreateWithFeatureSwitches(Femah.AllFeatures());
                             break;
                         case ApiRequest.ApiService.featureswitchtypes:
-                            response = apiResponseBuilder.CreateWithFeatureSwitchTypes(Femah.AllSwitchTypes())
-                                .WithApiRequest(apiRequest);
+                            response = apiResponseBuilder.CreateWithFeatureSwitchTypes(Femah.AllSwitchTypes());
                             break;
                         default:
                             response = apiResponseBuilder.WithBody(String.Empty)
@@ -52,8 +50,7 @@ namespace Femah.Core.Api
                         var featureSwitch = Femah.GetFeature(apiRequest.Parameter);
                         if (featureSwitch != null)
                         {
-                            response = apiResponseBuilder.CreateWithFeatureSwitches(featureSwitch)
-                                .WithApiRequest(apiRequest);
+                            response = apiResponseBuilder.CreateWithFeatureSwitches(featureSwitch);
                             break;
                         }
                         response = apiResponseBuilder.WithBody(String.Empty)
@@ -97,7 +94,7 @@ namespace Femah.Core.Api
                             response = apiResponseBuilder.CreateWithUpdatedFeatureSwitch(featureSwitch);
                         else
                         {
-                            response = apiResponseBuilder.WithBody("Error: Unable to deserialise the request body using the supplied 'FeatureType' value, have you used the AssemblyQualifiedName in your request?")
+                            response = apiResponseBuilder.WithBody("Error: Unable to deserialise the request body.  Either the JSON is invalid or the supplied 'FeatureType' value is incorrect, have you used the AssemblyQualifiedName as the 'FeatureType' in the request?")
                             .WithHttpStatusCode(HttpStatusCode.BadRequest);
                         }
 
@@ -113,25 +110,34 @@ namespace Femah.Core.Api
         }
 
         /// <summary>
-        /// A helper method to deserialise a given JSON string to its pre serialised type.
+        /// A helper method to deserialise a supplied JSON string to its pre-serialised concrete instance of <type>IFeatureSwitch</type>.
         /// </summary>
-        /// <param name="requestBody"></param>
-        /// <returns></returns>
+        /// <param name="requestBody" type="string">A JSON string representing a serialised instance of <type>IFeatureSwitch</type>.</param>
+        /// <returns type="IFeatureSwitch">A deserialised concrete instance of <type>IFeatureSwitch</type> or null if there is an error deserialising the JSON string.</returns>
         private static IFeatureSwitch DeSerialiseJsonBodyToFeatureSwitch(string requestBody)
         {
             //Get the AssemblyQualifiedName from the 'FeatureType' property of the passed in JSON string.
             using (JsonReader jsonReader = new JsonTextReader(new StringReader(requestBody)))
             {
                 string featureType = string.Empty;
-                while (jsonReader.Read())
+
+                try
                 {
-                    if (jsonReader.TokenType == JsonToken.PropertyName && jsonReader.Value.ToString() == "FeatureType")
+                    while (jsonReader.Read())
                     {
-                        jsonReader.Read();
-                        featureType = jsonReader.Value.ToString();
-                        break;
+                        if (jsonReader.TokenType == JsonToken.PropertyName && jsonReader.Value.ToString() == "FeatureType")
+                        {
+                            jsonReader.Read();
+                            featureType = jsonReader.Value.ToString();
+                            break;
+                        }
                     }
                 }
+                catch (JsonReaderException)
+                {
+                    return null;
+                }
+                
 
                 if (string.IsNullOrEmpty(featureType))
                     return null;
@@ -141,8 +147,16 @@ namespace Femah.Core.Api
                 if (theType == null)
                     return null;
 
-                var featureSwitch = JsonConvert.DeserializeObject(requestBody, theType);
-                return (IFeatureSwitch) featureSwitch;
+                try
+                {
+                    var featureSwitch = JsonConvert.DeserializeObject(requestBody, theType);
+                    return (IFeatureSwitch)featureSwitch;
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
+                
             }
         }
         

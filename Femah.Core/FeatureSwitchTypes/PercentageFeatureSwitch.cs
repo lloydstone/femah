@@ -1,5 +1,6 @@
 ﻿using System;
-using System.Collections.Specialized;
+using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
@@ -73,20 +74,29 @@ namespace Femah.Core.FeatureSwitchTypes
             return isOn;
         }
 
-        public override void RenderUI(HtmlTextWriter writer)
+        public override void RenderUi(HtmlTextWriter writer)
         {
             writer.Write("Percentage: <input type='text' name='percentage' value='{0}'/>", this.PercentageOn);
             return;
         }
 
-        public override void SetCustomAttributes(NameValueCollection values)
+        public override void SetCustomAttributes(Dictionary<string, string> values)
         {
             string percentage = values["percentage"];
             int percentageValue;
             if (!String.IsNullOrEmpty(percentage) && int.TryParse(percentage, out percentageValue) )
             {
-                this.PercentageOn = percentageValue;
+                PercentageOn = percentageValue;
             }
+        }
+
+        public override Dictionary<string, string> GetCustomAttributes()
+        {
+            var customAttributes = new Dictionary<string, string>
+            {
+                {"percentage", PercentageOn.ToString(CultureInfo.InvariantCulture)}
+            };
+            return customAttributes;
         }
 
         #endregion
