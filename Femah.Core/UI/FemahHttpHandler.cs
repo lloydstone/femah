@@ -1,11 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
-using Femah.Core;
 
-namespace Femah.Ui
+namespace Femah.Core.UI
 {
     internal sealed class FemahHttpHandler : IHttpHandler
     {
@@ -28,7 +28,7 @@ namespace Femah.Ui
                         bool doEnable;
                         if (name != null && enabled != null && Boolean.TryParse(enabled, out doEnable))
                         {
-                            Core.Femah.EnableFeature(name, doEnable);
+                            Femah.EnableFeature(name, doEnable);
                         }
                         break;
 
@@ -37,13 +37,22 @@ namespace Femah.Ui
                         var switchType = context.Request.QueryString["switchtype"];
                         if (name != null && switchType != null)
                         {
-                            Core.Femah.SetSwitchType(name, switchType);
+                            Femah.SetSwitchType(name, switchType);
                         }
                         break;
 
-                    case _setCustomAttributesAction:
+                    case _setCustomAttributesAction:    
                         name = context.Request.QueryString["name"];
-                        Core.Femah.SetFeatureAttributes(name, context.Request.QueryString);
+                        var queryString = context.Request.QueryString;
+                        
+                        var customAttributes = new Dictionary<string, string>();
+                        //Convert the NameValueCollection to Dictionary<string, string> as we get type safety and equality comparing with a Dictionary
+                        foreach (var key in queryString.AllKeys)
+                        {
+                            if (!customAttributes.ContainsKey(key))
+                                customAttributes.Add(key, queryString[key]);
+                        }
+                        Femah.SetFeatureAttributes(name, customAttributes);
                         break;
                 }
 
@@ -167,7 +176,7 @@ namespace Femah.Ui
             writer.RenderBeginTag(HtmlTextWriterTag.Form);
             writer.Write(String.Format("<input type='hidden' name='name' value='{0}'></input>", feature.Name));
             writer.Write(String.Format("<input type='hidden' name='action' value='{0}'></input>", _setCustomAttributesAction));
-            feature.RenderUI(writer);
+            feature.RenderUi(writer);
             writer.RenderEndTag(/* Form*/);
             writer.RenderEndTag(/* Td */);
 

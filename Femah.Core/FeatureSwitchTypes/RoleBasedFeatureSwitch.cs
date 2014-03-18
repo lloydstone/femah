@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 
 namespace Femah.Core.FeatureSwitchTypes
 {
@@ -39,13 +38,13 @@ namespace Femah.Core.FeatureSwitchTypes
             return false;
         }
 
-        public override void RenderUI(System.Web.UI.HtmlTextWriter writer)
+        public override void RenderUi(System.Web.UI.HtmlTextWriter writer)
         {
             writer.Write(String.Format("Roles: <input type='text' name='roles' value='{0}' /><input type='submit' value='update'/>", String.Join(",",AcceptedRoles.ToArray())));
             return;
         }
 
-        public override void SetCustomAttributes(NameValueCollection values)
+        public override void SetCustomAttributes(Dictionary<string, string> values)
         {
             this.AcceptedRoles.Clear();
 

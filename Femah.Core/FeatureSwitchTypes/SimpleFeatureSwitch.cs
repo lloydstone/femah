@@ -1,8 +1,4 @@
-﻿using System.Collections.Specialized;
-using System.Runtime.Serialization;
-using System.Web.UI;
-
-namespace Femah.Core.FeatureSwitchTypes
+﻿namespace Femah.Core.FeatureSwitchTypes
 {
     public class SimpleFeatureSwitch : FeatureSwitchBase
     {

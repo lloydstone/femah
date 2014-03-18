@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using Femah.Core.ExtensionMethods;
 using Newtonsoft.Json;
@@ -10,9 +11,9 @@ namespace Femah.Core.Api
     {
         private IEnumerable<Type> _featureSwitchTypes;
         private IEnumerable<IFeatureSwitch> _featureSwitches;
-        private ApiRequest _apiRequest;
         private string _body;
         private HttpStatusCode _httpStatusCode;
+        private bool _update;
 
         #region IDisposable
 
@@ -42,6 +43,7 @@ namespace Femah.Core.Api
 
         public ApiResponseBuilder CreateWithUpdatedFeatureSwitch(IFeatureSwitch featureSwitch)
         {
+            _update = true;
             var fs = new List<IFeatureSwitch> { featureSwitch };
             _featureSwitches = fs;
             return this;
@@ -50,12 +52,6 @@ namespace Femah.Core.Api
         public ApiResponseBuilder CreateWithFeatureSwitches(IEnumerable<IFeatureSwitch> featureSwitches)
         {
             _featureSwitches = featureSwitches;
-            return this;
-        }
-
-        public ApiResponseBuilder WithApiRequest(ApiRequest apiRequest)
-        {
-            _apiRequest = apiRequest;
             return this;
         }
 
@@ -80,11 +76,42 @@ namespace Femah.Core.Api
         /// <returns></returns>
         public static implicit operator ApiResponse(ApiResponseBuilder apiResponseBuilder)
         {
-
             if (apiResponseBuilder._body != null && apiResponseBuilder._httpStatusCode > 0)
             {
                 //WithBody and WithHttpStatusCode defined
                 return SetResponseProperties(apiResponseBuilder._body.ToJson(), apiResponseBuilder._httpStatusCode);
+            }
+
+            if (apiResponseBuilder._update)
+            {
+                //Do comparison and update stuffs here.
+                var desiredfeatureSwitchState = apiResponseBuilder._featureSwitches.First();
+                var featureSwitchName = desiredfeatureSwitchState.Name;
+                var currentFeatureSwitchState = Femah.GetFeature(featureSwitchName);
+                
+                if (currentFeatureSwitchState.Equals(desiredfeatureSwitchState))
+                {
+                    //Desired state and current state of FeatureSwitch are identical
+                    return SetResponseProperties(currentFeatureSwitchState.ToJson(), HttpStatusCode.NotModified);
+                }
+
+                //Desired state and current state of FeatureSwitch differ, let's update everything we care about and return the new value
+                Femah.EnableFeature(featureSwitchName, desiredfeatureSwitchState.IsEnabled);
+//                Femah.SetFeatureAttributes(); //iterate through
+                Femah.SetSwitchType(featureSwitchName, desiredfeatureSwitchState.FeatureType);
+//                //Check one last time that they are now equal
+//                var updatedFeatureSwitchState = Femah.GetFeature(featureSwitchName);
+//                if (updatedFeatureSwitchState.Equals(desiredfeatureSwitchState))
+//                {
+//                    //Desired state and current state of FeatureSwitch are identical
+//                    return SetResponseProperties(currentFeatureSwitchState.ToJson(), HttpStatusCode.OK);
+//                }
+//                else
+//                {
+//                    return SetResponseProperties("Error: Something", HttpStatusCode.NotModified);
+//                }
+
+                return SetResponseProperties(currentFeatureSwitchState.ToJson(), HttpStatusCode.OK);
             }
 
             if (apiResponseBuilder._featureSwitchTypes != null)
