@@ -95,23 +95,32 @@ namespace Femah.Core.Api
                     return SetResponseProperties(currentFeatureSwitchState.ToJson(), HttpStatusCode.NotModified);
                 }
 
-                //Desired state and current state of FeatureSwitch differ, let's update everything we care about and return the new value
+                //Desired state and current state of FeatureSwitch differ, we update *everything*, 
+                //it's the responsibility of the client to pass the complete desired state.
                 Femah.EnableFeature(featureSwitchName, desiredfeatureSwitchState.IsEnabled);
-//                Femah.SetFeatureAttributes(); //iterate through
                 Femah.SetSwitchType(featureSwitchName, desiredfeatureSwitchState.FeatureType);
-//                //Check one last time that they are now equal
-//                var updatedFeatureSwitchState = Femah.GetFeature(featureSwitchName);
-//                if (updatedFeatureSwitchState.Equals(desiredfeatureSwitchState))
-//                {
-//                    //Desired state and current state of FeatureSwitch are identical
-//                    return SetResponseProperties(currentFeatureSwitchState.ToJson(), HttpStatusCode.OK);
-//                }
-//                else
-//                {
-//                    return SetResponseProperties("Error: Something", HttpStatusCode.NotModified);
-//                }
 
-                return SetResponseProperties(currentFeatureSwitchState.ToJson(), HttpStatusCode.OK);
+                var attributes = desiredfeatureSwitchState.GetCustomAttributes();
+                if (attributes != null)
+                    Femah.SetFeatureAttributes(featureSwitchName, attributes);
+
+                //Check that the updated and desired FeatureSwitch state are now equal
+                var updatedFeatureSwitchState = Femah.GetFeature(featureSwitchName);
+                
+                //Updated and desired FeatureSwitch states DO match, return to client
+                if (updatedFeatureSwitchState.Equals(desiredfeatureSwitchState))
+                    return SetResponseProperties(currentFeatureSwitchState.ToJson(), HttpStatusCode.OK);
+
+                //Updated and desired FeatureSwitch states do NOT match, roll back change
+                //This is probably not the best way to do this, TODO: maybe make all changes within a transaction?
+                Femah.EnableFeature(featureSwitchName, currentFeatureSwitchState.IsEnabled);
+                Femah.SetSwitchType(featureSwitchName, currentFeatureSwitchState.FeatureType);
+
+                var existingAttributes = currentFeatureSwitchState.GetCustomAttributes();
+                if (existingAttributes != null)
+                    Femah.SetFeatureAttributes(featureSwitchName, existingAttributes);
+
+                return SetResponseProperties("Error: There was an issue setting the desired state for FeatureSwitch, please try again.", HttpStatusCode.NotModified);
             }
 
             if (apiResponseBuilder._featureSwitchTypes != null)

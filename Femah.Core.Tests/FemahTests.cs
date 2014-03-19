@@ -279,24 +279,22 @@ namespace Femah.Core.Tests
         {
             //Arrange
             const string validFeatureType = "Femah.Core.FeatureSwitchTypes.PercentageFeatureSwitch, Femah.Core, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null";
-            var customAttributes1 = new Dictionary<string, string> { { "percentage", "50" } };
-            var customAttributes2 = new Dictionary<string, string> { { "percentage", "75" } };
 
             var featureSwitch1 = new PercentageFeatureSwitch
             {
                 Name = "TestFeatureSwitch1",
                 FeatureType = validFeatureType,
-                IsEnabled = true
+                IsEnabled = true,
+                PercentageOn = 50
             };
-            featureSwitch1.SetCustomAttributes(customAttributes1);
 
             var featureSwitch2 = new PercentageFeatureSwitch
             {
                 Name = "TestFeatureSwitch1",
                 FeatureType = validFeatureType,
-                IsEnabled = true
+                IsEnabled = true,
+                PercentageOn = 75
             };
-            featureSwitch2.SetCustomAttributes(customAttributes2);
 
             var providerMock = new Mock<IFeatureSwitchProvider>();
             providerMock.Setup(p => p.Get("TestFeatureSwitch1"))
