@@ -1,10 +1,7 @@
 using System;
 using System.IO;
-using System.Linq;
 using System.Net;
-using Femah.Core.FeatureSwitchTypes;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Bson;
 
 namespace Femah.Core.Api
 {
@@ -20,45 +17,40 @@ namespace Femah.Core.Api
         {
             using (var apiResponseBuilder = new ApiResponseBuilder())
             {
-                ApiResponse response;
-                if (String.IsNullOrEmpty(apiRequest.Parameter))
-                {
-                    //Example GET: http://example.com/femah.axd/api/featureswitches - Lists all Feature Switches FeatureSwitching.AllFeatures()
-                    //Example GET: http://example.com/femah.axd/api/featureswitchtypes - Lists all Feature Switch Types FeatureSwitching.AllSwitchTypes()
-
-                    switch (apiRequest.Service)
-                    {
-                        case ApiRequest.ApiService.featureswitches:
-                            response = apiResponseBuilder.CreateWithFeatureSwitches(Femah.AllFeatures());
-                            break;
-                        case ApiRequest.ApiService.featureswitchtypes:
-                            response = apiResponseBuilder.CreateWithFeatureSwitchTypes(Femah.AllSwitchTypes());
-                            break;
-                        default:
-                            response = apiResponseBuilder.WithBody(String.Empty)
-                                .WithHttpStatusCode(HttpStatusCode.NotFound);
-                            break;
-                    }
-                    return response;
-                }
-
+                //Example GET: http://example.com/femah.axd/api/featureswitch - Lists all Feature Switches FeatureSwitching.AllFeatures()
                 //Example GET: http://example.com/femah.axd/api/featureswitch/improvedcheckout - Retrieve the Feature Switch ImprovedCheckout
+                //Example GET: http://example.com/femah.axd/api/featureswitchtypes - Lists all Feature Switch Types FeatureSwitching.AllSwitchTypes()
+                ApiResponse response;
                 switch (apiRequest.Service)
                 {
                     case ApiRequest.ApiService.featureswitch:
-
-                        var featureSwitch = Femah.GetFeature(apiRequest.Parameter);
-                        if (featureSwitch != null)
+                        if (string.IsNullOrEmpty(apiRequest.Parameter))
+                            response = apiResponseBuilder.CreateWithFeatureSwitches(Femah.AllFeatures());
+                        else
                         {
-                            response = apiResponseBuilder.CreateWithFeatureSwitches(featureSwitch);
+                            var featureSwitch = Femah.GetFeature(apiRequest.Parameter);
+                            if (featureSwitch != null)
+                            {
+                                response = apiResponseBuilder.CreateWithFeatureSwitches(featureSwitch);
+                                break;
+                            }
+                            response = apiResponseBuilder.WithBody(String.Empty).WithHttpStatusCode(HttpStatusCode.NotFound);
+                        }
+                        break;
+                    case ApiRequest.ApiService.featureswitchtypes:
+                        if (!string.IsNullOrEmpty(apiRequest.Parameter))
+                        {
+                            response = apiResponseBuilder.WithBody(
+                                String.Format("Error: Service '{0}' does not support parameter querying.", apiRequest.Service))
+                                .WithHttpStatusCode(HttpStatusCode.MethodNotAllowed);
                             break;
                         }
-                        response = apiResponseBuilder.WithBody(String.Empty)
-                            .WithHttpStatusCode(HttpStatusCode.NotFound);
+
+                        response = apiResponseBuilder.CreateWithFeatureSwitchTypes(Femah.AllSwitchTypes());
                         break;
                     default:
                         response = apiResponseBuilder.WithBody(
-                            String.Format("Error: Service '{0}' does not support parameter querying.", apiRequest.Service))
+                            String.Format("Error: '{0}' is not a valid Femah API service.", apiRequest.Service))
                             .WithHttpStatusCode(HttpStatusCode.MethodNotAllowed);
                         break;
                 }

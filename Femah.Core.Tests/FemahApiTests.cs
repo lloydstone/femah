@@ -554,7 +554,7 @@ namespace Femah.Core.Tests
 
             var httpContextMock = new Mock<HttpContextBase>();
             httpContextMock.Setup(x => x.Request.Url)
-                .Returns(new Uri("http://example.com/femah.axd/api/featureswitches"));
+                .Returns(new Uri("http://example.com/femah.axd/api/featureswitch"));
             httpContextMock.SetupGet(x => x.Request.HttpMethod).Returns("GET");
 
             var response = new Mock<HttpResponseBase>();
@@ -588,7 +588,7 @@ namespace Femah.Core.Tests
         }
 
         [Test]
-        public void ApiGetReturns404IfServiceNotFound()
+        public void ApiGetReturns405IfServiceNotFound()
         {
             //Arrange
             var testable = new TestableFemahApiHttpHandler();
@@ -604,14 +604,12 @@ namespace Femah.Core.Tests
             //Act
             testable.ProcessRequest(httpContextMock.Object);
 
-            Assert.AreEqual(404, response.Object.StatusCode);
+            Assert.AreEqual(405, response.Object.StatusCode);
         }
 
         [Test]
         public void ApiGetReturns405AndAccurateErrorMessageIfServiceDoesNotSupportParameterQuerying()
         {
-            //string.Format("Error: Service: '{0}' does not support parameter querying.", apiRequest.Service))
-            //Arrange
             var testable = new TestableFemahApiHttpHandler();
             var httpContextMock = new Mock<HttpContextBase>();
             httpContextMock.Setup(x => x.Request.Url)
@@ -751,7 +749,7 @@ namespace Femah.Core.Tests
 
             var httpContextMock = new Mock<HttpContextBase>();
             httpContextMock.Setup(x => x.Request.Url)
-                .Returns(new Uri("http://example.com/femah.axd/api/featureswitches"));
+                .Returns(new Uri("http://example.com/femah.axd/api/featureswitch"));
             httpContextMock.SetupGet(x => x.Request.HttpMethod).Returns("GET");
 
             var response = new Mock<HttpResponseBase>();
