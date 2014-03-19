@@ -11,14 +11,6 @@ using NUnit.Framework;
 
 namespace Femah.Core.Tests
 {
-    public class TestableFemahApiHttpHandler : FemahApiHttpHandler
-    {
-        public static TestableFemahApiHttpHandler Create()
-        {
-            return new TestableFemahApiHttpHandler();
-        }
-    }
-
     public class FemahApiTests
     {
         public enum FeatureSwitches
@@ -302,111 +294,9 @@ namespace Femah.Core.Tests
         #endregion
 
         #region ProcessApiRequest
+        
 
-        [Test]
-        public void ProcessPutRequestSetsHttpStatusCodeTo200AndReturnsUpdatedFeatureSwitchInResponseBodyIfPutRequestBodyIsValidContainingASingleJsonFeatureSwitchWithAStateChange()
-        {
-            //Arrange
-            const string validFeatureType = "Femah.Core.FeatureSwitchTypes.SimpleFeatureSwitch, Femah.Core, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null";
-            string jsonRequestAndResponse = string.Format(
-                    "{{\"IsEnabled\":true,\"Name\":\"TestFeatureSwitch1\",\"FeatureType\":\"{0}\",\"Description\":\"Define a short description of the feature switch type here.\",\"ConfigurationInstructions\":\"Add configuration context and instructions to be displayed in the admin UI\"}}",
-                    validFeatureType);
-
-            var apiRequest = new ApiRequest
-            {
-                HttpMethod = "PUT",
-                Service = ApiRequest.ApiService.featureswitch,
-                Parameter = "TestFeatureSwitch",
-                Body = jsonRequestAndResponse
-            };
-
-            var featureSwitch = new SimpleFeatureSwitch
-            {
-                Name = "TestFeatureSwitch1",
-                IsEnabled = false,
-                FeatureType = validFeatureType
-            };
-
-            var providerMock = new Mock<IFeatureSwitchProvider>();
-            providerMock.Setup(p => p.Get("TestFeatureSwitch1"))
-                .Returns(featureSwitch);
-
-            Femah.Configure()
-                .FeatureSwitchEnum(typeof(FeatureSwitches))
-                .Provider(providerMock.Object)
-                .Initialise();
-
-            //Act
-            ApiResponse apiResponse = ProcessApiRequest.ProcessPutRequest(apiRequest);
-
-            //Assert
-            Assert.AreEqual((int)HttpStatusCode.OK, apiResponse.HttpStatusCode);
-            Assert.AreEqual(jsonRequestAndResponse, apiResponse.Body);
-        }
-
-        [Test]
-        public void ProcessPutRequestSetsHttpStatusCodeTo405AndProvidesAccurateErrorMessageInBodyIfPutRequestIsMissingParameterInUrl()
-        {
-            //Arrange
-            var apiRequest = new ApiRequest
-            {
-                HttpMethod = "PUT",
-                Service = ApiRequest.ApiService.featureswitch,
-            };
-
-            const string expectedJsonBody = "\"Error: Service 'featureswitch' requires a parameter to be passed. Url must match the format /femah.axd/api/[service]/[parameter].\"";
-
-            //Act
-            ApiResponse apiResponse = ProcessApiRequest.ProcessPutRequest(apiRequest);
-
-            //Assert
-            Assert.AreEqual((int)HttpStatusCode.MethodNotAllowed, apiResponse.HttpStatusCode);
-            Assert.AreEqual(expectedJsonBody, apiResponse.Body);
-        }
-
-        [Test]
-        public void ProcessPutRequestSetsHttpStatusCodeTo405AndProvidesAccurateErrorMessageInResponseBodyIfPutRequestIsNotForFeatureSwitchService()
-        {
-            //Arrange
-            var apiRequest = new ApiRequest
-            {
-                HttpMethod = "PUT",
-                Service = ApiRequest.ApiService.featureswitchtypes,
-                Parameter = "TestFeatureSwitch"
-            };
-
-            const string expectedJsonBody = "\"Error: Service 'featureswitchtypes' does not support parameter querying.\"";
-
-            //Act
-            ApiResponse apiResponse = ProcessApiRequest.ProcessPutRequest(apiRequest);
-
-            //Assert
-            Assert.AreEqual((int)HttpStatusCode.MethodNotAllowed, apiResponse.HttpStatusCode);
-            Assert.AreEqual(expectedJsonBody, apiResponse.Body);
-        }
-
-        [Test]
-        public void ProcessPutRequestSetsHttpStatusCodeTo400AndProvidesGenericErrorMessageInResponseBodyIfPutRequestBodyContainsAnInvalidFeatureType()
-        {
-            //Arrange
-            const string invalidFeatureType = "Invalid.FeatureType.Will.Not.Deserialise";
-            var apiRequest = new ApiRequest
-            {
-                HttpMethod = "PUT",
-                Service = ApiRequest.ApiService.featureswitch,
-                Parameter = "TestFeatureSwitch",
-                Body = string.Format("{{\"IsEnabled\":true,\"Name\":\"TestFeatureSwitch1\",\"FeatureType\":\"{0}\",\"Description\":\"Define a short description of the feature switch type here.\",\"ConfigurationInstructions\":\"Add configuration context and instructions to be displayed in the admin UI\"}}", invalidFeatureType)
-            };
-
-            const string expectedJsonBody = "\"Error: Unable to deserialise the request body.  Either the JSON is invalid or the supplied 'FeatureType' value is incorrect, have you used the AssemblyQualifiedName as the 'FeatureType' in the request?\"";
-
-            //Act
-            ApiResponse apiResponse = ProcessApiRequest.ProcessPutRequest(apiRequest);
-
-            //Assert
-            Assert.AreEqual((int)HttpStatusCode.BadRequest, apiResponse.HttpStatusCode);
-            Assert.AreEqual(expectedJsonBody, apiResponse.Body);
-        }
+        
 
         [Test]
         public void ProcessPutRequestSetsHttpStatusCodeTo400AndReturnsGenericErrorMessageInResponseBodyIfPropertyValueIsInvalidInPutRequestBody()
@@ -985,7 +875,5 @@ namespace Femah.Core.Tests
         }
 
         #endregion
-
-
     }
 }
