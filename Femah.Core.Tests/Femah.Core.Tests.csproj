@@ -58,7 +58,10 @@
     <Compile Include="FemahTests.cs" />
     <Compile Include="PercentageFeatureSwitchTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PutApiRequestFactory.cs" />
     <Compile Include="RoleBasedFeatureSwitchTests.cs" />
+    <Compile Include="TestableFemahApiHttpHandler.cs" />
+    <Compile Include="WhenProcessingPutRequests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -68,6 +71,9 @@
       <Project>{78eea5a4-52bf-4b8d-9750-f87d76fa5107}</Project>
       <Name>Femah.Core</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
