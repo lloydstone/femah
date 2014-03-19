@@ -124,8 +124,12 @@ Example given within a Razor view
 		C:\Femah>Start-Build.bat
 		
 ###Contributing###
-1. Check out the current [Issues](https://github.com/lloydstone/femah/issues) 
+Please start with a small (very) pull request, the smaller and more focused the pull request the far higher the chance of it being merged in.
+
+1. Check out the current [Issues](https://github.com/lloydstone/femah/issues) and start commenting
+
 or
+
 1. Start a conversation by raising a new issue for anything you feel we should be working on
 
 		
