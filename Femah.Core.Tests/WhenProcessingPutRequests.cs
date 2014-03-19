@@ -10,12 +10,12 @@ namespace Femah.Core.Tests
     public class WhenProcessingPutRequests
     {
         [Test]
-        public void GivenRequestContainsInvalidSwitch_ThenHttp400AndGenericErrorMessageBodyIsReturned()
+        public void GivenRequestContainsInvalidFeatureSwitchType_ThenHttp400AndGenericErrorMessageBodyIsReturned()
         {
             //Arrange
             const string invalidFeatureType = "Invalid.FeatureType.Will.Not.Deserialise";
             var json = string.Format("{{\"IsEnabled\":true,\"Name\":\"TestFeatureSwitch1\",\"FeatureType\":\"{0}\",\"Description\":\"Define a short description of the feature switch type here.\",\"ConfigurationInstructions\":\"Add configuration context and instructions to be displayed in the admin UI\"}}", invalidFeatureType);
-            var apiRequest = new PutApiRequestFactory().WithSwitchName("TestFeatureSwitch")
+            var apiRequest = new PutApiRequestFactory().WithParameterName("TestFeatureSwitch")
                 .WithBody(json).Build();
 
             const string expectedJsonBody = "\"Error: Unable to deserialise the request body.  Either the JSON is invalid or the supplied 'FeatureType' value is incorrect, have you used the AssemblyQualifiedName as the 'FeatureType' in the request?\"";
@@ -29,11 +29,11 @@ namespace Femah.Core.Tests
         }
 
         [Test]
-        public void GivenRequestNotforFeatureSwitchService_ThenHttp405AndAccurateErrorMessageBodyIsReturned()
+        public void GivenRequestNotForFeatureSwitchService_ThenHttp405AndAccurateErrorMessageBodyIsReturned()
         {
             //Arrange
             var apiRequest = new PutApiRequestFactory().ForServiceType(ApiRequest.ApiService.featureswitchtypes)
-                .WithSwitchName("TestFeatureSwitch").Build();
+                .WithParameterName("TestFeatureSwitch").Build();
             const string expectedJsonBody = "\"Error: Service 'featureswitchtypes' does not support parameter querying.\"";
 
             //Act
@@ -60,7 +60,7 @@ namespace Femah.Core.Tests
         }
 
         [Test]
-        public void GivenJsonBodyWithFeatureSwitch_ThenHttp200AndUpdateFeatureSwitchBodyIsReturned()
+        public void GivenValidRequest_ThenHttp200AndUpdatedFeatureSwitchBodyIsReturned()
         {
             //Arrange
             const string validFeatureType = "Femah.Core.FeatureSwitchTypes.SimpleFeatureSwitch, Femah.Core, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null";
@@ -69,7 +69,7 @@ namespace Femah.Core.Tests
                     validFeatureType);
 
             var apiRequest = new PutApiRequestFactory().WithBody(jsonRequestAndResponse)
-                .WithSwitchName("TestFeatureSwitch").Build();
+                .WithParameterName("TestFeatureSwitch").Build();
 
             var featureSwitch = new SimpleFeatureSwitch
             {

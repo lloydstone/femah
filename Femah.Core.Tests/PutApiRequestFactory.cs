@@ -5,7 +5,7 @@ namespace Femah.Core.Tests
     public class PutApiRequestFactory
     {
         private string _body = string.Empty;
-        private string _switchName = string.Empty;
+        private string _parameterName = string.Empty;
         private ApiRequest.ApiService _service = ApiRequest.ApiService.featureswitch;
 
         public PutApiRequestFactory ForServiceType(ApiRequest.ApiService service)
@@ -14,9 +14,9 @@ namespace Femah.Core.Tests
             return this;
         }
 
-        public PutApiRequestFactory WithSwitchName(string name)
+        public PutApiRequestFactory WithParameterName(string name)
         {
-            _switchName = name;
+            _parameterName = name;
             return this;
         }
 
@@ -32,7 +32,7 @@ namespace Femah.Core.Tests
             {
                 HttpMethod = "PUT",
                 Service = _service,
-                Parameter = _switchName,
+                Parameter = _parameterName,
                 Body = _body
             };
         }
