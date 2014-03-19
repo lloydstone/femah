@@ -161,7 +161,7 @@ namespace Femah.Core.Tests
         }
 
         [Test]
-        public void ApiResponseBuilderSetsHttpStatusCodeTo200AndReturnsDesiredFeatureSwitchStateIfPutRequestIncludesFeatureSwitchChanges()
+        public void ApiResponseBuilderSetsHttpStatusCodeTo200AndReturnsDesiredFeatureSwitchStateIfPutRequestIncludesFeatureSwitchChangesToIsEnabledState()
         {
             //Arrange
             const string validFeatureType = "Femah.Core.FeatureSwitchTypes.SimpleFeatureSwitch, Femah.Core, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null";
@@ -173,7 +173,7 @@ namespace Femah.Core.Tests
             {
                 Name = "TestFeatureSwitch1",
                 IsEnabled = true,
-                FeatureType = validFeatureType
+                FeatureType = validFeatureType,
             };
 
             var desiredFeatureSwitchState = new SimpleFeatureSwitch
@@ -202,6 +202,101 @@ namespace Femah.Core.Tests
             //Assert
             Assert.AreEqual((int)HttpStatusCode.OK, apiResponse.HttpStatusCode);
             Assert.AreEqual(jsonRequestAndResponse, apiResponse.Body);
+        }
+
+        [Test]
+        public void ApiResponseBuilderSetsHttpStatusCodeTo200AndReturnsDesiredFeatureSwitchStateIfPutRequestIncludesFeatureSwitchChangesToCustomParameters()
+        {
+            //Arrange
+            const string validFeatureType = "Femah.Core.FeatureSwitchTypes.PercentageFeatureSwitch, Femah.Core, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null";
+            const string jsonResponse = "{\"PercentageOn\":75,\"Description\":\"A simple feature switch that is on for a set percentage of users. The state of the switch is persisted in the user's cookies.If no cookie exists the state is chosen at random (weighted according to the percentage), and then stored in a cookie.\",\"ConfigurationInstructions\":\"Set PercentageOn to the percentage of users who should see this feature. Eg. 10 means the feature is on for 10% of users.\",\"IsEnabled\":true,\"Name\":\"TestFeatureSwitch1\",\"FeatureType\":\"Femah.Core.FeatureSwitchTypes.PercentageFeatureSwitch, Femah.Core, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null\"}";
+                    
+            var currentFeatureSwitchState = new PercentageFeatureSwitch
+            {
+                Name = "TestFeatureSwitch1",
+                FeatureType = validFeatureType,
+                IsEnabled = true,
+                PercentageOn = 50
+            };
+
+            var desiredFeatureSwitchState = new PercentageFeatureSwitch
+            {
+                Name = "TestFeatureSwitch1",
+                FeatureType = validFeatureType,
+                IsEnabled = true,
+                PercentageOn = 75
+            };
+
+            var providerMock = new Mock<IFeatureSwitchProvider>();
+            providerMock.Setup(p => p.Get("TestFeatureSwitch1"))
+                .Returns(currentFeatureSwitchState);
+
+            Femah.Configure()
+                .FeatureSwitchEnum(typeof(FeatureSwitches))
+                .Provider(providerMock.Object)
+                .Initialise();
+
+            //Act
+            ApiResponse apiResponse;
+            using (var apiResponseBuilder = new ApiResponseBuilder())
+            {
+                apiResponse = apiResponseBuilder.CreateWithUpdatedFeatureSwitch(desiredFeatureSwitchState);
+            }
+
+            //Assert
+            Assert.AreEqual((int)HttpStatusCode.OK, apiResponse.HttpStatusCode);
+            Assert.AreEqual(jsonResponse, apiResponse.Body);
+        }
+
+        [Test]
+        [Ignore("Can't currently mock Femah easily, seeing as it's both sealed and the methods we're interested in are internal static, thoughts?")]
+        public void AssertApiResponseBuilderCallsUpdateOnFeatureTypeStateIsEnabledStateAndAttributes()
+        {
+            //Arrange
+            const string validFeatureType = "Femah.Core.FeatureSwitchTypes.PercentageFeatureSwitch, Femah.Core, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null";
+            const string jsonResponse = "{\"PercentageOn\":75,\"Description\":\"A simple feature switch that is on for a set percentage of users. The state of the switch is persisted in the user's cookies.If no cookie exists the state is chosen at random (weighted according to the percentage), and then stored in a cookie.\",\"ConfigurationInstructions\":\"Set PercentageOn to the percentage of users who should see this feature. Eg. 10 means the feature is on for 10% of users.\",\"IsEnabled\":true,\"Name\":\"TestFeatureSwitch1\",\"FeatureType\":\"Femah.Core.FeatureSwitchTypes.PercentageFeatureSwitch, Femah.Core, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null\"}";
+
+            var currentFeatureSwitchState = new PercentageFeatureSwitch
+            {
+                Name = "TestFeatureSwitch1",
+                FeatureType = validFeatureType,
+                IsEnabled = true,
+                PercentageOn = 50
+            };
+
+            var desiredFeatureSwitchState = new PercentageFeatureSwitch
+            {
+                Name = "TestFeatureSwitch1",
+                FeatureType = validFeatureType,
+                IsEnabled = true,
+                PercentageOn = 75
+            };
+
+            var providerMock = new Mock<IFeatureSwitchProvider>();
+            providerMock.Setup(p => p.Get("TestFeatureSwitch1"))
+                .Returns(currentFeatureSwitchState);
+
+            var femahMock = new Mock<Femah>();
+            //femahMock.Setup(f => f)
+            //TODO: Can't currently mock Femah easily, seeing as it's both sealed and the methods we're interested in are internal static, thoughts?
+
+
+            Femah.Configure()
+                .FeatureSwitchEnum(typeof(FeatureSwitches))
+                .Provider(providerMock.Object)
+                .Initialise();
+
+            //Act
+            ApiResponse apiResponse;
+            using (var apiResponseBuilder = new ApiResponseBuilder())
+            {
+                apiResponse = apiResponseBuilder.CreateWithUpdatedFeatureSwitch(desiredFeatureSwitchState);
+            }
+
+            //Assert
+            //Assert.AreEqual((int)HttpStatusCode.OK, apiResponse.HttpStatusCode);
+            //Assert.AreEqual(jsonResponse, apiResponse.Body);
+            
         }
 
         #endregion
@@ -248,10 +343,6 @@ namespace Femah.Core.Tests
             Assert.AreEqual((int)HttpStatusCode.OK, apiResponse.HttpStatusCode);
             Assert.AreEqual(jsonRequestAndResponse, apiResponse.Body);
         }
-
-        //Test for comparing IsEnabled state
-        //Test for comparing CustomAttributes value
-        //Test for comparing FeatureType value
 
         [Test]
         public void ProcessPutRequestSetsHttpStatusCodeTo405AndProvidesAccurateErrorMessageInBodyIfPutRequestIsMissingParameterInUrl()
