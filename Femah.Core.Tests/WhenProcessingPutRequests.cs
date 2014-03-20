@@ -10,6 +10,27 @@ namespace Femah.Core.Tests
     public class WhenProcessingPutRequests
     {
         [Test]
+        public void GivenRequestContainsInvalidProperty_ThenHttp400AndGenericErrorMessageBodyIsReturned()
+        {
+            //Arrange
+            const string invalidIsEnabledProperty = "NotValidBoolean";
+            var json = string.Format("{{\"IsEnabled\":{0},\"Name\":\"TestFeatureSwitch1\",\"FeatureType\":\"Femah.Core.FeatureSwitchTypes.SimpleFeatureSwitch, Femah.Core, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null\",\"Description\":\"Define a short description of the feature switch type here.\",\"ConfigurationInstructions\":\"Add configuration context and instructions to be displayed in the admin UI\"}}", invalidIsEnabledProperty);
+
+            var apiRequest = new PutApiRequestFactory().WithParameterName("TestFeatureSwitch")
+                                    .WithBody(json).Build(); 
+
+            //TODO: I'd like this to be a more specific error with regards to formatting
+            const string expectedJsonBody = "\"Error: Unable to deserialise the request body.  Either the JSON is invalid or the supplied 'FeatureType' value is incorrect, have you used the AssemblyQualifiedName as the 'FeatureType' in the request?\"";
+
+            //Act
+            var apiResponse = ProcessApiRequest.ProcessPutRequest(apiRequest);
+
+            //Assert
+            apiResponse.HttpStatusCode.ShouldBe((int)HttpStatusCode.BadRequest);
+            apiResponse.Body.ShouldBe(expectedJsonBody);
+        }
+
+        [Test]
         public void GivenRequestContainsInvalidFeatureSwitchType_ThenHttp400AndGenericErrorMessageBodyIsReturned()
         {
             //Arrange
