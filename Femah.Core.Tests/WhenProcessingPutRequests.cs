@@ -10,6 +10,24 @@ namespace Femah.Core.Tests
     public class WhenProcessingPutRequests
     {
         [Test]
+        public void GivenRequestContainsInvalidJson_ThenHttp400AndGenericErrorMessageBodyIsReturned()
+        {
+            //Arrange
+            var apiRequest = new PutApiRequestFactory().WithParameterName("TestFeatureSwitch")
+                .WithBody("This is not JSON").Build();
+
+            //TODO: I'd like this to be a more specific error with regards to formatting
+            const string expectedJsonBody = "\"Error: Unable to deserialise the request body.  Either the JSON is invalid or the supplied 'FeatureType' value is incorrect, have you used the AssemblyQualifiedName as the 'FeatureType' in the request?\"";
+
+            //Act
+            var apiResponse = ProcessApiRequest.ProcessPutRequest(apiRequest);
+
+            //Assert
+            apiResponse.HttpStatusCode.ShouldBe((int)HttpStatusCode.BadRequest);
+            apiResponse.Body.ShouldBe(expectedJsonBody);
+        }
+
+        [Test]
         public void GivenRequestContainsInvalidProperty_ThenHttp400AndGenericErrorMessageBodyIsReturned()
         {
             //Arrange
