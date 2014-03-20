@@ -294,57 +294,6 @@ namespace Femah.Core.Tests
         #endregion
 
         #region ProcessApiRequest
-        
-
-        
-
-        [Test]
-        public void ProcessPutRequestSetsHttpStatusCodeTo400AndReturnsGenericErrorMessageInResponseBodyIfPropertyValueIsInvalidInPutRequestBody()
-        {
-            //Arrange
-            const string invalidIsEnabledProperty = "NotValidBoolean";
-            var apiRequest = new ApiRequest
-            {
-                HttpMethod = "PUT",
-                Service = ApiRequest.ApiService.featureswitch,
-                Parameter = "TestFeatureSwitch",
-                Body = string.Format("{{\"IsEnabled\":{0},\"Name\":\"TestFeatureSwitch1\",\"FeatureType\":\"Femah.Core.FeatureSwitchTypes.SimpleFeatureSwitch, Femah.Core, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null\",\"Description\":\"Define a short description of the feature switch type here.\",\"ConfigurationInstructions\":\"Add configuration context and instructions to be displayed in the admin UI\"}}", invalidIsEnabledProperty)
-            };
-
-            //TODO: I'd like this to be a more specific error with regards to formatting
-            const string expectedJsonBody = "\"Error: Unable to deserialise the request body.  Either the JSON is invalid or the supplied 'FeatureType' value is incorrect, have you used the AssemblyQualifiedName as the 'FeatureType' in the request?\"";
-
-            //Act
-            ApiResponse apiResponse = ProcessApiRequest.ProcessPutRequest(apiRequest);
-
-            //Assert
-            Assert.AreEqual((int)HttpStatusCode.BadRequest, apiResponse.HttpStatusCode);
-            Assert.AreEqual(expectedJsonBody, apiResponse.Body);
-        }
-
-        [Test]
-        public void ProcessPutRequestSetsHttpStatusCodeTo400AndReturnsGenericErrorMessageInResponseBodyIfPutRequestBodyContainsInvalidJson()
-        {
-            //Arrange
-            var apiRequest = new ApiRequest
-            {
-                HttpMethod = "PUT",
-                Service = ApiRequest.ApiService.featureswitch,
-                Parameter = "TestFeatureSwitch",
-                Body = "This is not JSON"
-            };
-
-            //TODO: I'd like this to be a more specific error with regards to formatting
-            const string expectedJsonBody = "\"Error: Unable to deserialise the request body.  Either the JSON is invalid or the supplied 'FeatureType' value is incorrect, have you used the AssemblyQualifiedName as the 'FeatureType' in the request?\"";
-
-            //Act
-            ApiResponse apiResponse = ProcessApiRequest.ProcessPutRequest(apiRequest);
-
-            //Assert
-            Assert.AreEqual((int)HttpStatusCode.BadRequest, apiResponse.HttpStatusCode);
-            Assert.AreEqual(expectedJsonBody, apiResponse.Body);
-        }
-
         [Test]
         public void ProcessPutRequestSetsHttpStatusCodeTo400AndReturnsGenericErrorMessageInResponseBodyIfPutRequestBodyContainsAJsonArrayOfFeatureSwitches()
         {
