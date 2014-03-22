@@ -9,62 +9,17 @@ namespace Femah.Core.Tests
 {
     public class WhenProcessingPutRequests
     {
-        [Test]
-        public void GivenRequestContainsInvalidJson_ThenHttp400AndGenericErrorMessageBodyIsReturned()
+        [Test, TestCaseSource(typeof(InvalidRequestTestData), "TestCases")]
+        public void GivenRequestWithInvalidData_ThenAppropriateHttpCodeAndErrorAreReturned(string parameterName,
+            string requestJson, string expectedResponse, HttpStatusCode expectedStatusCode)
         {
-            //Arrange
-            var apiRequest = new PutApiRequestFactory().WithParameterName("TestFeatureSwitch")
-                .WithBody("This is not JSON").Build();
+            var apiRequest = new PutApiRequestFactory().WithParameterName(parameterName)
+                .WithBody(requestJson).Build();
 
-            //TODO: I'd like this to be a more specific error with regards to formatting
-            const string expectedJsonBody = "\"Error: Unable to deserialise the request body.  Either the JSON is invalid or the supplied 'FeatureType' value is incorrect, have you used the AssemblyQualifiedName as the 'FeatureType' in the request?\"";
-
-            //Act
             var apiResponse = ProcessApiRequest.ProcessPutRequest(apiRequest);
 
-            //Assert
-            apiResponse.HttpStatusCode.ShouldBe((int)HttpStatusCode.BadRequest);
-            apiResponse.Body.ShouldBe(expectedJsonBody);
-        }
-
-        [Test]
-        public void GivenRequestContainsInvalidProperty_ThenHttp400AndGenericErrorMessageBodyIsReturned()
-        {
-            //Arrange
-            const string invalidIsEnabledProperty = "NotValidBoolean";
-            var json = string.Format("{{\"IsEnabled\":{0},\"Name\":\"TestFeatureSwitch1\",\"FeatureType\":\"Femah.Core.FeatureSwitchTypes.SimpleFeatureSwitch, Femah.Core, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null\",\"Description\":\"Define a short description of the feature switch type here.\",\"ConfigurationInstructions\":\"Add configuration context and instructions to be displayed in the admin UI\"}}", invalidIsEnabledProperty);
-
-            var apiRequest = new PutApiRequestFactory().WithParameterName("TestFeatureSwitch")
-                                    .WithBody(json).Build(); 
-
-            //TODO: I'd like this to be a more specific error with regards to formatting
-            const string expectedJsonBody = "\"Error: Unable to deserialise the request body.  Either the JSON is invalid or the supplied 'FeatureType' value is incorrect, have you used the AssemblyQualifiedName as the 'FeatureType' in the request?\"";
-
-            //Act
-            var apiResponse = ProcessApiRequest.ProcessPutRequest(apiRequest);
-
-            //Assert
-            apiResponse.HttpStatusCode.ShouldBe((int)HttpStatusCode.BadRequest);
-            apiResponse.Body.ShouldBe(expectedJsonBody);
-        }
-
-        [Test]
-        public void GivenRequestContainsInvalidFeatureSwitchType_ThenHttp400AndGenericErrorMessageBodyIsReturned()
-        {
-            //Arrange
-            const string invalidFeatureType = "Invalid.FeatureType.Will.Not.Deserialise";
-            var json = string.Format("{{\"IsEnabled\":true,\"Name\":\"TestFeatureSwitch1\",\"FeatureType\":\"{0}\",\"Description\":\"Define a short description of the feature switch type here.\",\"ConfigurationInstructions\":\"Add configuration context and instructions to be displayed in the admin UI\"}}", invalidFeatureType);
-            var apiRequest = new PutApiRequestFactory().WithParameterName("TestFeatureSwitch")
-                .WithBody(json).Build();
-
-            const string expectedJsonBody = "\"Error: Unable to deserialise the request body.  Either the JSON is invalid or the supplied 'FeatureType' value is incorrect, have you used the AssemblyQualifiedName as the 'FeatureType' in the request?\"";
-
-            //Act
-            var apiResponse = ProcessApiRequest.ProcessPutRequest(apiRequest);
-
-            //Assert
-            apiResponse.HttpStatusCode.ShouldBe((int)HttpStatusCode.BadRequest);
-            apiResponse.Body.ShouldBe(expectedJsonBody);
+            apiResponse.HttpStatusCode.ShouldBe((int)expectedStatusCode);
+            apiResponse.Body.ShouldBe(expectedResponse);
         }
 
         [Test]
