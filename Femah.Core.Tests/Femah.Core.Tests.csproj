@@ -54,6 +54,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AccessingtheServiceFixtureObject.cs" />
     <Compile Include="FemahApiTests.cs" />
     <Compile Include="FemahTests.cs" />
     <Compile Include="InvalidRequestTestData.cs" />
