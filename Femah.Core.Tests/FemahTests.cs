@@ -8,8 +8,6 @@ using Newtonsoft.Json;
 
 namespace Femah.Core.Tests
 {
-
-
     public class TestObject
     {
         public string Name { get; set; }
@@ -27,13 +25,7 @@ namespace Femah.Core.Tests
         }
 
         #region Exception Handling Tests
-
-        [Test]
-        public void InvokingWithoutInitialisingDoesntThrowException()
-        {
-            Femah.IsFeatureOn((int)FeatureSwitches.SomeNewFeature);
-        }
-
+        
         [Test]
         public void ExceptionsThrownByProviderAreSwallowed()
         {

@@ -54,7 +54,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AccessingtheServiceFixtureObject.cs" />
     <Compile Include="FemahApiTests.cs" />
     <Compile Include="FemahTests.cs" />
     <Compile Include="InvalidRequestTestData.cs" />
@@ -64,6 +63,7 @@
     <Compile Include="RoleBasedFeatureSwitchTests.cs" />
     <Compile Include="TestableFemahApiHttpHandler.cs" />
     <Compile Include="WhenAccessingTheService.cs" />
+    <Compile Include="WhenCallingIsFeatureOn.cs" />
     <Compile Include="WhenProcessingPutRequests.cs" />
   </ItemGroup>
   <ItemGroup>

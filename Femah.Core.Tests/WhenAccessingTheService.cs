@@ -5,6 +5,7 @@ using Shouldly;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Web;
 
 namespace Femah.Core.Tests
 {
@@ -15,24 +16,33 @@ namespace Femah.Core.Tests
         {
             //Arrange
             var testable = new TestableFemahApiHttpHandler();
-            var fixtures = new AccessingtheServiceFixtureObject(new Uri("http://example.com/femah.axd/api/featureswitchtypes"));
-            fixtures.Response.SetupProperty(x => x.ContentType);
-            fixtures.Response.SetupProperty(x => x.ContentEncoding);
-            
-            //Act
-            testable.ProcessRequest(fixtures.Context.Object);
+            var context = new Mock<HttpContextBase>();
+            context.Setup(x => x.Request.Url)
+                .Returns(new Uri("http://example.com/femah.axd/api/featureswitchtypes"));
+            var response = new Mock<HttpResponseBase>();
+            response.SetupProperty(x => x.ContentType);
+            response.SetupProperty(x => x.ContentEncoding);
+            context.Setup(x => x.Response).Returns(response.Object);
 
-            fixtures.Response.Object.ContentType.ShouldBe("application/json");
-            fixtures.Response.Object.ContentEncoding.ShouldBe(Encoding.UTF8);
+            //Act
+            testable.ProcessRequest(context.Object);
+
+            response.Object.ContentType.ShouldBe("application/json");
+            response.Object.ContentEncoding.ShouldBe(Encoding.UTF8);
         }
 
         [Test]
         public void AndServiceDoesNotSupportParameterQuerying_ThenGetReturns405AndAccurateErrorMessage()
         {
             var testable = new TestableFemahApiHttpHandler();
-            var fixtures = new AccessingtheServiceFixtureObject(new Uri("http://example.com/femah.axd/api/featureswitchtypes/simplefeatureswitch"));
-            fixtures.Context.SetupGet(x => x.Request.HttpMethod).Returns("GET");
-            fixtures.Response.SetupProperty(x => x.StatusCode);
+            var httpContextMock = new Mock<HttpContextBase>();
+            httpContextMock.Setup(x => x.Request.Url)
+                .Returns(new Uri("http://example.com/femah.axd/api/featureswitchtypes/simplefeatureswitch"));
+            httpContextMock.SetupGet(x => x.Request.HttpMethod).Returns("GET");
+
+            var response = new Mock<HttpResponseBase>();
+            response.SetupProperty(x => x.StatusCode);
+            httpContextMock.Setup(x => x.Response).Returns(response.Object);
 
             var featureSwitchTypes = new[] {typeof (SimpleFeatureSwitch), typeof (SimpleFeatureSwitch)};
 
@@ -44,13 +54,13 @@ namespace Femah.Core.Tests
 
             //Get the JSON response by intercepting the call to context.Response.Write
             var responseContent = string.Empty;
-            fixtures.Response.Setup(x => x.Write(It.IsAny<string>())).Callback((string r) => { responseContent = r; });
+            response.Setup(x => x.Write(It.IsAny<string>())).Callback((string r) => { responseContent = r; });
 
             //Act
-            testable.ProcessRequest(fixtures.Context.Object);
+            testable.ProcessRequest(httpContextMock.Object);
 
             //Asert
-            fixtures.Response.Object.StatusCode.ShouldBe(405);
+            response.Object.StatusCode.ShouldBe(405);
             responseContent.ShouldBe(expectedJsonResponse);
         }
 
@@ -59,14 +69,19 @@ namespace Femah.Core.Tests
         {
             //Arrange
             var testable = new TestableFemahApiHttpHandler();
-            var fixtures = new AccessingtheServiceFixtureObject(new Uri("http://example.com/femah.axd/api/unknownservicebla"));
-            fixtures.Context.SetupGet(x => x.Request.HttpMethod).Returns("GET");
-            fixtures.Response.SetupProperty(x => x.StatusCode);
+            var httpContextMock = new Mock<HttpContextBase>();
+            httpContextMock.Setup(x => x.Request.Url)
+                .Returns(new Uri("http://example.com/femah.axd/api/unknownservicebla"));
+            httpContextMock.SetupGet(x => x.Request.HttpMethod).Returns("GET");
+
+            var response = new Mock<HttpResponseBase>();
+            response.SetupProperty(x => x.StatusCode);
+            httpContextMock.Setup(x => x.Response).Returns(response.Object);
 
             //Act
-            testable.ProcessRequest(fixtures.Context.Object);
+            testable.ProcessRequest(httpContextMock.Object);
 
-            fixtures.Response.Object.StatusCode.ShouldBe(405);
+            response.Object.StatusCode.ShouldBe(405);
         }
 
         [Test]
@@ -74,10 +89,16 @@ namespace Femah.Core.Tests
         {
             //Arrange
             var testable = new TestableFemahApiHttpHandler();
-            var fixtures = new AccessingtheServiceFixtureObject(new Uri("http://example.com/femah.axd/api/featureswitch"));
-            fixtures.Context.SetupGet(x => x.Request.HttpMethod).Returns("GET");
-            fixtures.Response.SetupProperty(x => x.StatusCode);
-            
+
+            var httpContextMock = new Mock<HttpContextBase>();
+            httpContextMock.Setup(x => x.Request.Url)
+                .Returns(new Uri("http://example.com/femah.axd/api/featureswitch"));
+            httpContextMock.SetupGet(x => x.Request.HttpMethod).Returns("GET");
+
+            var response = new Mock<HttpResponseBase>();
+            response.SetupProperty(x => x.StatusCode);
+            httpContextMock.Setup(x => x.Response).Returns(response.Object);
+
             var featureSwitches = new List<IFeatureSwitch>
             {
                 (new SimpleFeatureSwitch
@@ -98,10 +119,10 @@ namespace Femah.Core.Tests
                 .Initialise();
 
             //Act
-            testable.ProcessRequest(fixtures.Context.Object);
+            testable.ProcessRequest(httpContextMock.Object);
 
             //Assert
-            fixtures.Response.Object.StatusCode.ShouldBe(200);
+            response.Object.StatusCode.ShouldBe(200);
         }
     }
 }
