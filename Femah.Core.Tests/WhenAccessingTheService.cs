@@ -1,16 +1,36 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Web;
-using Femah.Core.FeatureSwitchTypes;
+﻿using Femah.Core.FeatureSwitchTypes;
 using Moq;
 using NUnit.Framework;
+using Shouldly;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Web;
 
 namespace Femah.Core.Tests
 {
-    using Shouldly;
-
     public class WhenAccessingTheService
     {
+        [Test]
+        public void ThenResponseHasCorrectEncodingAndContentType()
+        {
+            //Arrange
+            var testable = new TestableFemahApiHttpHandler();
+            var context = new Mock<HttpContextBase>();
+            context.Setup(x => x.Request.Url)
+                .Returns(new Uri("http://example.com/femah.axd/api/featureswitchtypes"));
+            var response = new Mock<HttpResponseBase>();
+            response.SetupProperty(x => x.ContentType);
+            response.SetupProperty(x => x.ContentEncoding);
+            context.Setup(x => x.Response).Returns(response.Object);
+
+            //Act
+            testable.ProcessRequest(context.Object);
+
+            response.Object.ContentType.ShouldBe("application/json");
+            response.Object.ContentEncoding.ShouldBe(Encoding.UTF8);
+        }
+
         [Test]
         public void AndServiceDoesNotSupportParameterQuerying_ThenGetReturns405AndAccurateErrorMessage()
         {
@@ -24,10 +44,7 @@ namespace Femah.Core.Tests
             response.SetupProperty(x => x.StatusCode);
             httpContextMock.Setup(x => x.Response).Returns(response.Object);
 
-            const int numberOfSwitchTypes = 2;
-            var featureSwitchTypes = new Type[numberOfSwitchTypes];
-            featureSwitchTypes[0] = typeof(SimpleFeatureSwitch);
-            featureSwitchTypes[1] = typeof(SimpleFeatureSwitch);
+            var featureSwitchTypes = new[] {typeof (SimpleFeatureSwitch), typeof (SimpleFeatureSwitch)};
 
             const string expectedJsonResponse = "\"Error: Service 'featureswitchtypes' does not support parameter querying.\"";
 

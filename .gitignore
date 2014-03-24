@@ -7,3 +7,4 @@ build/
 BuildOutput/
 *TestResult.xml
 TestResult.xml
+/.project
