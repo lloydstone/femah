@@ -32,7 +32,7 @@ namespace Femah.Core.Tests
         }
 
         [Test]
-        public void AndExceptionIsThrownByContextFactory_ThenTheExceptionIsAreSwallowed()
+        public void AndExceptionIsThrownByContextFactory_ThenTheExceptionIsSwallowed()
         {
             var providerMock = new Mock<IFeatureSwitchProvider>();
             providerMock.Setup(p => p.Get(It.IsAny<string>()))
@@ -41,6 +41,30 @@ namespace Femah.Core.Tests
             var contextFactoryMock = new Mock<IFemahContextFactory>();
             contextFactoryMock.Setup(f => f.GenerateContext())
                 .Throws(new Exception("Exception thrown by context factory."));
+
+            Femah.Configure()
+                .Provider(providerMock.Object)
+                .ContextFactory(contextFactoryMock.Object)
+                .FeatureSwitchEnum(typeof(FeatureSwitches))
+                .Initialise();
+
+            Femah.IsFeatureOn((int)FeatureSwitches.SomeNewFeature);
+        }
+
+        [Test]
+        public void AndExceptionIsThrownByContext_ThenTheExceptionIsSwallowed()
+        {
+            var providerMock = new Mock<IFeatureSwitchProvider>();
+            providerMock.Setup(p => p.Get(It.IsAny<string>()))
+                .Returns(new SimpleFeatureSwitch { IsEnabled = true });
+
+            var contextMock = new Mock<IFemahContext>();
+            contextMock.SetupGet(c => c.HttpContext)
+                .Throws(new Exception("Exception thrown by context."));
+
+            var contextFactoryMock = new Mock<IFemahContextFactory>();
+            contextFactoryMock.Setup(f => f.GenerateContext())
+                .Returns(contextMock.Object);
 
             Femah.Configure()
                 .Provider(providerMock.Object)
