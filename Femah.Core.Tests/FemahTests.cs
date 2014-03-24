@@ -26,20 +26,7 @@ namespace Femah.Core.Tests
 
         #region Exception Handling Tests
         
-        [Test]
-        public void ExceptionsThrownByProviderAreSwallowed()
-        {
-            var providerMock = new Mock<IFeatureSwitchProvider>();
-            providerMock.Setup(p => p.Get(It.IsAny<string>()))
-                .Throws(new Exception("Exception thrown by provider."));
-
-            Femah.Configure()
-                .Provider(providerMock.Object)
-                .FeatureSwitchEnum(typeof(FeatureSwitches))
-                .Initialise();
-
-            Femah.IsFeatureOn((int)FeatureSwitches.SomeNewFeature);            
-        }
+        
 
         [Test]
         public void ExceptionsThrownByContextFactoryAreSwallowed()
