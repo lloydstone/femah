@@ -246,7 +246,7 @@ namespace Femah.Core.Tests
         {
             //Arrange
             const string validFeatureType = "Femah.Core.FeatureSwitchTypes.PercentageFeatureSwitch, Femah.Core, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null";
-            const string jsonResponse = "{\"PercentageOn\":75,\"Description\":\"A simple feature switch that is on for a set percentage of users. The state of the switch is persisted in the user's cookies.If no cookie exists the state is chosen at random (weighted according to the percentage), and then stored in a cookie.\",\"ConfigurationInstructions\":\"Set PercentageOn to the percentage of users who should see this feature. Eg. 10 means the feature is on for 10% of users.\",\"IsEnabled\":true,\"Name\":\"TestFeatureSwitch1\",\"FeatureType\":\"Femah.Core.FeatureSwitchTypes.PercentageFeatureSwitch, Femah.Core, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null\"}";
+            //const string jsonResponse = "{\"PercentageOn\":75,\"Description\":\"A simple feature switch that is on for a set percentage of users. The state of the switch is persisted in the user's cookies.If no cookie exists the state is chosen at random (weighted according to the percentage), and then stored in a cookie.\",\"ConfigurationInstructions\":\"Set PercentageOn to the percentage of users who should see this feature. Eg. 10 means the feature is on for 10% of users.\",\"IsEnabled\":true,\"Name\":\"TestFeatureSwitch1\",\"FeatureType\":\"Femah.Core.FeatureSwitchTypes.PercentageFeatureSwitch, Femah.Core, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null\"}";
 
             var currentFeatureSwitchState = new PercentageFeatureSwitch
             {
@@ -384,104 +384,7 @@ namespace Femah.Core.Tests
             Assert.AreEqual("application/json", response.Object.ContentType);
             Assert.AreEqual(Encoding.UTF8, response.Object.ContentEncoding);
         }
-
-        [Test]
-        public void ApiGetReturns200IfServiceExists()
-        {
-            //Arrange
-            var testable = new TestableFemahApiHttpHandler();
-
-            var httpContextMock = new Mock<HttpContextBase>();
-            httpContextMock.Setup(x => x.Request.Url)
-                .Returns(new Uri("http://example.com/femah.axd/api/featureswitch"));
-            httpContextMock.SetupGet(x => x.Request.HttpMethod).Returns("GET");
-
-            var response = new Mock<HttpResponseBase>();
-            response.SetupProperty(x => x.StatusCode);
-            httpContextMock.Setup(x => x.Response).Returns(response.Object);
-
-            var featureSwitches = new List<IFeatureSwitch>
-            {
-                (new SimpleFeatureSwitch
-                {
-                    Name = "TestFeatureSwitch",
-                    IsEnabled = false,
-                    FeatureType = "SimpleFeatureSwitch"
-                })
-            };
-
-            var providerMock = new Mock<IFeatureSwitchProvider>();
-            providerMock.Setup(p => p.AllFeatureSwitches())
-                .Returns(featureSwitches);
-
-            Femah.Configure()
-                .FeatureSwitchEnum(typeof(FeatureSwitches))
-                .Provider(providerMock.Object)
-                .Initialise();
-
-            //Act
-            testable.ProcessRequest(httpContextMock.Object);
-
-            //Assert
-            Assert.AreEqual(200, response.Object.StatusCode);
-        }
-
-        [Test]
-        public void ApiGetReturns405IfServiceNotFound()
-        {
-            //Arrange
-            var testable = new TestableFemahApiHttpHandler();
-            var httpContextMock = new Mock<HttpContextBase>();
-            httpContextMock.Setup(x => x.Request.Url)
-                .Returns(new Uri("http://example.com/femah.axd/api/unknownservicebla"));
-            httpContextMock.SetupGet(x => x.Request.HttpMethod).Returns("GET");
-
-            var response = new Mock<HttpResponseBase>();
-            response.SetupProperty(x => x.StatusCode);
-            httpContextMock.Setup(x => x.Response).Returns(response.Object);
-
-            //Act
-            testable.ProcessRequest(httpContextMock.Object);
-
-            Assert.AreEqual(405, response.Object.StatusCode);
-        }
-
-        [Test]
-        public void ApiGetReturns405AndAccurateErrorMessageIfServiceDoesNotSupportParameterQuerying()
-        {
-            var testable = new TestableFemahApiHttpHandler();
-            var httpContextMock = new Mock<HttpContextBase>();
-            httpContextMock.Setup(x => x.Request.Url)
-                .Returns(new Uri("http://example.com/femah.axd/api/featureswitchtypes/simplefeatureswitch"));
-            httpContextMock.SetupGet(x => x.Request.HttpMethod).Returns("GET");
-
-            var response = new Mock<HttpResponseBase>();
-            response.SetupProperty(x => x.StatusCode);
-            httpContextMock.Setup(x => x.Response).Returns(response.Object);
-
-            const int numberOfSwitchTypes = 2;
-            var featureSwitchTypes = new Type[numberOfSwitchTypes];
-            featureSwitchTypes[0] = typeof(SimpleFeatureSwitch);
-            featureSwitchTypes[1] = typeof(SimpleFeatureSwitch);
-
-            const string expectedJsonResponse = "\"Error: Service 'featureswitchtypes' does not support parameter querying.\"";
-
-            Femah.Configure()
-                .WithSelectedFeatureSwitchTypes(featureSwitchTypes)
-                .Initialise();
-
-            //Get the JSON response by intercepting the call to context.Response.Write
-            string responseContent = string.Empty;
-            response.Setup(x => x.Write(It.IsAny<string>())).Callback((string r) => { responseContent = r; });
-
-            //Act
-            testable.ProcessRequest(httpContextMock.Object);
-
-            //Asert
-            Assert.AreEqual(405, response.Object.StatusCode);
-            Assert.AreEqual(expectedJsonResponse, responseContent);
-        }
-
+        
         [Test]
         [Ignore("We are now testing this in the ApiRequesteBuilder(), keep this as an integration test maybe?")]
         public void ApiGetReturns500AndAccurateErrorMessageIfRequestUrlIsInvalidAndContainsTooManySegments()
