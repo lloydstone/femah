@@ -25,30 +25,6 @@ namespace Femah.Core.Tests
         }
 
         #region Exception Handling Tests
-        
-        
-
-        [Test]
-        public void ExceptionsThrownByContextFactoryAreSwallowed()
-        {
-
-            var providerMock = new Mock<IFeatureSwitchProvider>();
-            providerMock.Setup(p => p.Get(It.IsAny<string>()))
-                .Returns(new SimpleFeatureSwitch { IsEnabled = true });
-
-            var contextFactoryMock = new Mock<IFemahContextFactory>();
-            contextFactoryMock.Setup(f => f.GenerateContext())
-                .Throws(new Exception("Exception thrown by context factory."));
-
-            Femah.Configure()
-                .Provider(providerMock.Object)
-                .ContextFactory(contextFactoryMock.Object)
-                .FeatureSwitchEnum(typeof(FeatureSwitches))
-                .Initialise();
-
-            Femah.IsFeatureOn((int)FeatureSwitches.SomeNewFeature);
-        }
-
         [Test]
         public void ExceptionsThrownByContextAreSwallowed()
         {
