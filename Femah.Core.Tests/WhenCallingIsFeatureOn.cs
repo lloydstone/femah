@@ -8,7 +8,9 @@ namespace Femah.Core.Tests
     public class WhenCallingIsFeatureOn
     {
         public enum FeatureSwitches
-        { SomeNewFeature = 1 }
+        {
+            SomeNewFeature = 1
+        }
 
         [Test]
         public void AndInvokingWithoutInitialising_ThenNoExceptionIsThrown()
