@@ -63,6 +63,7 @@
     <Compile Include="RoleBasedFeatureSwitchTests.cs" />
     <Compile Include="TestableFemahApiHttpHandler.cs" />
     <Compile Include="WhenAccessingTheService.cs" />
+    <Compile Include="WhenCallingIsFeatureOn.cs" />
     <Compile Include="WhenProcessingPutRequests.cs" />
   </ItemGroup>
   <ItemGroup>

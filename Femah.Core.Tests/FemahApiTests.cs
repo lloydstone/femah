@@ -365,25 +365,7 @@ namespace Femah.Core.Tests
 
         #region General API (GET methods)
 
-        [Test]
-        public void ApiGetSetsCorrectContentTypeAndEncodingInResponse()
-        {
-            //Arrange
-            var testable = new TestableFemahApiHttpHandler();
-            var context = new Mock<HttpContextBase>();
-            context.Setup(x => x.Request.Url)
-                .Returns(new Uri("http://example.com/femah.axd/api/featureswitchtypes"));
-            var response = new Mock<HttpResponseBase>();
-            response.SetupProperty(x => x.ContentType);
-            response.SetupProperty(x => x.ContentEncoding);
-            context.Setup(x => x.Response).Returns(response.Object);
-
-            //Act
-            testable.ProcessRequest(context.Object);
-
-            Assert.AreEqual("application/json", response.Object.ContentType);
-            Assert.AreEqual(Encoding.UTF8, response.Object.ContentEncoding);
-        }
+        
         
         [Test]
         [Ignore("We are now testing this in the ApiRequesteBuilder(), keep this as an integration test maybe?")]
