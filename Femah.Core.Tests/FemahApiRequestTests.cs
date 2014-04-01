@@ -4,33 +4,75 @@ using System.Web;
 using Moq;
 using NUnit.Framework;
 using Shouldly;
+using System.Collections.Generic;
+using Femah.Core.FeatureSwitchTypes;
 
 namespace Femah.Core.Tests
 {
-    using FeatureSwitchTypes;
-
     public class FemahApiRequestTests
     {
         public class TheProcessRequestMethod
         {
+            private Mock<HttpContextBase> _contextBase;
+            private Mock<HttpResponseBase> _response;
+
+            [SetUp]
+            public void Init()
+            {
+                _contextBase = new Mock<HttpContextBase>();
+                _response = new Mock<HttpResponseBase>();
+            }
+
             [Test]
-            public void Returns405IfServiceIsNotFound()
+            public void Returns200_IfTheServiceExists()
+            {
+                var testable = new TestableFemahApiHttpHandler();
+
+                SetupContextBaseMock("http://example.com/femah.axd/api/featureswitch");
+
+                _response.SetupProperty(x => x.StatusCode);
+                _contextBase.Setup(x => x.Response).Returns(_response.Object);
+
+                var featureSwitches = new List<IFeatureSwitch>
+                                        {
+                                            (new SimpleFeatureSwitch
+                                            {
+                                                Name = "TestFeatureSwitch",
+                                                IsEnabled = false,
+                                                FeatureType = "SimpleFeatureSwitch"
+                                            })
+                                        };
+
+                var providerMock = new Mock<IFeatureSwitchProvider>();
+                providerMock.Setup(p => p.AllFeatureSwitches())
+                    .Returns(featureSwitches);
+
+                Femah.Configure()
+                    .FeatureSwitchEnum(typeof(FemahApiTests.FeatureSwitches))
+                    .Provider(providerMock.Object)
+                    .Initialise();
+
+                //Act
+                testable.ProcessRequest(_contextBase.Object);
+
+                //Assert
+                _response.Object.StatusCode.ShouldBe(200);
+            }
+
+            [Test]
+            public void Returns405_IfServiceIsNotFound()
             {
                 //Arrange
                 var testable = new TestableFemahApiHttpHandler();
-                var httpContextMock = new Mock<HttpContextBase>();
-                httpContextMock.Setup(x => x.Request.Url)
-                    .Returns(new Uri("http://example.com/femah.axd/api/unknownservicebla"));
-                httpContextMock.SetupGet(x => x.Request.HttpMethod).Returns("GET");
+                SetupContextBaseMock("http://example.com/femah.axd/api/unknownservicebla");
 
-                var response = new Mock<HttpResponseBase>();
-                response.SetupProperty(x => x.StatusCode);
-                httpContextMock.Setup(x => x.Response).Returns(response.Object);
+                _response.SetupProperty(x => x.StatusCode);
+                _contextBase.Setup(x => x.Response).Returns(_response.Object);
 
                 //Act
-                testable.ProcessRequest(httpContextMock.Object);
+                testable.ProcessRequest(_contextBase.Object);
 
-                response.Object.StatusCode.ShouldBe(405);
+                _response.Object.StatusCode.ShouldBe(405);
             }
 
             [Test]
@@ -38,33 +80,26 @@ namespace Femah.Core.Tests
             {
                 //Arrange
                 var testable = new TestableFemahApiHttpHandler();
-                var context = new Mock<HttpContextBase>();
-                context.Setup(x => x.Request.Url)
-                    .Returns(new Uri("http://example.com/femah.axd/api/featureswitchtypes"));
-                var response = new Mock<HttpResponseBase>();
-                response.SetupProperty(x => x.ContentType);
-                response.SetupProperty(x => x.ContentEncoding);
-                context.Setup(x => x.Response).Returns(response.Object);
+                SetupContextBaseMock("http://example.com/femah.axd/api/featureswitchtypes");
+                _response.SetupProperty(x => x.ContentType);
+                _response.SetupProperty(x => x.ContentEncoding);
+                _contextBase.Setup(x => x.Response).Returns(_response.Object);
 
                 //Act
-                testable.ProcessRequest(context.Object);
+                testable.ProcessRequest(_contextBase.Object);
 
-                response.Object.ContentType.ShouldBe("application/json");
-                response.Object.ContentEncoding.ShouldBe(Encoding.UTF8);
+                _response.Object.ContentType.ShouldBe("application/json");
+                _response.Object.ContentEncoding.ShouldBe(Encoding.UTF8);
             }
 
             [Test]
             public void Returns405AndAccurateErrorMessage_IfServiceDoesntSupportParameterQuerying()
             {
                 var testable = new TestableFemahApiHttpHandler();
-                var httpContextMock = new Mock<HttpContextBase>();
-                httpContextMock.Setup(x => x.Request.Url)
-                    .Returns(new Uri("http://example.com/femah.axd/api/featureswitchtypes/simplefeatureswitch"));
-                httpContextMock.SetupGet(x => x.Request.HttpMethod).Returns("GET");
+                SetupContextBaseMock("http://example.com/femah.axd/api/featureswitchtypes/simplefeatureswitch");
 
-                var response = new Mock<HttpResponseBase>();
-                response.SetupProperty(x => x.StatusCode);
-                httpContextMock.Setup(x => x.Response).Returns(response.Object);
+                _response.SetupProperty(x => x.StatusCode);
+                _contextBase.Setup(x => x.Response).Returns(_response.Object);
 
                 var featureSwitchTypes = new[] { typeof(SimpleFeatureSwitch), typeof(SimpleFeatureSwitch) };
 
@@ -76,14 +111,20 @@ namespace Femah.Core.Tests
 
                 //Get the JSON response by intercepting the call to context.Response.Write
                 var responseContent = string.Empty;
-                response.Setup(x => x.Write(It.IsAny<string>())).Callback((string r) => { responseContent = r; });
+                _response.Setup(x => x.Write(It.IsAny<string>())).Callback((string r) => { responseContent = r; });
 
                 //Act
-                testable.ProcessRequest(httpContextMock.Object);
+                testable.ProcessRequest(_contextBase.Object);
 
                 //Asert
-                response.Object.StatusCode.ShouldBe(405);
+                _response.Object.StatusCode.ShouldBe(405);
                 responseContent.ShouldBe(expectedJsonResponse);
+            }
+
+            private void SetupContextBaseMock(string uriString)
+            {
+                _contextBase.Setup(x => x.Request.Url).Returns(new Uri(uriString));
+                _contextBase.SetupGet(x => x.Request.HttpMethod).Returns("GET");
             }
         }
     }
