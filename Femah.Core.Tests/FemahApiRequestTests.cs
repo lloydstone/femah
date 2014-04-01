@@ -21,26 +21,24 @@ namespace Femah.Core.Tests
             {
                 _contextBase = new Mock<HttpContextBase>();
                 _response = new Mock<HttpResponseBase>();
+                _contextBase.Setup(x => x.Response).Returns(_response.Object);
             }
 
             [Test]
             public void Returns200_IfTheServiceExists()
             {
                 var testable = new TestableFemahApiHttpHandler();
-
                 SetupContextBaseMock("http://example.com/femah.axd/api/featureswitch");
-
                 _response.SetupProperty(x => x.StatusCode);
-                _contextBase.Setup(x => x.Response).Returns(_response.Object);
 
                 var featureSwitches = new List<IFeatureSwitch>
                                         {
-                                            (new SimpleFeatureSwitch
+                                            new SimpleFeatureSwitch
                                             {
                                                 Name = "TestFeatureSwitch",
                                                 IsEnabled = false,
                                                 FeatureType = "SimpleFeatureSwitch"
-                                            })
+                                            }
                                         };
 
                 var providerMock = new Mock<IFeatureSwitchProvider>();
@@ -52,24 +50,18 @@ namespace Femah.Core.Tests
                     .Provider(providerMock.Object)
                     .Initialise();
 
-                //Act
                 testable.ProcessRequest(_contextBase.Object);
 
-                //Assert
                 _response.Object.StatusCode.ShouldBe(200);
             }
 
             [Test]
             public void Returns405_IfServiceIsNotFound()
             {
-                //Arrange
                 var testable = new TestableFemahApiHttpHandler();
                 SetupContextBaseMock("http://example.com/femah.axd/api/unknownservicebla");
-
                 _response.SetupProperty(x => x.StatusCode);
-                _contextBase.Setup(x => x.Response).Returns(_response.Object);
 
-                //Act
                 testable.ProcessRequest(_contextBase.Object);
 
                 _response.Object.StatusCode.ShouldBe(405);
@@ -78,14 +70,11 @@ namespace Femah.Core.Tests
             [Test]
             public void ReturnsCorrectEncodingAndContentType()
             {
-                //Arrange
                 var testable = new TestableFemahApiHttpHandler();
                 SetupContextBaseMock("http://example.com/femah.axd/api/featureswitchtypes");
                 _response.SetupProperty(x => x.ContentType);
                 _response.SetupProperty(x => x.ContentEncoding);
-                _contextBase.Setup(x => x.Response).Returns(_response.Object);
 
-                //Act
                 testable.ProcessRequest(_contextBase.Object);
 
                 _response.Object.ContentType.ShouldBe("application/json");
@@ -97,9 +86,7 @@ namespace Femah.Core.Tests
             {
                 var testable = new TestableFemahApiHttpHandler();
                 SetupContextBaseMock("http://example.com/femah.axd/api/featureswitchtypes/simplefeatureswitch");
-
                 _response.SetupProperty(x => x.StatusCode);
-                _contextBase.Setup(x => x.Response).Returns(_response.Object);
 
                 var featureSwitchTypes = new[] { typeof(SimpleFeatureSwitch), typeof(SimpleFeatureSwitch) };
 
@@ -111,12 +98,11 @@ namespace Femah.Core.Tests
 
                 //Get the JSON response by intercepting the call to context.Response.Write
                 var responseContent = string.Empty;
-                _response.Setup(x => x.Write(It.IsAny<string>())).Callback((string r) => { responseContent = r; });
+                _response.Setup(x => x.Write(It.IsAny<string>()))
+                    .Callback((string r) => { responseContent = r; });
 
-                //Act
                 testable.ProcessRequest(_contextBase.Object);
 
-                //Asert
                 _response.Object.StatusCode.ShouldBe(405);
                 responseContent.ShouldBe(expectedJsonResponse);
             }
