@@ -12,26 +12,6 @@ namespace Femah.Core.Tests
     public class WhenAccessingTheService
     {
         [Test]
-        public void ThenResponseHasCorrectEncodingAndContentType()
-        {
-            //Arrange
-            var testable = new TestableFemahApiHttpHandler();
-            var context = new Mock<HttpContextBase>();
-            context.Setup(x => x.Request.Url)
-                .Returns(new Uri("http://example.com/femah.axd/api/featureswitchtypes"));
-            var response = new Mock<HttpResponseBase>();
-            response.SetupProperty(x => x.ContentType);
-            response.SetupProperty(x => x.ContentEncoding);
-            context.Setup(x => x.Response).Returns(response.Object);
-
-            //Act
-            testable.ProcessRequest(context.Object);
-
-            response.Object.ContentType.ShouldBe("application/json");
-            response.Object.ContentEncoding.ShouldBe(Encoding.UTF8);
-        }
-
-        [Test]
         public void AndServiceDoesNotSupportParameterQuerying_ThenGetReturns405AndAccurateErrorMessage()
         {
             var testable = new TestableFemahApiHttpHandler();
