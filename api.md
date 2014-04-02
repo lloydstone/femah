@@ -2,10 +2,6 @@
 layout: layout
 title: "Api"
 ---
-<section class="content">
-  <h1>{{ page.title }}</h1>
-
-</section>
 
 credits: https://haveibeenpwned.com/API/v2
 
