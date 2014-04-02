@@ -1,7 +1,6 @@
 ---
 layout: layout
 title: "Api"
-category: api
 ---
 
 ##Methods ##
