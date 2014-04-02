@@ -9,7 +9,7 @@ layout: nil
     
     {% for post in site.posts %}
     <url>
-        <loc>{{ site.url }}{{ post.url }}</loc>
+        <loc>{{ site.baseurl }}{{ post.url }}</loc>
     </url>
     {% endfor %}
 </urlset>
