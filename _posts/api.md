@@ -1,6 +1,7 @@
 ---
-layout: pagetemplate
+layout: post
 title: Api
+category: posts
 ---
 
 ##Methods ##
