@@ -114,16 +114,6 @@ function Invoke-Compile{
 					#Write-Output "##teamcity[publishArtifacts '**/*.* => Release/']"
 				}
 
-				
-				#Get the compiled AssemblyFileVersion from a known assembly
-				#if (Test-Path "$basePath\Web\MoonpigWebSite\bin\MoonpigWebSite.dll" ) { 
-				#	$script:buildNumber = [System.Diagnostics.FileVersionInfo]::GetVersionInfo("$basePath\Web\WebSite\bin\Bla.dll").FileVersion
-				#}
-				#else
-				#{
-				#	$script:buildNumber = "unknown"
-				#}
-
 			}
 }
 

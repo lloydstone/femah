@@ -23,19 +23,23 @@ Within the target Visual Studio web application, using the Visual Studio Package
 ```Install-Package Femah```
 
 ####2. Register the Femah HTTP handlers within your app####
-Add the following to your web applications web.config (as a child of the <configuration> element
+Add the following to the bottom of your web applications web.config (as a child of the < configuration > element)
+
 ```
-  <location path="femah.axd" inheritInChildApplications="false">
+<location path="femah.axd" inheritInChildApplications="false">
+    <!-- IIS 6 -->
     <system.web>
       <httpHandlers>
-        <add verb="GET,PUT,DELETE" path="femah.axd/api*" type="Femah.Core.FemahApiHttpHandlerFactory, Femah.Core" />
-        <add verb="POST,GET,HEAD" path="femah.axd" type="Femah.Ui.FemahHttpHandlerFactory, Femah.Core" />
+        <add verb="GET,PUT,DELETE" path="femah.axd/api*" type="Femah.Core.Api.FemahApiHttpHandler, Femah.Core" />
+        <add verb="POST,GET,HEAD" path="femah.axd" type="Femah.Core.UI.FemahHttpHandlerFactory, Femah.Core" />
       </httpHandlers>
     </system.web>
+    <!-- iis 7 -->
     <system.webServer>
+      <validation validateIntegratedModeConfiguration="false" />
       <handlers>
-        <add name="FEMAHAPI" verb="GET,PUT,DELETE" path="femah.axd/api*" type="Femah.Core.FemahApiHttpHandlerFactory, Femah.Core" preCondition="integratedMode" />
-        <add name="FEMAH" verb="POST,GET,HEAD" path="femah.axd" type="Femah.Ui.FemahHttpHandlerFactory, Femah.Core" preCondition="integratedMode" />
+        <add name="FEMAHAPI" verb="GET,PUT,DELETE" path="femah.axd/api*" type="Femah.Core.Api.FemahApiHttpHandler, Femah.Core" preCondition="integratedMode" />
+        <add name="FEMAH" verb="POST,GET,HEAD" path="femah.axd" type="Femah.Core.UI.FemahHttpHandlerFactory, Femah.Core" preCondition="integratedMode" />
       </handlers>
     </system.webServer>
   </location>
