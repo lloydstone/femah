@@ -82,7 +82,7 @@ namespace Femah.Core.Tests
             }
 
             [Test]
-            public void Returns405AndAccurateErrorMessage_IfServiceDoesntSupportParameterQuerying()
+            public void Returns405AndAccurateErrorMessage_IfServiceDoesNotSupportParameterQuerying()
             {
                 var testable = new TestableFemahApiHttpHandler();
                 SetupContextBaseMock("http://example.com/femah.axd/api/featureswitchtypes/simplefeatureswitch");
