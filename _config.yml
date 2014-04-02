@@ -1,4 +1,5 @@
 markdown: rdiscount
+baseurl: /femah
 pygments: true
 permalink: /posts/:title
 rdiscount:
