@@ -1,7 +1,7 @@
 ---
-layout: post
-title: Api
-category: posts
+layout: layout
+title: "Api"
+category: api
 ---
 
 ##Methods ##
