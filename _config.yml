@@ -2,8 +2,6 @@ markdown: redcarpet
 baseurl: /femah
 pygments: true
 permalink: /posts/:title
-rdiscount:
-  extensions: [smart]
 
 name: Femah
 url: http://github.com/lloydstone/femah

@@ -1,9 +1,13 @@
 ---
 layout: layout
 title: "Api"
-credits: https://haveibeenpwned.com/API/v2
-
 ---
+<section class="content">
+  <h1>{{ page.title }}</h1>
+
+</section>
+
+credits: https://haveibeenpwned.com/API/v2
 
 ##API##
 The Femah API allows initialised feature switches within the hosting applications domain to be retrieved and updated via a RESTful service. For manual configuration see [the admin UI](adminUi.md)
