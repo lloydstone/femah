@@ -2,6 +2,7 @@
 layout: layout
 title: "Api"
 credits: https://haveibeenpwned.com/API/v2
+
 ---
 
 ##API##
@@ -24,14 +25,14 @@ A "featureswitch" is an instance of an initiliased Femah feature switch containi
 ##Getting a single initialised feature switch##
 Often just a single featureswitch is required, a single featureswitch can be returned by passing a single featureswitch "name" parameter.
 
-[test demo site by clicking here](http://additionator.azure.net/femah.axd/api/featureswitch/flipflop
+[test demo site by clicking here](http://additionator.azure.net/femah.axd/api/featureswitch/flipflop)
 ```GET http://<hosting_site>/femah.axd/api/featureswitch/{name}```
 
 ##Getting all initialised feature switch types##
 A "featureswitchtype" is an instance of an initiliased Femah feature switch type, providing specific feature switching logic. Femah ships with a number of [bundled feature switch types](http://github.com/lloydstone/femah/Femah.Core/FeatureSwitchTypes).
 Returns the details (including the name, .NET type, description and configuration instructions) of each initialised featureswitchtype within the hosting applications domain.
 
-[test demo site by clicking here](http://additionator.azure.net/femah.axd/api/featureswitchtypes
+[test demo site by clicking here](http://additionator.azure.net/femah.axd/api/featureswitchtypes)
 ```GET http://<hosting_site>/femah.axd/api/featureswitchtypes```
 
 ##Updating an existing initiliased feature switch##

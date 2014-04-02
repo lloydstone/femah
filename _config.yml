@@ -1,4 +1,4 @@
-markdown: rdiscount
+markdown: redcarpet
 baseurl: /femah
 pygments: true
 permalink: /posts/:title
