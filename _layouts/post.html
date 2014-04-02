@@ -4,7 +4,7 @@ layout: layout
 
 <section class="content">
   <h1>
-    <a href="{{ page.url }}">{{ page.title }}</a>
+    <a href="{{ site.baseurl }}{{ page.url }}">{{ page.title }}</a>
   </h1>
 
   <section class="byline">
@@ -22,9 +22,7 @@ layout: layout
       </a>
 
       <p>
-        I'm a developer at GitHub. <a href="https://twitter.com/{{ site.twitter }}" target="_blank">Follow me on Twitter</a>;
-        you'll enjoy my tweets. I take care to carefully craft each one. Or at least aim to make
-        you giggle. Or offended. One of those two&mdash; I haven't decided which yet.
+        <a href="https://twitter.com/{{ site.twitter }}" target="_blank">Follow us on Twitter</a>
       </p>
 
       <a href="http://twitter.com/share" class="twitter-share-button" data-count="none" data-via="{{ site.twitter }}">Tweet</a>
