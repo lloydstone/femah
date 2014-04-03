@@ -6,7 +6,7 @@ namespace Femah.Core.Tests
     {
         private string _body = string.Empty;
         private string _parameterName = string.Empty;
-        private ApiRequest.ApiService _service = ApiRequest.ApiService.featureswitch;
+        private ApiRequest.ApiService _service = ApiRequest.ApiService.featureswitches;
 
         public PutApiRequestFactory ForServiceType(ApiRequest.ApiService service)
         {
