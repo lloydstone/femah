@@ -28,7 +28,7 @@ A "featureswitch" is an instance of an initiliased Femah feature switch containi
 ## <a name="GetAFeatureSwitch"></a>Getting a single initialised feature switch
 Often just a single featureswitch is required, a single featureswitch can be returned by passing a single featureswitch "name" parameter.
 
-[test demo site by clicking here](http://femah-additionator.azurewebsites.net/femah.axd/api/featureswitch/flipflop)
+[test demo site by clicking here](http://femah-additionator.azurewebsites.net/femah.axd/api/featureswitch/ShorterText)
 
 ```GET http://<hosting_site>/femah.axd/api/featureswitch/{name}```
 
@@ -41,6 +41,8 @@ Returns the details (including the name, .NET type, description and configuratio
 [test demo site by clicking here](http://femah-additionator.azurewebsites.net/femah.axd/api/featureswitchtypes)
 
 ```GET http://<hosting_site>/femah.axd/api/featureswitchtypes```
+
+<iframe width="100%" height="475" src="http://dotnetfiddle.net/Widget/Vp7A7Q" frameborder="0"></iframe>
 
 ## <a name="UpdateAFeatureSwitch"></a>Updating an existing initiliased feature switch
 Expected to be one of the most popular uses of the API, update an existing initialised featureswitch, [be sure to create it first](userguide.md). The API requires a single featureswitchtype "name" parameter to be passed, along with a JSON body representing the desired state of the featureswitchtype.
