@@ -18,21 +18,21 @@ The API is designed to have predictable, resource orientated URL's and uses HTTP
 ## <a name="GetAllFeatureSwitches"></a> Getting all initialised feature switches
 A "featureswitch" is an instance of an initiliased Femah feature switch containing its name, feature switch type and status. This method returns the details of each initialised featureswitch within the hosting applications domain.
 
-[test demo site by clicking here ](http://femah-additionator.azurewebsites.net/femah.axd/api/featureswitch)
+[test demo site by clicking here ](http://femah-additionator.azurewebsites.net/femah.axd/api/featureswitches)
 
 ```GET http://<hosting_site>/femah.axd/api/featureswitch```
 
-<iframe width="100%" height="475" src="http://dotnetfiddle.net/Widget/0SWM1V" frameborder="0"></iframe>
+<iframe width="100%" height="475" src="http://dotnetfiddle.net/Widget/IHFVdI" frameborder="0"></iframe>
 
 
 ## <a name="GetAFeatureSwitch"></a>Getting a single initialised feature switch
 Often just a single featureswitch is required, a single featureswitch can be returned by passing a single featureswitch "name" parameter.
 
-[test demo site by clicking here](http://femah-additionator.azurewebsites.net/femah.axd/api/featureswitch/ShorterText)
+[test demo site by clicking here](http://femah-additionator.azurewebsites.net/femah.axd/api/featureswitches/ShorterText)
 
 ```GET http://<hosting_site>/femah.axd/api/featureswitch/{name}```
 
-<iframe width="100%" height="475" src="http://dotnetfiddle.net/Widget/6hYcyU" frameborder="0"></iframe>
+<iframe width="100%" height="475" src="http://dotnetfiddle.net/Widget/yB2G2z" frameborder="0"></iframe>
 
 ## <a name="GetAllFeatureSwitchTypes"></a>Getting all initialised feature switch types
 A "featureswitchtype" is an instance of an initiliased Femah feature switch type, providing specific feature switching logic. Femah ships with a number of [bundled feature switch types](http://github.com/lloydstone/femah/Femah.Core/FeatureSwitchTypes).
@@ -48,7 +48,7 @@ Returns the details (including the name, .NET type, description and configuratio
 Expected to be one of the most popular uses of the API, update an existing initialised featureswitch, [be sure to create it first](userguide.md). The API requires a single featureswitchtype "name" parameter to be passed, along with a JSON body representing the desired state of the featureswitchtype.
 
 ```
-PUT http://<hosting_site>/femah.axd/api/featureswitch/{name}
+PUT http://<hosting_site>/femah.axd/api/featureswitches/{name}
 Content-Type: application/json
 Content-Length: 372
 {\"IsEnabled\":false,\"Name\":\"ShorterText\",\"FeatureType\":\"Femah.Core.FeatureSwitchTypes.SimpleFeatureSwitch, Femah.Core, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null\",\"Description\":\"Define a short description of the feature switch type here.\",\"ConfigurationInstructions\":\"Add configuration context and instructions to be displayed in the admin UI\"}
@@ -56,7 +56,7 @@ Content-Length: 372
 
 ### C&#35;
 
-<iframe width="100%" height="475" src="http://dotnetfiddle.net/Widget/oRcFNV" frameborder="0"></iframe>
+<iframe width="100%" height="475" src="http://dotnetfiddle.net/Widget/oomL9f" frameborder="0"></iframe>
 
 ### cURL
 The below is tested using cURL on Windows, installed using [Chocolatey](http://chocolatey.org/packages/curl) i.e.  `C:\>cinst curl`
@@ -64,7 +64,7 @@ The below is tested using cURL on Windows, installed using [Chocolatey](http://c
 ####Request
 
 ```bash
-C:\>curl -v -X PUT -H "Content-Type: application/json" -d "{\"IsEnabled\":false,\"Name\":\"ShorterText\",\"FeatureType\":\"Femah.Core.FeatureSwitchTypes.SimpleFeatureSwitch, Femah.Core, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null\",\"Description\":\"Define a short description of the feature switch type here.\",\"ConfigurationInstructions\":\"Add configuration context and instructions to be displayed in the admin UI\"}" http://femah-additionator.azurewebsites.net/femah.axd/api/featureswitch/ShorterText 
+C:\>curl -v -X PUT -H "Content-Type: application/json" -d "{\"IsEnabled\":false,\"Name\":\"ShorterText\",\"FeatureType\":\"Femah.Core.FeatureSwitchTypes.SimpleFeatureSwitch, Femah.Core, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null\",\"Description\":\"Define a short description of the feature switch type here.\",\"ConfigurationInstructions\":\"Add configuration context and instructions to be displayed in the admin UI\"}" http://femah-additionator.azurewebsites.net/femah.axd/api/featureswitches/ShorterText 
 ```
 
 ####Response
