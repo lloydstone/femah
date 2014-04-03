@@ -47,5 +47,12 @@ Returns the details (including the name, .NET type, description and configuratio
 ## <a name="UpdateAFeatureSwitch"></a>Updating an existing initiliased feature switch
 Expected to be one of the most popular uses of the API, update an existing initialised featureswitch, [be sure to create it first](userguide.md). The API requires a single featureswitchtype "name" parameter to be passed, along with a JSON body representing the desired state of the featureswitchtype.
 
-```PUT http://<hosting_site>/femah.axd/api/featureswitch/{name}```
+```
+PUT http://<hosting_site>/femah.axd/api/featureswitch/{name}
+Content-Type: application/json
+Content-Length: 372
+{\"IsEnabled\":false,\"Name\":\"ShorterText\",\"FeatureType\":\"Femah.Core.FeatureSwitchTypes.SimpleFeatureSwitch, Femah.Core, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null\",\"Description\":\"Define a short description of the feature switch type here.\",\"ConfigurationInstructions\":\"Add configuration context and instructions to be displayed in the admin UI\"}
+```
+
+<iframe width="100%" height="475" src="http://dotnetfiddle.net/Widget/oRcFNV" frameborder="0"></iframe>
 
