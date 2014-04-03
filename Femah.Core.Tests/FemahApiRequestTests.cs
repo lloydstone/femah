@@ -28,7 +28,7 @@ namespace Femah.Core.Tests
             public void Returns200_IfTheServiceExists()
             {
                 var testable = new TestableFemahApiHttpHandler();
-                SetupContextBaseMock("http://example.com/femah.axd/api/featureswitch");
+                SetupContextBaseMock("http://example.com/femah.axd/api/featureswitches");
                 _response.SetupProperty(x => x.StatusCode);
 
                 var featureSwitches = new List<IFeatureSwitch>

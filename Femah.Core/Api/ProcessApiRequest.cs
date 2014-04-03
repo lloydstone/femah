@@ -17,13 +17,13 @@ namespace Femah.Core.Api
         {
             using (var apiResponseBuilder = new ApiResponseBuilder())
             {
-                //Example GET: http://example.com/femah.axd/api/featureswitch - Lists all Feature Switches FeatureSwitching.AllFeatures()
-                //Example GET: http://example.com/femah.axd/api/featureswitch/improvedcheckout - Retrieve the Feature Switch ImprovedCheckout
+                //Example GET: http://example.com/femah.axd/api/featureswitches - Lists all Feature Switches FeatureSwitching.AllFeatures()
+                //Example GET: http://example.com/femah.axd/api/featureswitches/improvedcheckout - Retrieve the Feature Switch ImprovedCheckout
                 //Example GET: http://example.com/femah.axd/api/featureswitchtypes - Lists all Feature Switch Types FeatureSwitching.AllSwitchTypes()
                 ApiResponse response;
                 switch (apiRequest.Service)
                 {
-                    case ApiRequest.ApiService.featureswitch:
+                    case ApiRequest.ApiService.featureswitches:
                         if (string.IsNullOrEmpty(apiRequest.Parameter))
                             response = apiResponseBuilder.CreateWithFeatureSwitches(Femah.AllFeatures());
                         else
@@ -79,8 +79,8 @@ namespace Femah.Core.Api
                 }
                 switch (apiRequest.Service)
                 {
-                    //Example PUT: http://example.com/femah.axd/api/featureswitch/TestFeatureSwitch1 - Update a single Feature Switch (IsEnabled, SetCustomAttributes, FeatureType) 
-                    case ApiRequest.ApiService.featureswitch:
+                    //Example PUT: http://example.com/femah.axd/api/featureswitches/TestFeatureSwitch1 - Update a single Feature Switch (IsEnabled, SetCustomAttributes, FeatureType) 
+                    case ApiRequest.ApiService.featureswitches:
                         var featureSwitch = DeSerialiseJsonBodyToFeatureSwitch(apiRequest.Body);
                         if (featureSwitch != null)
                             response = apiResponseBuilder.CreateWithUpdatedFeatureSwitch(featureSwitch);

@@ -13,7 +13,7 @@ namespace Femah.Core.Api
 
         public enum ApiService
         {
-            featureswitch,
+            featureswitches,
             featureswitchtypes
         }
     }
