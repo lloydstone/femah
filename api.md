@@ -51,6 +51,9 @@ public class Program
 
 ```
 
+<iframe width="100%" height="475" src="http://dotnetfiddle.net/Widget/r3uWam" frameborder="0"></iframe>
+
+
 ## <a name="GetAFeatureSwitch"></a>Getting a single initialised feature switch
 Often just a single featureswitch is required, a single featureswitch can be returned by passing a single featureswitch "name" parameter.
 
