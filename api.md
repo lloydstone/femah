@@ -1,7 +1,7 @@
 ---
 layout: layout
 title: "Api"
-credits: https://haveibeenpwned.com/API/v2
+credits: https://haveibeenpwned.com/API/v2;http://www.vinaysahni.com/best-practices-for-a-pragmatic-restful-api
 ---
 
 The Femah API allows initialised feature switches within the hosting applications domain to be retrieved and updated via a [RESTful](http://en.wikipedia.org/wiki/Representational_State_Transfer) service. For manual configuration see [the admin UI](adminUi.md).
