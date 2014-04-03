@@ -32,6 +32,8 @@ Often just a single featureswitch is required, a single featureswitch can be ret
 
 ```GET http://<hosting_site>/femah.axd/api/featureswitch/{name}```
 
+<iframe width="100%" height="475" src="http://dotnetfiddle.net/Widget/6hYcyU" frameborder="0"></iframe>
+
 ## <a name="GetAllFeatureSwitchTypes"></a>Getting all initialised feature switch types
 A "featureswitchtype" is an instance of an initiliased Femah feature switch type, providing specific feature switching logic. Femah ships with a number of [bundled feature switch types](http://github.com/lloydstone/femah/Femah.Core/FeatureSwitchTypes).
 Returns the details (including the name, .NET type, description and configuration instructions) of each initialised featureswitchtype within the hosting applications domain.
