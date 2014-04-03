@@ -26,26 +26,26 @@ A "featureswitch" is an instance of an initiliased Femah feature switch containi
 using System;
 using System.Net;
 
-class Program
+public class Program
 {
-    static void Main()
+    public static void Main()
     {
-	// Create web client.
-	WebClient client = new WebClient();
+    // Create web client.
+    WebClient client = new WebClient();
 
-	// Set user agent and also accept-encoding headers.
-	client.Headers["Accept-Encoding"] = "application/json";
+    // Set user agent and also accept-encoding headers.
+    client.Headers["Accept-Encoding"] = "application/json";
 
-	// Download data.
-	byte[] arr = client.DownloadData("http://femah-additionator.azurewebsites.net/femah.axd/api/featureswitch");
+    // Download data.
+    byte[] arr = client.DownloadData("http://femah-additionator.azurewebsites.net/femah.axd/api/featureswitch");
 
-	// Get response header.
-	string contentEncoding = client.ResponseHeaders["Content-Encoding"];
+    // Get response header.
+    string contentEncoding = client.ResponseHeaders["Content-Encoding"];
 
-	// Write values.
-	Console.WriteLine("--- WebClient result ---");
-	Console.WriteLine(arr.Length);
-	Console.WriteLine(contentEncoding);
+    // Write values.
+    Console.WriteLine("--- WebClient result ---");
+    Console.WriteLine(arr.Length);
+    Console.WriteLine(contentEncoding);
     }
 }
 
