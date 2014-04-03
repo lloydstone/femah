@@ -21,8 +21,8 @@ A "featureswitch" is an instance of an initiliased Femah feature switch containi
 [test demo site by clicking here ](http://femah-additionator.azurewebsites.net/femah.axd/api/featureswitch)
 
 ```GET http://<hosting_site>/femah.axd/api/featureswitch```
-```
-c#
+
+```c#
 using System;
 using System.Net;
 
