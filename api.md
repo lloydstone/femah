@@ -22,7 +22,7 @@ A "featureswitch" is an instance of an initiliased Femah feature switch containi
 
 ```GET http://<hosting_site>/femah.axd/api/featureswitch```
 
-<iframe width="100%" height="475" src="http://dotnetfiddle.net/rOiAnI" frameborder="0"></iframe>
+<iframe width="100%" height="475" src="http://dotnetfiddle.net/Widget/rOiAnI" frameborder="0"></iframe>
 
 
 ## <a name="GetAFeatureSwitch"></a>Getting a single initialised feature switch
