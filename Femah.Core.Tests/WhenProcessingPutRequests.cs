@@ -43,7 +43,7 @@ namespace Femah.Core.Tests
         {
             //Arrange
             var apiRequest = new PutApiRequestFactory().Build();
-            const string expectedJsonBody = "\"Error: Service 'featureswitch' requires a parameter to be passed. Url must match the format /femah.axd/api/[service]/[parameter].\"";
+            const string expectedJsonBody = "\"Error: Service 'featureswitches' requires a parameter to be passed. Url must match the format /femah.axd/api/[service]/[parameter].\"";
 
             //Act
             var apiResponse = ProcessApiRequest.ProcessPutRequest(apiRequest);

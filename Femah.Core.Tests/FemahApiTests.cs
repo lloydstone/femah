@@ -55,7 +55,7 @@ namespace Femah.Core.Tests
             
             var httpContextMock = new Mock<HttpContextBase>();
             httpContextMock.Setup(x => x.Request.Url)
-                .Returns(new Uri("http://example.com/femah.axd/api/featureswitch/TestFeatureSwitch1"));
+                .Returns(new Uri("http://example.com/femah.axd/api/featureswitches/TestFeatureSwitch1"));
             httpContextMock.SetupGet(x => x.Request.HttpMethod).Returns("PUT");
             httpContextMock.SetupGet(x => x.Request.ContentType).Returns("incorrect/contenttype");
 
@@ -303,7 +303,7 @@ namespace Femah.Core.Tests
             var apiRequest = new ApiRequest
             {
                 HttpMethod = "PUT",
-                Service = ApiRequest.ApiService.featureswitch,
+                Service = ApiRequest.ApiService.featureswitches,
                 Parameter = "TestFeatureSwitch",
                 Body = string.Format("{{\"IsEnabled\":true,\"Name\":\"TestFeatureSwitch1\",\"FeatureType\":\"{0}\",\"Description\":\"Define a short description of the feature switch type here.\",\"ConfigurationInstructions\":\"Add configuration context and instructions to be displayed in the admin UI\"}},{{\"IsEnabled\":true,\"Name\":\"TestFeatureSwitch2\",\"FeatureType\":\"{0}\",\"Description\":\"Define a short description of the feature switch type here.\",\"ConfigurationInstructions\":\"Add configuration context and instructions to be displayed in the admin UI\"}}", validFeatureType)
             };
@@ -332,7 +332,7 @@ namespace Femah.Core.Tests
             var apiRequest = new ApiRequest
             {
                 HttpMethod = "PUT",
-                Service = ApiRequest.ApiService.featureswitch,
+                Service = ApiRequest.ApiService.featureswitches,
                 Parameter = "TestFeatureSwitch",
                 Body = jsonRequestAndResponse
             };
@@ -473,7 +473,7 @@ namespace Femah.Core.Tests
 
             var httpContextMock = new Mock<HttpContextBase>();
             httpContextMock.Setup(x => x.Request.Url)
-                .Returns(new Uri("http://example.com/femah.axd/api/featureswitch"));
+                .Returns(new Uri("http://example.com/femah.axd/api/featureswitches"));
             httpContextMock.SetupGet(x => x.Request.HttpMethod).Returns("GET");
 
             var response = new Mock<HttpResponseBase>();
@@ -529,7 +529,7 @@ namespace Femah.Core.Tests
 
             var httpContextMock = new Mock<HttpContextBase>();
             httpContextMock.Setup(x => x.Request.Url)
-                .Returns(new Uri("http://example.com/femah.axd/api/featureswitch/TestFeatureSwitch1"));
+                .Returns(new Uri("http://example.com/femah.axd/api/featureswitches/TestFeatureSwitch1"));
             httpContextMock.SetupGet(x => x.Request.HttpMethod).Returns("GET");
 
             var response = new Mock<HttpResponseBase>();
@@ -575,7 +575,7 @@ namespace Femah.Core.Tests
 
             var httpContextMock = new Mock<HttpContextBase>();
             httpContextMock.Setup(x => x.Request.Url)
-                .Returns(new Uri("http://example.com/femah.axd/api/featureswitch/unknownfeatureswitch"));
+                .Returns(new Uri("http://example.com/femah.axd/api/featureswitches/unknownfeatureswitch"));
             httpContextMock.SetupGet(x => x.Request.HttpMethod).Returns("GET");
 
             var response = new Mock<HttpResponseBase>();
@@ -626,7 +626,7 @@ namespace Femah.Core.Tests
 
             var httpContextMock = new Mock<HttpContextBase>();
             httpContextMock.Setup(x => x.Request.Url)
-                .Returns(new Uri("http://example.com/femah.axd/api/featureswitch/TestFeatureSwitch1"));
+                .Returns(new Uri("http://example.com/femah.axd/api/featureswitches/TestFeatureSwitch1"));
             httpContextMock.SetupGet(x => x.Request.HttpMethod).Returns("PUT");
             httpContextMock.SetupGet(x => x.Request.ContentType).Returns("incorrect/contenttype");
 
