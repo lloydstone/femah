@@ -22,36 +22,7 @@ A "featureswitch" is an instance of an initiliased Femah feature switch containi
 
 ```GET http://<hosting_site>/femah.axd/api/featureswitch```
 
-```c#
-using System;
-using System.Net;
-
-public class Program
-{
-    public static void Main()
-    {
-    // Create web client.
-    WebClient client = new WebClient();
-
-    // Set user agent and also accept-encoding headers.
-    client.Headers["Accept-Encoding"] = "application/json";
-
-    // Download data.
-    byte[] arr = client.DownloadData("http://femah-additionator.azurewebsites.net/femah.axd/api/featureswitch");
-
-    // Get response header.
-    string contentEncoding = client.ResponseHeaders["Content-Encoding"];
-
-    // Write values.
-    Console.WriteLine("--- WebClient result ---");
-    Console.WriteLine(arr.Length);
-    Console.WriteLine(contentEncoding);
-    }
-}
-
-```
-
-<iframe width="100%" height="475" src="http://dotnetfiddle.net/Widget/r3uWam" frameborder="0"></iframe>
+<iframe width="100%" height="475" src="http://dotnetfiddle.net/rOiAnI" frameborder="0"></iframe>
 
 
 ## <a name="GetAFeatureSwitch"></a>Getting a single initialised feature switch
