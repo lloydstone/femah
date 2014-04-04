@@ -37,7 +37,11 @@ function New-NuGetPackage{
 			[Parameter(
 				Position = 2,
 				Mandatory = $False )]
-				[string]$nuGetPath				
+				[string]$nuGetPath,
+			[Parameter(
+				Position = 3,
+				Mandatory = $False )]
+				[switch]$includeSymbolPackage					
 			)
 	Begin {
 			$DebugPreference = "Continue"
@@ -59,7 +63,14 @@ function New-NuGetPackage{
 					if ((Test-Path -Path "$basePath\BuildOutput") -eq $True) { Remove-Item -Path "$basePath\BuildOutput" -Force	-Recurse}
 					New-Item -ItemType directory -Path "$basePath\BuildOutput" -force
 					
-					& $nuGetPath pack $specFilePath -Version $versionNumber -OutputDirectory "BuildOutput"
+					if ($includeSymbolPackage)
+					{
+						& $nuGetPath pack $specFilePath -Version $versionNumber -OutputDirectory "BuildOutput" -Symbols
+					}
+					else
+					{
+						& $nuGetPath pack $specFilePath -Version $versionNumber -OutputDirectory "BuildOutput"	
+					}
 				}
 				catch [Exception] {
 					throw "Error executing NuGet Pack for supplied spec file: $specFilePath using NuGet from: $nuGetPath `r`n $_.Exception.ToString()"
