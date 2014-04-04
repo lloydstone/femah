@@ -88,13 +88,13 @@ function Invoke-Compile{
 						Invoke-NUnitTestsForProject -projectPath "\Femah.Core.Tests\BuildOutput\Femah.Core.Tests.dll"
 						Remove-Module Invoke-NUnitTestsForProject
 						
-						#Create NuGet package
+						#Create NuGet and Symbol Package
 						$versionLabels = $assemblyInformationalVersion.Split(".")
 						$nuGetPackageVersion = $versionLabels[0] + "." + $versionLabels[1] + "." + $versionLabels[2] + "-beta" 
 						
 						Write-Host "Will use version: $nuGetPackageVersion to build NuGet package"
 						Import-Module "$baseModulePath\New-NuGetPackage.psm1"
-						New-NuGetPackage -versionNumber $nuGetPackageVersion -specFilePath "Femah.Core\Femah.Core.nuspec"
+						New-NuGetPackage -versionNumber $nuGetPackageVersion -specFilePath "Femah.Core\Femah.Core.nuspec" -includeSymbolPackage
 						Remove-Module New-NuGetPackage
 						
 					}

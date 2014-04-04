@@ -18,6 +18,8 @@
     </dependencies>
   </metadata>
   <files>
+	<file src="BuildOutput\**\Femah.Core.pdb" target="\lib\Net35"/>
 	<file src="BuildOutput\**\Femah.Core.dll" target="\lib\Net35"/>
+	<file src="**\*.cs" target="src" />
   </files>
 </package>
