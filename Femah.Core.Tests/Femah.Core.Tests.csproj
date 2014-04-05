@@ -57,6 +57,7 @@
     <Compile Include="FemahApiRequestTests.cs" />
     <Compile Include="FemahApiTests.cs" />
     <Compile Include="FemahTests.cs" />
+    <Compile Include="InProcProviderTests.cs" />
     <Compile Include="InvalidRequestTestData.cs" />
     <Compile Include="PercentageFeatureSwitchTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
