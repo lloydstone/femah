@@ -388,7 +388,7 @@ namespace Femah.Core.Tests
 
         #endregion
 
-        public class TheFeatureIsOnMethod
+        public class TheIsFeatureOnMethod
         {
             [Test]
             public void ThrowsException_IfCalledWithoutInitialisingFemah()
