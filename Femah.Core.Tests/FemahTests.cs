@@ -387,6 +387,15 @@ namespace Femah.Core.Tests
         }
 
         #endregion
+
+        public class TheFeatureIsOnMethod
+        {
+            [Test]
+            public void ThrowsException_IfCalledWithoutInitialisingFemah()
+            {
+                Femah.IsFeatureOn((int)FeatureSwitches.SomeNewFeature);
+            }
+        }
     }
 }
 
