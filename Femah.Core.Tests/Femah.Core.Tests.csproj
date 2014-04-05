@@ -63,7 +63,7 @@
     <Compile Include="PutApiRequestFactory.cs" />
     <Compile Include="RoleBasedFeatureSwitchTests.cs" />
     <Compile Include="TestableFemahApiHttpHandler.cs" />
-    <Compile Include="WhenProcessingPutRequests.cs" />
+    <Compile Include="ProcessApiRequestTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
