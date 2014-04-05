@@ -9,77 +9,76 @@ namespace Femah.Core.Tests
 {
     public class RoleBasedFeatureSwitchTests
     {
-        private FemahContext _femahContext;
-        private const string _testUserRole = "testrole";
-
-        [SetUp]
-        public void Initialize()
+        public class TheIsOnMethod
         {
-            // Mock out the HttpContext - mock uses our local cookie collection.
-            var httpContextMock = new Mock<HttpContextBase>();
-            httpContextMock.Setup(c => c.User.Identity.IsAuthenticated)
-                .Returns(true);
-            httpContextMock.Setup(c => c.User.IsInRole(It.IsAny<string>()))
-                .Returns((string s) => String.Equals(s, _testUserRole, StringComparison.InvariantCultureIgnoreCase));
+            private FemahContext _femahContext;
+            private const string _testUserRole = "testrole";
+            private RoleBasedFeatureSwitch _featureSwitch;
 
-            // Create new FemahContext using mock HttpContext.
-            _femahContext = new FemahContext(httpContextMock.Object);
-        }
-
-        [Test]
-        public void ReturnsTrueWhenUserInRole()
-        {
-            var featureSwitch = new RoleBasedFeatureSwitch
+            [SetUp]
+            public void Initialize()
             {
-                IsEnabled = true,
-                Name = "testRoleBasedFeatureSwitch"
-            };
-            featureSwitch.AcceptedRoles.Add(_testUserRole);
+                CreateTestFeatureSwitch();
 
-            var result = featureSwitch.IsOn(_femahContext);
-            result.ShouldBe(true);
-        }
+                // Mock out the HttpContext - mock uses our local cookie collection.
+                var httpContextMock = CreateHttpContextMock();
 
-        [Test]
-        public void ReturnsFalseWhenUserNotInRole()
-        {
-            var featureSwitch = new RoleBasedFeatureSwitch
+                // Create new FemahContext using mock HttpContext.
+                _femahContext = new FemahContext(httpContextMock.Object);
+            }
+
+            [Test]
+            public void ReturnsTrue_IfUserIsInRole()
             {
-                IsEnabled = true,
-                Name = "testRoleBasedFeatureSwitch"
-            };
-            featureSwitch.AcceptedRoles.Add("adifferentrole");
+                _featureSwitch.AcceptedRoles.Add(_testUserRole);
 
-            var result = featureSwitch.IsOn(_femahContext);
-            result.ShouldBe(false);
-        }
+                var result = _featureSwitch.IsOn(_femahContext);
+                result.ShouldBe(true);
+            }
 
-        [Test]
-        public void ReturnsFalseWhenNoRoles()
-        {
-            var featureSwitch = new RoleBasedFeatureSwitch
+            [Test]
+            public void ReturnsFalse_IfUserIsNotInRole()
             {
-                IsEnabled = true,
-                Name = "testRoleBasedFeatureSwitch"
-            };
+                _featureSwitch.AcceptedRoles.Add("adifferentrole");
 
-            var result = featureSwitch.IsOn(_femahContext);
-            result.ShouldBe(false);
-        }
-        
-        [Test]
-        public void ReturnsTrueWhenUserInOneOfManyRoles()
-        {
-            var featureSwitch = new RoleBasedFeatureSwitch
+                var result = _featureSwitch.IsOn(_femahContext);
+                result.ShouldBe(false);
+            }
+
+            [Test]
+            public void ReturnsFalse_IfThereAreNoRoles()
             {
-                IsEnabled = true,
-                Name = "testRoleBasedFeatureSwitch"
-            };
+                var result = _featureSwitch.IsOn(_femahContext);
+                result.ShouldBe(false);
+            }
 
-            featureSwitch.AcceptedRoles.AddRange( new [] { "adifferentrole", "role2", _testUserRole });
+            [Test]
+            public void ReturnsTrue_IfUserIsInOneOfManyRoles()
+            {
+                _featureSwitch.AcceptedRoles.AddRange(new[] { "adifferentrole", "role2", _testUserRole });
 
-            var result = featureSwitch.IsOn(_femahContext);
-            result.ShouldBe(true);
+                var result = _featureSwitch.IsOn(_femahContext);
+                result.ShouldBe(true);
+            }
+
+            private static Mock<HttpContextBase> CreateHttpContextMock()
+            {
+                var httpContextMock = new Mock<HttpContextBase>();
+                httpContextMock.Setup(c => c.User.Identity.IsAuthenticated)
+                    .Returns(true);
+                httpContextMock.Setup(c => c.User.IsInRole(It.IsAny<string>()))
+                    .Returns((string s) => String.Equals(s, _testUserRole, StringComparison.InvariantCultureIgnoreCase));
+                return httpContextMock;
+            }
+
+            private void CreateTestFeatureSwitch()
+            {
+                _featureSwitch = new RoleBasedFeatureSwitch
+                {
+                    IsEnabled = true,
+                    Name = "testRoleBasedFeatureSwitch"
+                };
+            }
         }
     }
 }
