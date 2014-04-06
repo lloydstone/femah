@@ -1,5 +1,4 @@
-﻿using System;
-using System.Web;
+﻿using System.Web;
 using Femah.Core.FeatureSwitchTypes;
 using Moq;
 using NUnit.Framework;
@@ -19,9 +18,7 @@ namespace Femah.Core.Tests
             _cookies = new HttpCookieCollection();
 
             // Mock out the HttpContext - mock uses our local cookie collection.
-            var httpContextMock = new Mock<HttpContextBase>();
-            httpContextMock.Setup(c => c.Request.Cookies).Returns(_cookies);
-            httpContextMock.Setup(c => c.Response.Cookies).Returns(_cookies);
+            var httpContextMock = CreateContextMock();
 
             // Create new FemahContext using mock HttpContext.
             _femahContext = new FemahContext(httpContextMock.Object);
@@ -49,7 +46,7 @@ namespace Femah.Core.Tests
         [Test]
         public void SetsCookieWhenNoCookieExists()
         {
-            var featureSwitch = new PercentageFeatureSwitch()
+            var featureSwitch = new PercentageFeatureSwitch
             {
                 IsEnabled = true,
                 Name = "testPercentageFeatureSwitch"
@@ -66,35 +63,20 @@ namespace Femah.Core.Tests
         public void IsOnIffRandomNumberBelowThreshold()
         {
             // Random number below threshold (should be on).
-            var featureSwitch = new PercentageFeatureSwitch(() => 0.1)
-            {
-                PercentageOn = 30,
-                Name = "testfeatureswitch",
-                IsEnabled = true
-            };
+            var featureSwitch = CreateTestPercentageSwitch(0.1, 30);
 
             var result = featureSwitch.IsOn(_femahContext);
             result.ShouldBe(true);
 
             // Random number above threshold (should be off).
-            featureSwitch = new PercentageFeatureSwitch(() => 0.4)
-            {
-                PercentageOn = 30,
-                Name = "testfeatureswitch",
-                IsEnabled = true
-            };
+            featureSwitch = CreateTestPercentageSwitch(0.4, 30);
 
             _cookies.Clear();
             result = featureSwitch.IsOn(_femahContext);
             result.ShouldBe(false);
 
             // Random number same as threshold (should be off).
-            featureSwitch = new PercentageFeatureSwitch(() => 0.1)
-            {
-                PercentageOn = 10,
-                Name = "testfeatureswitch",
-                IsEnabled = true
-            };
+            featureSwitch = CreateTestPercentageSwitch(0.1, 10);
 
             _cookies.Clear();
             result = featureSwitch.IsOn(_femahContext);
@@ -102,16 +84,29 @@ namespace Femah.Core.Tests
 
 
             // Random number same as threshold, threshold is zero. (Should be off).
-            featureSwitch = new PercentageFeatureSwitch(() => 0.0)
-            {
-                PercentageOn = 0,
-                Name = "testfeatureswitch",
-                IsEnabled = true
-            };
+            featureSwitch = CreateTestPercentageSwitch(0.0, 0);
 
             _cookies.Clear();
             result = featureSwitch.IsOn(_femahContext);
             result.ShouldBe(false);
+        }
+
+        private static PercentageFeatureSwitch CreateTestPercentageSwitch(double randomValue, int percentageOn)
+        {
+            return new PercentageFeatureSwitch(() => randomValue)
+            {
+                PercentageOn = percentageOn,
+                Name = "testfeatureswitch",
+                IsEnabled = true
+            };
+        }
+
+        private Mock<HttpContextBase> CreateContextMock()
+        {
+            var httpContextMock = new Mock<HttpContextBase>();
+            httpContextMock.Setup(c => c.Request.Cookies).Returns(_cookies);
+            httpContextMock.Setup(c => c.Response.Cookies).Returns(_cookies);
+            return httpContextMock;
         }
     }
 }
