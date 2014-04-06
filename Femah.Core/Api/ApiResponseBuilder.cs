@@ -109,7 +109,7 @@ namespace Femah.Core.Api
                 
                 //Updated and desired FeatureSwitch states DO match, return to client
                 if (updatedFeatureSwitchState.Equals(desiredfeatureSwitchState))
-                    return SetResponseProperties(currentFeatureSwitchState.ToJson(), HttpStatusCode.OK);
+                    return SetResponseProperties(updatedFeatureSwitchState.ToJson(), HttpStatusCode.OK);
 
                 //Updated and desired FeatureSwitch states do NOT match, roll back change
                 //This is probably not the best way to do this, TODO: maybe make all changes within a transaction?

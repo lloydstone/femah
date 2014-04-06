@@ -23,7 +23,7 @@ namespace Femah.Core.Providers
 
             foreach (var featureSwitch in featureSwitches)
             {
-                _featureSwitches.Add(new SimpleFeatureSwitch { Name = featureSwitch, IsEnabled = false, FeatureType = featureSwitch.GetType().Name});
+                _featureSwitches.Add(new SimpleFeatureSwitch { Name = featureSwitch, IsEnabled = false, FeatureType = typeof(SimpleFeatureSwitch).AssemblyQualifiedName });
             }
         }
 

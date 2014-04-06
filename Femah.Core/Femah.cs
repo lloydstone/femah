@@ -145,7 +145,7 @@ namespace Femah.Core
             {
                 newFeatureSwitch.Name = featureSwitch.Name;
                 newFeatureSwitch.IsEnabled = featureSwitch.IsEnabled;
-                newFeatureSwitch.FeatureType = featureSwitch.GetType().Name;
+                newFeatureSwitch.FeatureType = featureSwitch.GetType().AssemblyQualifiedName;
             }
 
             // Save as the new type of feature switch.
