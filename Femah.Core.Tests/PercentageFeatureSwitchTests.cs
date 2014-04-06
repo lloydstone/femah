@@ -6,6 +6,8 @@ using Shouldly;
 
 namespace Femah.Core.Tests
 {
+    using System.Runtime.Remoting.Messaging;
+
     public class PercentageFeatureSwitchTests
     {
         public class TheIsOnMethod
@@ -27,9 +29,9 @@ namespace Femah.Core.Tests
             }
 
             [Test]
-            [TestCase(true)]
-            [TestCase(false)]
-            public void ReturnsValueFromCookie_IfCookieExists(bool cookieValue)
+            [TestCase(true, Result=true)]
+            [TestCase(false, Result=false)]
+            public bool ReturnsValueFromCookie_IfCookieExists(bool cookieValue)
             {
                 var featureSwitch = new PercentageFeatureSwitch
                 {
@@ -38,8 +40,7 @@ namespace Femah.Core.Tests
                 };
 
                 _cookies.Add(new HttpCookie(featureSwitch.Name, cookieValue.ToString()));
-                var result = featureSwitch.IsOn(_femahContext);
-                result.ShouldBe(cookieValue);
+                return featureSwitch.IsOn(_femahContext);
             }
 
             [Test]
@@ -59,16 +60,14 @@ namespace Femah.Core.Tests
             }
 
             [Test]
-            [TestCase(0.1, 30, true)] // Random number below threshold (should be on).
-            [TestCase(0.4, 30, false)] // Random number above threshold (should be off).
-            [TestCase(0.1, 10, false)] // Random number same as threshold (should be off).
-            [TestCase(0.0, 0, false)] // Random number same as threshold, threshold is zero. (Should be off).
-            public void ReturnsFalse_IfRandomNumberIsBelowThreshold(double randomNumber, int percentageOn, bool expectedResult)
+            [TestCase(0.1, 30, Result=true)] // Random number below threshold (should be on).
+            [TestCase(0.4, 30, Result=false)] // Random number above threshold (should be off).
+            [TestCase(0.1, 10, Result=false)] // Random number same as threshold (should be off).
+            [TestCase(0.0, 0, Result=false)] // Random number same as threshold, threshold is zero. (Should be off).
+            public bool ReturnsFalse_IfRandomNumberIsBelowThreshold(double randomNumber, int percentageOn)
             {
                 var featureSwitch = CreateTestPercentageSwitch(randomNumber, percentageOn);
-
-                var result = featureSwitch.IsOn(_femahContext);
-                result.ShouldBe(expectedResult);
+                return featureSwitch.IsOn(_femahContext);
             }
 
             private static PercentageFeatureSwitch CreateTestPercentageSwitch(double randomValue, int percentageOn)
