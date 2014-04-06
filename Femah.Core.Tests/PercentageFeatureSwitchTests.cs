@@ -60,35 +60,16 @@ namespace Femah.Core.Tests
         }
 
         [Test]
-        public void IsOnIffRandomNumberBelowThreshold()
+        [TestCase(0.1, 30, true)] // Random number below threshold (should be on).
+        [TestCase(0.4, 30, false)] // Random number above threshold (should be off).
+        [TestCase(0.1, 10, false)] // Random number same as threshold (should be off).
+        [TestCase(0.0, 0, false)] // Random number same as threshold, threshold is zero. (Should be off).
+        public void IsOnIffRandomNumberBelowThreshold(double randomNumber, int percentageOn, bool expectedResult)
         {
-            // Random number below threshold (should be on).
-            var featureSwitch = CreateTestPercentageSwitch(0.1, 30);
+            var featureSwitch = CreateTestPercentageSwitch(randomNumber, percentageOn);
 
             var result = featureSwitch.IsOn(_femahContext);
-            result.ShouldBe(true);
-
-            // Random number above threshold (should be off).
-            featureSwitch = CreateTestPercentageSwitch(0.4, 30);
-
-            _cookies.Clear();
-            result = featureSwitch.IsOn(_femahContext);
-            result.ShouldBe(false);
-
-            // Random number same as threshold (should be off).
-            featureSwitch = CreateTestPercentageSwitch(0.1, 10);
-
-            _cookies.Clear();
-            result = featureSwitch.IsOn(_femahContext);
-            result.ShouldBe(false);
-
-
-            // Random number same as threshold, threshold is zero. (Should be off).
-            featureSwitch = CreateTestPercentageSwitch(0.0, 0);
-
-            _cookies.Clear();
-            result = featureSwitch.IsOn(_femahContext);
-            result.ShouldBe(false);
+            result.ShouldBe(expectedResult);
         }
 
         private static PercentageFeatureSwitch CreateTestPercentageSwitch(double randomValue, int percentageOn)
