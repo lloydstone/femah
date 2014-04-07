@@ -116,7 +116,7 @@ namespace Femah.Core.Tests
         #region ApiResponseBuilder
 
         [Test]
-        public void ApiResponseBuilderSetsHttpStatusCodeTo304AndReturnsAccurateErrorMessageInResponseBodyIfPutRequestBodyIsValidJsonButFeatureSwitchHasNoChanges()
+        public void ApiResponseBuilderSetsHttpStatusCodeTo304IfPutRequestBodyIsValidJsonButFeatureSwitchHasNoChanges()
         {
             //Arrange
             const string validFeatureType = "Femah.Core.FeatureSwitchTypes.SimpleFeatureSwitch, Femah.Core, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null";
@@ -149,7 +149,7 @@ namespace Femah.Core.Tests
 
             //Assert
             Assert.AreEqual((int)HttpStatusCode.NotModified, apiResponse.HttpStatusCode);
-            Assert.AreEqual(jsonRequestAndResponse, apiResponse.Body);
+            Assert.AreEqual(string.Empty, apiResponse.Body);
         }
 
         [Test]
@@ -321,7 +321,7 @@ namespace Femah.Core.Tests
         
         [Test]
         //[Ignore("We are now testing this in the ApiResponseBuilder(), keep this as an integration test maybe?")]
-        public void ProcessPutRequestSetsHttpStatusCodeTo304AndReturnsAccurateErrorMessageInResponseBodyIfPutRequestBodyIsValidJsonButFeatureSwitchHasNoChanges()
+        public void ProcessPutRequestSetsHttpStatusCodeTo304IfPutRequestBodyIsValidJsonButFeatureSwitchHasNoChanges()
         {
             //Arrange
             const string validFeatureType = "Femah.Core.FeatureSwitchTypes.SimpleFeatureSwitch, Femah.Core, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null";
@@ -358,7 +358,7 @@ namespace Femah.Core.Tests
 
             //Assert
             Assert.AreEqual((int)HttpStatusCode.NotModified, apiResponse.HttpStatusCode);
-            Assert.AreEqual(jsonRequestAndResponse, apiResponse.Body);
+            Assert.AreEqual(string.Empty, apiResponse.Body);
         }
 
 
