@@ -92,7 +92,7 @@ namespace Femah.Core.Api
                 if (currentFeatureSwitchState.Equals(desiredfeatureSwitchState))
                 {
                     //Desired state and current state of FeatureSwitch are identical
-                    return SetResponseProperties(currentFeatureSwitchState.ToJson(), HttpStatusCode.NotModified);
+                    return SetResponseProperties(HttpStatusCode.NotModified);
                 }
 
                 //Desired state and current state of FeatureSwitch differ, we update *everything*, 
@@ -176,6 +176,11 @@ namespace Femah.Core.Api
         {
             //TODO: Use JSON.NET to validate if the Body is JSON??
             return new ApiResponse { Body = body, HttpStatusCode = (int)httpStatusCode };
+        }
+
+        private static ApiResponse SetResponseProperties(HttpStatusCode httpStatusCode)
+        {
+            return new ApiResponse { Body = string.Empty, HttpStatusCode = (int)httpStatusCode };
         }
 
 
