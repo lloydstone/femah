@@ -58,10 +58,10 @@ namespace Femah.Core.Tests
             }
 
             [Test]
-            [TestCase(0.1, 30, Result=true)] // Random number below threshold (should be on).
-            [TestCase(0.4, 30, Result=false)] // Random number above threshold (should be off).
-            [TestCase(0.1, 10, Result=false)] // Random number same as threshold (should be off).
-            [TestCase(0.0, 0, Result=false)] // Random number same as threshold, threshold is zero. (Should be off).
+            [TestCase(0.1, 30, Result = true, TestName = "Random number below threshold (should be on)")]
+            [TestCase(0.4, 30, Result = false, TestName = "Random number above threshold (should be off)")]
+            [TestCase(0.1, 10, Result = false, TestName = "Random number same as threshold (should be off)")]
+            [TestCase(0.0, 0, Result = false, TestName = "Random number same as threshold, threshold is zero. (Should be off)")]
             public bool ReturnsFalse_IfRandomNumberIsBelowThreshold(double randomNumber, int percentageOn)
             {
                 var featureSwitch = CreateTestPercentageSwitch(randomNumber, percentageOn);
