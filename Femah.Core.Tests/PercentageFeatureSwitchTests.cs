@@ -6,8 +6,6 @@ using Shouldly;
 
 namespace Femah.Core.Tests
 {
-    using System.Runtime.Remoting.Messaging;
-
     public class PercentageFeatureSwitchTests
     {
         public class TheIsOnMethod
