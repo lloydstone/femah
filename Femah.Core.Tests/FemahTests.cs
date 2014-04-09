@@ -24,38 +24,12 @@ namespace Femah.Core.Tests
         #region FeatureSwitch Equality tests
 
         [Test]
-        public void TwoSimpleFeatureSwitchesAreEqualIfAllPropertyValuesAreIdentical()
+        public void GivenTwoPercentageFeatureSwitches_ReturnsTrue_IfAllPropertyValuesAreIdentical()
         {
             //Arrange
             const string validFeatureType = "Femah.Core.FeatureSwitchTypes.SimpleFeatureSwitch, Femah.Core, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null";
-            var featureSwitch1 = new SimpleFeatureSwitch
-            {
-                Name = "TestFeatureSwitch1",
-                FeatureType = validFeatureType,
-                IsEnabled = true
-            };
-            var featureSwitch2 = new SimpleFeatureSwitch
-            {
-                Name = "TestFeatureSwitch1",
-                FeatureType = validFeatureType,
-                IsEnabled = true
-            };
-
-            //Act
-            var equal = featureSwitch1.Equals(featureSwitch2);
-
-            //Assert
-            Assert.IsTrue(equal);
-        }
-
-        [Test]
-        public void TwoPercentageFeatureSwitchesAreEqualIfAllPropertyValuesAreIdentical()
-        {
-            //Arrange
-            const string validFeatureType = "Femah.Core.FeatureSwitchTypes.SimpleFeatureSwitch, Femah.Core, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null";
-            var customAttributes1 = new Dictionary<string, string> {{"percentage", "50"}};
-            var customAttributes2 = new Dictionary<string, string> {{"percentage", "50"}};
-
+            var customAttributes1 = new Dictionary<string, string> { { "percentage", "50" } };
+            var customAttributes2 = new Dictionary<string, string> { { "percentage", "50" } };
 
             var featureSwitch1 = new PercentageFeatureSwitch
             {
@@ -88,79 +62,7 @@ namespace Femah.Core.Tests
             //Assert
             Assert.IsTrue(equal);
         }
-
-        [Test]
-        public void TwoSimpleFeatureSwitchesAreNotEqualIfNamesAreDifferent()
-        {
-            //Arrange
-            const string validFeatureType = "Femah.Core.FeatureSwitchTypes.SimpleFeatureSwitch, Femah.Core, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null";
-            var featureSwitch1 = new SimpleFeatureSwitch
-            {
-                Name = "TestFeatureSwitch1",
-                FeatureType = validFeatureType
-            };
-            var featureSwitch2 = new SimpleFeatureSwitch
-            {
-                Name = "TestFeatureSwitch2",
-                FeatureType = validFeatureType
-            };
-
-            //Act
-            var equal = featureSwitch1.Equals(featureSwitch2);
-
-            //Assert
-            Assert.IsFalse(equal);
-        }
-
-        [Test]
-        public void TwoFeatureSwitchesAreNotEqualIfFeatureTypesAreDifferent()
-        {
-            //Arrange
-            const string validFeatureType1 = "Femah.Core.FeatureSwitchTypes.SimpleFeatureSwitch, Femah.Core, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null";
-            const string validFeatureType2 = "Femah.Core.FeatureSwitchTypes.PercentageFeatureSwitch, Femah.Core, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null";
-            var featureSwitch1 = new SimpleFeatureSwitch
-            {
-                Name = "TestFeatureSwitch1",
-                FeatureType = validFeatureType1
-            };
-            var featureSwitch2 = new PercentageFeatureSwitch
-            {
-                Name = "TestFeatureSwitch1",
-                FeatureType = validFeatureType2
-            };
-
-            //Act
-            var equal = featureSwitch1.Equals(featureSwitch2);
-
-            //Assert
-            Assert.IsFalse(equal);
-        }
-
-        [Test]
-        public void TwoFeatureSwitchesAreNotEqualIfIsEnabledStatesAreDifferent()
-        {
-            //Arrange
-            const string validFeatureType = "Femah.Core.FeatureSwitchTypes.SimpleFeatureSwitch, Femah.Core, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null";
-            var featureSwitch1 = new SimpleFeatureSwitch
-            {
-                Name = "TestFeatureSwitch1",
-                FeatureType = validFeatureType,
-                IsEnabled = true
-            };
-            var featureSwitch2 = new SimpleFeatureSwitch
-            {
-                Name = "TestFeatureSwitch1",
-                FeatureType = validFeatureType,
-                IsEnabled = false
-            };
-
-            //Act
-            var equal = featureSwitch1.Equals(featureSwitch2);
-
-            //Assert
-            Assert.IsFalse(equal);
-        }
-
+        
         //TODO: Review to determine if we're mocking properly.
         [Test]
         public void TwoFeatureSwitchesAreNotEqualIfCustomAttributesAreDifferent()
@@ -201,8 +103,6 @@ namespace Femah.Core.Tests
             //Assert
             Assert.IsFalse(equal);
         }
-
-
         #endregion
 
         #region Tolerant Json Reader Tests
@@ -392,4 +292,3 @@ namespace Femah.Core.Tests
         }
     }
 }
-
