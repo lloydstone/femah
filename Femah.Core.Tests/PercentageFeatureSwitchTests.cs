@@ -27,8 +27,8 @@ namespace Femah.Core.Tests
             }
 
             [Test]
-            [TestCase(true, Result=true)]
-            [TestCase(false, Result=false)]
+            [TestCase(true, Result = true, TestName="ReturnsTrueFromCookie_IfCookieExistsWithTrueValue")]
+            [TestCase(false, Result = false, TestName="ReturnsFalseFromCookie_IfCookieExistsWithFalseValue")]
             public bool ReturnsValueFromCookie_IfCookieExists(bool cookieValue)
             {
                 var featureSwitch = new PercentageFeatureSwitch
