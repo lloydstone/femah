@@ -27,9 +27,9 @@ namespace Femah.Core.Tests
             }
 
             [Test]
-            [TestCase(true, Result = true, TestName="ReturnsTrueFromCookie_IfCookieExistsWithTrueValue")]
-            [TestCase(false, Result = false, TestName="ReturnsFalseFromCookie_IfCookieExistsWithFalseValue")]
-            public bool ReturnsValueFromCookie_IfCookieExists(bool cookieValue)
+            [TestCase(true, Result = true, TestName="ReturnsTrueSwitchState_IfCookieExistsWithTrueValue")]
+            [TestCase(false, Result = false, TestName="ReturnsFalseSwitchState_IfCookieExistsWithFalseValue")]
+            public bool ReturnsSwitchState_DependantOnCookieValue(bool cookieValue)
             {
                 var featureSwitch = new PercentageFeatureSwitch
                 {
@@ -62,7 +62,7 @@ namespace Femah.Core.Tests
             [TestCase(0.4, 30, Result = false, TestName = "ReturnsFalse_IfRandomNumberIsAboveThreshold")]
             [TestCase(0.1, 10, Result = false, TestName = "ReturnsFalse_IfRandomNumberIsSameAsThreshold")]
             [TestCase(0.0, 0, Result = false, TestName = "ReturnsFalse_IfRandomNumberIsSameAsThreshold_AndThresholdIsZero")]
-            public bool ReturnsFalse_IfRandomNumberIsBelowThreshold(double randomNumber, int percentageOn)
+            public bool ReturnsSwitchState_DependantOnComparisonOfRandomNumberToThreshold(double randomNumber, int percentageOn)
             {
                 var featureSwitch = CreateTestPercentageSwitch(randomNumber, percentageOn);
                 return featureSwitch.IsOn(_femahContext);
