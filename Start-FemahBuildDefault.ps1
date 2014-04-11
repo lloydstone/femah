@@ -22,7 +22,8 @@ Properties {
 	$minor = 1
 }
 
-$ErrorActionPreference = 'Stop'
+$ErrorActionPreference = "Stop"
+$DebugPreference = "Continue"
 
 $basePath = Resolve-Path .
 $baseModulePath = "$basePath\lib\powershell\modules"
@@ -33,7 +34,7 @@ Task default -depends Invoke-Commit
 #*================================================================================================
 #* Purpose: A top-level task that orchestrates the Commit phase of the deployment pipeline.
 #*================================================================================================
-Task Invoke-Commit -depends Invoke-Compile, Invoke-UnitTests, New-Packages {
+Task Invoke-Commit -depends Invoke-Compile, Invoke-UnitTests, Update-ReleaseNotesFromGithub, New-Packages {
 
 	Write-Host "Undoing AssemblyInfo.cs file changes"
 	Import-Module "$baseModulePath\Undo-GitFileModifications.psm1"
@@ -107,5 +108,51 @@ Task New-Packages {
 	Remove-Module New-NuGetPackage
 }
 
+#*================================================================================================
+#* Purpose: Retrieves the matching Release from Github for the current [major].[minor] build and
+#* updates the <releaseNotes></releaseNotes> element within the .nuspec file prior to packaging 
+#* the NuGet and Symbolsource packages.
+#*================================================================================================
+Task Update-ReleaseNotesFromGithub {
+
+$user = "c2e14cc45b7977286d576b0e4d8bb5ff2767359f"
+$pass = "x-oauth-basic"
+
+$params = @{
+	  Uri = 'https://api.github.com/repos/lloydstone/femah/releases';
+      Method = 'GET';
+      Headers = @{
+        Authorization = 'Basic ' + [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes("$($user):$($pass)"));
+		UserAgent = 'User-Agent: femah-deployment-pipeline'
+      }
+      ContentType = 'application/json';
+    }  
+	
+	$releases = Invoke-RestMethod @params
+	
+	$tagName = "v$major.$minor*"
+	Write-Debug "Finding release that matches tag_name:$tagName"
+	$singleRelease = $releases | Select-Object | Where-Object {$_.tag_name -like $tagName}
+	if ($singleRelease.Count -gt 1)
+	{
+		throw "More than one release exists matching the tag_name:$tagName, please rectify and try again."
+	}	
+	
+	$femahCoreNuspecPath = "$basePath\Femah.Core\Femah.Core.nuspec"
+	Write-Debug "Found release: $($singleRelease.tag_name), updating release notes in $femahCoreNuspecPath"
+	
+	Try {
+		[xml]$x = Get-Content $femahCoreNuspecPath
+		Select-Xml -xml $x -XPath //package/metadata/releaseNotes |
+		% { $_.Node.InnerText = $singleRelease.body
+		  }
+		$x.Save($femahCoreNuspecPath)
+	}
+	Catch [System.Exception]
+	{
+		throw "Error reading from/writing to file: $femahCoreNuspecPath, unable to update release notes. `r`n $_.Exception.ToString()"
+	}
+	
+}
 
 
