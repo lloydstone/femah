@@ -58,10 +58,10 @@ namespace Femah.Core.Tests
             }
 
             [Test]
-            [TestCase(0.1, 30, Result = true, TestName = "ReturnsTrue_IfRandomNumberIsBelowThreshold")]
-            [TestCase(0.4, 30, Result = false, TestName = "ReturnsFalse_IfRandomNumberIsAboveThreshold")]
-            [TestCase(0.1, 10, Result = false, TestName = "ReturnsFalse_IfRandomNumberIsSameAsThreshold")]
-            [TestCase(0.0, 0, Result = false, TestName = "ReturnsFalse_IfRandomNumberIsSameAsThreshold_AndThresholdIsZero")]
+            [TestCase(0.1, 30, Result = true, TestName = "ReturnsTrueSwitchState_IfRandomNumberIsBelowThreshold")]
+            [TestCase(0.4, 30, Result = false, TestName = "ReturnsFalseSwitchState_IfRandomNumberIsAboveThreshold")]
+            [TestCase(0.1, 10, Result = false, TestName = "ReturnsFalseSwitchState_IfRandomNumberIsSameAsThreshold")]
+            [TestCase(0.0, 0, Result = false, TestName = "ReturnsFalseSwitchState_IfRandomNumberIsSameAsThreshold_AndThresholdIsZero")]
             public bool ReturnsSwitchState_DependantOnComparisonOfRandomNumberToThreshold(double randomNumber, int percentageOn)
             {
                 var featureSwitch = CreateTestPercentageSwitch(randomNumber, percentageOn);
