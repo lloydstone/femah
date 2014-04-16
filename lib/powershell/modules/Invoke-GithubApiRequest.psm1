@@ -11,9 +11,11 @@ function Invoke-GithubApiRequest{
 .PARAMETER uri
 	Required. The complete Uri to use in the HTTP request.
 .PARAMETER method
-	Required. The HTTP method to use in the HTTP request, valid options are GET, PUT 
+	Required. The HTTP method to use in the HTTP request, valid options are 'GET' or 'POST'
 .PARAMETER githubToken
 	Required. An active Github API token to authenticate against the Github API with.
+.PARAMETER body
+	Optional. A valid and escaped JSON string body to pass with the request.
 .EXAMPLE 
 	Import-Module Invoke-GithubApiRequest
 	Import the module
@@ -37,7 +39,11 @@ function Invoke-GithubApiRequest{
 			[Parameter(
 				Position = 2,
 				Mandatory = $True )]
-				[string]$githubToken				
+				[string]$githubToken,
+			[Parameter(
+				Position = 3,
+				Mandatory = $False )]
+				[string]$body				
 			)
 
 	Begin {
@@ -55,6 +61,7 @@ function Invoke-GithubApiRequest{
 						UserAgent = 'User-Agent: femah-deployment-pipeline'
 					  }
 					  ContentType = 'application/json';
+					  Body = if ($body -ne "") { $body };
 					}  
 					
 					return Invoke-RestMethod @params

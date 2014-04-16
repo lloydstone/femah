@@ -21,8 +21,7 @@ Properties {
 	$major = 0
 	$minor = 1
 	$beta = "-beta"
-	$buildNumberToPublish = "$major.$minor.$buildCounter$beta"
-	
+
 	$githubToken = "c2e14cc45b7977286d576b0e4d8bb5ff2767359f"
 	
 	$script:githubRelease = ""
@@ -37,10 +36,48 @@ $script:assemblyInformationalVersion = ""
 
 Task default -depends Invoke-Commit
 
+
+#*================================================================================================
+#* Purpose: A task that orchestrates the Publish phase of the femah deployment pipeline.
+#*================================================================================================
+Task Publish-Femah -depends Update-GithubReleaseTagName {
+
+}
+
+#*================================================================================================
+#* Purpose: Updates the tag_name of the matching Release from Github for the current [major].[minor] 
+#* build with the full build number of the current build, i.e. v[major].[minor].[counter] that we
+#* intend to publish to Nuget.org.
+#*================================================================================================
+Task Update-GithubReleaseTagName -depends Get-GithubRelease {
+
+	#Determined by the task Get-GithubRelease
+	$singleRelease = $script:githubRelease
+	$githubReleaseId = $script:githubRelease.Id
+	
+	$buildNumberToTagReleaseWith = "v$major.$minor.$buildCounter$beta"
+	$jsonBody = "{""tag_name"":""$buildNumberToTagReleaseWith""}" 
+	Write-Debug "Updating Github release: ""$($script:githubRelease.name)"" from tag_name: ""$($script:githubRelease.tag_name)"" to tag_name: ""$buildNumberToTagReleaseWith"""
+	
+	Import-Module "$baseModulePath\Invoke-GithubApiRequest.psm1"
+	$updatedRelease = Invoke-GithubApiRequest -uri "https://api.github.com/repos/lloydstone/femah/releases/$githubReleaseId" -method Post -githubToken $githubToken -body $jsonBody
+	Remove-Module Invoke-GithubApiRequest
+	
+	if ($updatedRelease.tag_name -eq $buildNumberToTagReleaseWith){
+		Write-Debug "Successfully updated release: ""$($updatedRelease.name)"" with tag_name: ""$($updatedRelease.tag_name)"""
+	}
+	else {
+		throw "Error updating github release with tag_name: $buildNumberToTagReleaseWith"
+	}
+		
+}
+
+
 #*================================================================================================
 #* Purpose: A top-level task that orchestrates the Commit phase of the deployment pipeline.
 #*================================================================================================
 Task Invoke-Commit -depends Invoke-Compile, Invoke-UnitTests, Update-ReleaseNotesFromGithub, New-Packages {
+
 	Write-Host "Undoing AssemblyInfo.cs file changes"
 	Import-Module "$baseModulePath\Undo-GitFileModifications.psm1"
 	Undo-GitFileModifications -fileName AssemblyInfo.cs -gitPath $gitPath
@@ -119,7 +156,7 @@ Task New-Packages {
 Task Update-ReleaseNotesFromGithub -depends Get-GithubRelease {
 
 	$femahCoreNuspecPath = "$basePath\Femah.Core\Femah.Core.nuspec"
-	Write-Debug "Found release: $($script:githubRelease.tag_name), updating release notes in $femahCoreNuspecPath"
+	Write-Debug "Updating release notes in $femahCoreNuspecPath for release: $($script:githubRelease.tag_name) "
 	
 	Try {
 		[xml]$x = Get-Content $femahCoreNuspecPath
@@ -145,13 +182,14 @@ Task Get-GithubRelease {
 	Remove-Module Invoke-GithubApiRequest
 		
 	$tagName = "v$major.$minor*"
-	Write-Debug "Finding release that matches tag_name:$tagName"
+	Write-Debug "Finding release that matches tag_name: ""$tagName"""
 	$singleRelease = $releases | Select-Object | Where-Object {$_.tag_name -like $tagName}
 	if ($singleRelease.Count -gt 1)
 	{
 		throw "More than one release exists matching the tag_name:$tagName, please rectify and try again."
 	}	
 	$script:githubRelease = $singleRelease
+	Write-Debug "Found release with name: ""$($script:githubRelease.name)"" and tag_name: ""$($script:githubRelease.tag_name)"""
 
 }
 
