@@ -45,9 +45,8 @@ Task Publish-Femah -depends Update-GithubReleaseTagName {
 }
 
 #*================================================================================================
-#* Purpose: Updates the tag_name of the matching Release from Github for the current [major].[minor] 
-#* build with the full build number of the current build, i.e. v[major].[minor].[counter] that we
-#* intend to publish to Nuget.org.
+#* Purpose: Updates the tag_name of the matching Release in Github that we intend to publish to 
+#* Nuget.org with the current build number, i.e. v[major].[minor].[counter], e.g. v0.1.57-beta
 #*================================================================================================
 Task Update-GithubReleaseTagName -depends Get-GithubRelease {
 
