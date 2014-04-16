@@ -20,6 +20,12 @@ Properties {
 	
 	$major = 0
 	$minor = 1
+	$beta = "-beta"
+	$buildNumberToPublish = "$major.$minor.$buildCounter$beta"
+	
+	$githubToken = "c2e14cc45b7977286d576b0e4d8bb5ff2767359f"
+	
+	$script:githubRelease = ""
 }
 
 $ErrorActionPreference = "Stop"
@@ -35,7 +41,6 @@ Task default -depends Invoke-Commit
 #* Purpose: A top-level task that orchestrates the Commit phase of the deployment pipeline.
 #*================================================================================================
 Task Invoke-Commit -depends Invoke-Compile, Invoke-UnitTests, Update-ReleaseNotesFromGithub, New-Packages {
-
 	Write-Host "Undoing AssemblyInfo.cs file changes"
 	Import-Module "$baseModulePath\Undo-GitFileModifications.psm1"
 	Undo-GitFileModifications -fileName AssemblyInfo.cs -gitPath $gitPath
@@ -109,42 +114,17 @@ Task New-Packages {
 }
 
 #*================================================================================================
-#* Purpose: Retrieves the matching Release from Github for the current [major].[minor] build and
-#* updates the <releaseNotes></releaseNotes> element within the .nuspec file prior to packaging 
-#* the NuGet and Symbolsource packages.
+#* Purpose: Updates the <releaseNotes></releaseNotes> element within the .nuspec file.
 #*================================================================================================
-Task Update-ReleaseNotesFromGithub {
+Task Update-ReleaseNotesFromGithub -depends Get-GithubRelease {
 
-$user = "c2e14cc45b7977286d576b0e4d8bb5ff2767359f"
-$pass = "x-oauth-basic"
-
-$params = @{
-	  Uri = 'https://api.github.com/repos/lloydstone/femah/releases';
-      Method = 'GET';
-      Headers = @{
-        Authorization = 'Basic ' + [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes("$($user):$($pass)"));
-		UserAgent = 'User-Agent: femah-deployment-pipeline'
-      }
-      ContentType = 'application/json';
-    }  
-	
-	$releases = Invoke-RestMethod @params
-	
-	$tagName = "v$major.$minor*"
-	Write-Debug "Finding release that matches tag_name:$tagName"
-	$singleRelease = $releases | Select-Object | Where-Object {$_.tag_name -like $tagName}
-	if ($singleRelease.Count -gt 1)
-	{
-		throw "More than one release exists matching the tag_name:$tagName, please rectify and try again."
-	}	
-	
 	$femahCoreNuspecPath = "$basePath\Femah.Core\Femah.Core.nuspec"
-	Write-Debug "Found release: $($singleRelease.tag_name), updating release notes in $femahCoreNuspecPath"
+	Write-Debug "Found release: $($script:githubRelease.tag_name), updating release notes in $femahCoreNuspecPath"
 	
 	Try {
 		[xml]$x = Get-Content $femahCoreNuspecPath
 		Select-Xml -xml $x -XPath //package/metadata/releaseNotes |
-		% { $_.Node.InnerText = $singleRelease.body
+		% { $_.Node.InnerText = $script:githubRelease.body
 		  }
 		$x.Save($femahCoreNuspecPath)
 	}
@@ -153,6 +133,26 @@ $params = @{
 		throw "Error reading from/writing to file: $femahCoreNuspecPath, unable to update release notes. `r`n $_.Exception.ToString()"
 	}
 	
+}
+
+#*================================================================================================
+#* Purpose: Retrieves the matching Release from Github for the current [major].[minor] build.
+#*================================================================================================
+Task Get-GithubRelease {
+
+	Import-Module "$baseModulePath\Invoke-GithubApiRequest.psm1"
+	$releases = Invoke-GithubApiRequest -uri "https://api.github.com/repos/lloydstone/femah/releases" -method GET -githubToken $githubToken
+	Remove-Module Invoke-GithubApiRequest
+		
+	$tagName = "v$major.$minor*"
+	Write-Debug "Finding release that matches tag_name:$tagName"
+	$singleRelease = $releases | Select-Object | Where-Object {$_.tag_name -like $tagName}
+	if ($singleRelease.Count -gt 1)
+	{
+		throw "More than one release exists matching the tag_name:$tagName, please rectify and try again."
+	}	
+	$script:githubRelease = $singleRelease
+
 }
 
 
