@@ -174,14 +174,14 @@ Task Invoke-Commit -depends Invoke-Compile, Invoke-UnitTests, Update-ReleaseNote
 #*================================================================================================
 Task Invoke-Compile -depends Invoke-HardcoreClean, Set-VersionNumber {
 
-	if($configMode -ne "Debug" -or $configMode -ne "Release")
+	if(($configMode -ne "Debug") -and ($configMode -ne "Release"))
 	{ 
-		Write-Host "Unknown configMode $configMode supplied.  Valid values are 'Debug' or 'Release', changing to default 'Release'"
+		Write-Host "Unknown configMode ""$configMode"" supplied.  Valid values are ""Debug"" or ""Release"", changing to default 'Release'"
 		$configMode = "Release"
 	}
 	$solutionFile = "Femah.sln"
 	Write-Host "Building ""$solutionFile"" in ""$configMode"" mode."
-	exec { & $msbuildPath $solutionFile /t:ReBuild /t:Clean /p:Configuration=$configMode /p:PlatformTarget=AnyCPU /m}
+	exec { & $msbuildPath $solutionFile /t:ReBuild /t:Clean /p:Configuration=$configMode /p:PlatformTarget=AnyCPU /m }
 }
 
 #*================================================================================================
