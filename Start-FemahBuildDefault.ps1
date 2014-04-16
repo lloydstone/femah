@@ -38,10 +38,39 @@ Task default -depends Invoke-Commit
 
 
 #*================================================================================================
-#* Purpose: A task that orchestrates the Publish phase of the femah deployment pipeline.
+#* Purpose: A task that orchestrates the Publish phase of the deployment pipeline.
 #*================================================================================================
-Task Publish-Femah -depends Update-GithubReleaseTagName {
+Task Publish-Femah -depends Publish-GithubRelease {
 
+}
+
+#*================================================================================================
+#* Purpose: Updates the status of the matching Release in Github that we intend to publish to 
+#* Nuget.org to be 'Published'.
+#*================================================================================================
+Task Publish-GithubRelease -depends Update-GithubReleaseTagName {
+
+	#Check the release obtained by the task Update-GithubReleaseTagName
+	if ($script:githubRelease.draft -eq $false){
+		Write-Debug "Release: ""$($script:githubRelease.name)"" with tag_name: ""$($script:githubRelease.tag_name)"" already set to ""Published"" status. Nothing more to do."
+		return
+	}
+	
+	$githubReleaseId = $script:githubRelease.Id
+		
+	$jsonBody = "{""draft"":""false""}" 
+	Write-Debug "Updating Github release: ""$($script:githubRelease.name)"" with tag_name: ""$($script:githubRelease.tag_name)"" to ""Published"" status."
+	
+	Import-Module "$baseModulePath\Invoke-GithubApiRequest.psm1"
+	$updatedRelease = Invoke-GithubApiRequest -uri "https://api.github.com/repos/lloydstone/femah/releases/$githubReleaseId" -method Post -githubToken $githubToken -body $jsonBody
+	Remove-Module Invoke-GithubApiRequest
+	
+	if ($updatedRelease.draft -eq $false){
+		Write-Debug "Successfully updated release: ""$($updatedRelease.name)"" with tag_name: ""$($updatedRelease.tag_name)"" to ""Published"" status."
+	}
+	else {
+		throw "Error updating Github release: ""$($script:githubRelease.name)"" with tag_name: $($script:githubRelease.tag_name) to ""Published"" status."
+	}
 }
 
 #*================================================================================================
@@ -59,18 +88,17 @@ Task Update-GithubReleaseTagName -depends Get-GithubRelease {
 	Write-Debug "Updating Github release: ""$($script:githubRelease.name)"" from tag_name: ""$($script:githubRelease.tag_name)"" to tag_name: ""$buildNumberToTagReleaseWith"""
 	
 	Import-Module "$baseModulePath\Invoke-GithubApiRequest.psm1"
-	$updatedRelease = Invoke-GithubApiRequest -uri "https://api.github.com/repos/lloydstone/femah/releases/$githubReleaseId" -method Post -githubToken $githubToken -body $jsonBody
+	$script:githubRelease = Invoke-GithubApiRequest -uri "https://api.github.com/repos/lloydstone/femah/releases/$githubReleaseId" -method Post -githubToken $githubToken -body $jsonBody
 	Remove-Module Invoke-GithubApiRequest
 	
-	if ($updatedRelease.tag_name -eq $buildNumberToTagReleaseWith){
-		Write-Debug "Successfully updated release: ""$($updatedRelease.name)"" with tag_name: ""$($updatedRelease.tag_name)"""
+	if ($script:githubRelease.tag_name -eq $buildNumberToTagReleaseWith){
+		Write-Debug "Successfully updated release: ""$($script:githubRelease.name)"" with tag_name: ""$($script:githubRelease.tag_name)"""
 	}
 	else {
 		throw "Error updating github release with tag_name: $buildNumberToTagReleaseWith"
 	}
 		
 }
-
 
 #*================================================================================================
 #* Purpose: A top-level task that orchestrates the Commit phase of the deployment pipeline.
