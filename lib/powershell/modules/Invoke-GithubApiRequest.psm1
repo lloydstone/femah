@@ -12,7 +12,7 @@ function Invoke-GithubApiRequest{
 	Required. The complete Uri to use in the HTTP request.
 .PARAMETER method
 	Required. The HTTP method to use in the HTTP request, valid options are 'GET' or 'POST'
-.PARAMETER githubToken
+.PARAMETER githubApiKey
 	Required. An active Github API token to authenticate against the Github API with.
 .PARAMETER body
 	Optional. A valid and escaped JSON string body to pass with the request.
@@ -23,7 +23,7 @@ function Invoke-GithubApiRequest{
 	Get-Command -Module Invoke-GithubApiRequest
 	List available functions
 .EXAMPLE
-	Invoke-GithubApiRequest -uri "https://api.github.com/repos/lloydstone/femah/releases" -method GET -githubToken "c2e14cc45b7977286d576b0e4d8bb5ff2767364a"
+	Invoke-GithubApiRequest -uri "https://api.github.com/repos/lloydstone/femah/releases" -method GET -githubApiKey "c2e14cc45b7977286d576b0e4d8bb5ff2767364a"
 	Execute the module
 #>
 	[cmdletbinding()]
@@ -39,7 +39,7 @@ function Invoke-GithubApiRequest{
 			[Parameter(
 				Position = 2,
 				Mandatory = $True )]
-				[string]$githubToken,
+				[string]$githubApiKey,
 			[Parameter(
 				Position = 3,
 				Mandatory = $False )]
@@ -57,7 +57,7 @@ function Invoke-GithubApiRequest{
 					  Uri = $uri;
 					  Method = $method;
 					  Headers = @{
-						Authorization = 'Basic ' + [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes("$($githubToken):x-oauth-basic"));
+						Authorization = 'Basic ' + [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes("$($githubApiKey):x-oauth-basic"));
 						UserAgent = 'User-Agent: femah-deployment-pipeline'
 					  }
 					  ContentType = 'application/json';
