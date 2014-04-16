@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<package >
+<package>
   <metadata>
     <id>Femah.Core</id>
     <version>1.0.0</version>
@@ -10,16 +10,24 @@
     <iconUrl>http://github.com/lloydstone/femah</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <summary>Femah is a feature switching/toggling library, requiring minimal configuration.  Enable stable mainline development.</summary>
-	<description>Femah is a feature switching/toggling library, requiring minimal configuration.  Designed from day 1 to be enterprise scalable, our intention is to provide a robust and extensible framework to enable the .NET community to embrace the stable mainline (trunk) method of development and realise Continuous Delivery.</description>	
-    <releaseNotes></releaseNotes>
+    <description>Femah is a feature switching/toggling library, requiring minimal configuration.  Designed from day 1 to be enterprise scalable, our intention is to provide a robust and extensible framework to enable the .NET community to embrace the stable mainline (trunk) method of development and realise Continuous Delivery.</description>
+    <releaseNotes>We are building up to the first release of Femah, this is still beta but approaching our MVP (Minimum Viable Product), with this release we get so far.
+
+* The Femah.Core engine as a NuGet package, compiled to .NET 3.5.
+* Three built in feature switches Percentage, RoleBased and Simple.
+* An in memory provider for persisting feature switch states.
+* A SQL Server provider for persisting feature switch states. 
+* A management UI, accessible via /femah.axd/
+* A RESTful API, accessible via /femah.axd/api
+* A hosted test site to see how Femah works</releaseNotes>
     <copyright>Copyright 2014</copyright>
     <dependencies>
-		<dependency id="Newtonsoft.Json" version="4.5.11" />
+      <dependency id="Newtonsoft.Json" version="4.5.11" />
     </dependencies>
   </metadata>
   <files>
-	<file src="BuildOutput\**\Femah.Core.pdb" target="\lib\Net35"/>
-	<file src="BuildOutput\**\Femah.Core.dll" target="\lib\Net35"/>
-	<file src="**\*.cs" target="src" />
+    <file src="BuildOutput\**\Femah.Core.pdb" target="\lib\Net35" />
+    <file src="BuildOutput\**\Femah.Core.dll" target="\lib\Net35" />
+    <file src="**\*.cs" target="src" />
   </files>
 </package>

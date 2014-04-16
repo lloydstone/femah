@@ -24,7 +24,7 @@
 #*==========================================================================================
 #* SCRIPT BODY
 #*==========================================================================================
-param([string]$task = "Invoke-Commit", [string]$msbuildPath = "C:\Windows\Microsoft.NET\Framework\v4.0.30319\msbuild.exe", [string]$configMode = "Debug", [array]$solutionFiles = "", [string]$buildCounter = "0", [string]$gitPath = "")
+param([string]$task = "Invoke-Commit", [string]$msbuildPath = "C:\Windows\Microsoft.NET\Framework\v4.0.30319\msbuild.exe", [string]$configMode = "Debug", [array]$solutionFiles = "", [string]$buildCounter = "0", [string]$gitPath = "", [switch]$publishToLive, [string]$githubApiKey = "", [string]$nugetApiKey = "")
 
 Write-Host "Using the following parameter values (sensible defaults used where parameter not supplied)"
 Write-Host "task: $task"
@@ -33,11 +33,14 @@ Write-Host "configMode: $configMode"
 Write-Host "solutionFiles: $solutionFiles"
 Write-Host "buildCounter: $buildCounter"
 Write-Host "gitPath: $gitPath"
+Write-Host "publishToLive: $publishToLive"
+Write-Host "githubApiKey: $githubApiKey"
+Write-Host "nugetApiKey: $nugetApiKey"
 
 Import-Module '.\lib\psake.4.3.1.0\tools\psake.psm1'; 
 #$psake
 #$psake.use_exit_on_error = $true
-Invoke-psake .\Start-FemahBuildDefault.ps1 -t $task -framework '4.0' -parameters @{"p1"=$msbuildPath;"p2"=$configMode;"p3"=$solutionFiles;"p4"=$buildCounter;"p5"=$gitPath} 
+Invoke-psake .\Start-FemahBuildDefault.ps1 -t $task -framework '4.0' -parameters @{"p1"=$msbuildPath;"p2"=$configMode;"p3"=$solutionFiles;"p4"=$buildCounter;"p5"=$gitPath;"p6"=$publishToLive;"p7"=$githubApiKey;"p8"=$nugetApiKey} 
 #$psake
 Remove-Module [p]sake -ErrorAction 'SilentlyContinue'
 

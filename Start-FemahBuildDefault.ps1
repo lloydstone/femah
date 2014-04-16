@@ -17,14 +17,16 @@ Properties {
 	$solutionFiles = $p3
 	$buildCounter = $p4
 	$gitPath = $p5
+	$publishToLive = $p6
+	$githubApiKey = $p7
+	$nugetApiKey = $p8
 	
 	$major = 0
 	$minor = 1
 	$beta = "-beta"
-
-	$githubToken = "c2e14cc45b7977286d576b0e4d8bb5ff2767359f"
 	
 	$script:githubRelease = ""
+	$script:versionNumber = ""
 }
 
 $ErrorActionPreference = "Stop"
@@ -36,12 +38,45 @@ $script:assemblyInformationalVersion = ""
 
 Task default -depends Invoke-Commit
 
-
 #*================================================================================================
 #* Purpose: A task that orchestrates the Publish phase of the deployment pipeline.
 #*================================================================================================
-Task Publish-Femah -depends Publish-GithubRelease {
+Task Publish-Femah -depends Check-PublishToLiveSwitches, Publish-GithubRelease, Publish-Packages {
 
+}
+
+#*================================================================================================
+#* Purpose: Checks whether we have explicitly supplied the -publishToLive switch (hopefully helping
+#* to avoid accidently pushing to nuget.org) along with keys for -githubApiKey and -nugetApiKey.
+#*================================================================================================
+Task Check-PublishToLiveSwitches {
+
+	if ($publishToLive -eq $False) {
+		throw "Please supply the -publishToLive switch to confirm execution of the Publish-Femah task."
+		return
+	}
+	
+	if ($githubApiKey -eq "") {
+		throw "Please supply a valid -githubApiKey to execute the Publish-Femah task."
+		return
+	}
+	
+	if ($nugetApiKey -eq "") {
+		throw "Please supply a valid -nugetApiKey to execute the Publish-Femah task."
+		return
+	}	
+}
+
+#*================================================================================================
+#* Purpose: Checks whether we have explicitly supplied the -publishToLive switch, hopefully helping
+#* to avoid accidently pushing to nuget.org
+#*================================================================================================
+Task Check-PublishToLiveSwitch {
+
+	if ($publishToLive -eq $False) {
+		throw "Supply the -publishToLive switch to confirm execution of the Publish-Femah task."
+		return
+	}
 }
 
 #*================================================================================================
@@ -62,7 +97,7 @@ Task Publish-GithubRelease -depends Update-GithubReleaseTagName {
 	Write-Debug "Updating Github release: ""$($script:githubRelease.name)"" with tag_name: ""$($script:githubRelease.tag_name)"" to ""Published"" status."
 	
 	Import-Module "$baseModulePath\Invoke-GithubApiRequest.psm1"
-	$updatedRelease = Invoke-GithubApiRequest -uri "https://api.github.com/repos/lloydstone/femah/releases/$githubReleaseId" -method Post -githubToken $githubToken -body $jsonBody
+	$updatedRelease = Invoke-GithubApiRequest -uri "https://api.github.com/repos/lloydstone/femah/releases/$githubReleaseId" -method Post -githubApiKey $githubApiKey -body $jsonBody
 	Remove-Module Invoke-GithubApiRequest
 	
 	if ($updatedRelease.draft -eq $false){
@@ -80,15 +115,23 @@ Task Publish-GithubRelease -depends Update-GithubReleaseTagName {
 Task Update-GithubReleaseTagName -depends Get-GithubRelease {
 
 	#Determined by the task Get-GithubRelease
-	$singleRelease = $script:githubRelease
 	$githubReleaseId = $script:githubRelease.Id
 	
-	$buildNumberToTagReleaseWith = "v$major.$minor.$buildCounter$beta"
+	#Get the complete build number [major].[minor].[buildCounter] from the dependant packaged Nuget package (generated as part of the Invoke-Commit task) 
+	$packageToPublish = Get-ChildItem "$basePath\BuildOutput" -Filter "*.nupkg" | Sort-Object length | Select-Object -First 1
+	if ($packageToPublish.Count -ne 1) {
+		throw "Unable to find a Nuget package to publish in folder ""$basePath\BuildOutput"". Please run "".\Start-FemahBuildDefault.ps1 -task Invoke-Commit"" to generate a Nuget package."
+		return
+	}
+	
+	$script:versionNumber = $packageToPublish.Name.Replace('Femah.Core.', '').Replace('.nupkg','')
+		
+	$buildNumberToTagReleaseWith = "v$($script:versionNumber)"
 	$jsonBody = "{""tag_name"":""$buildNumberToTagReleaseWith""}" 
 	Write-Debug "Updating Github release: ""$($script:githubRelease.name)"" from tag_name: ""$($script:githubRelease.tag_name)"" to tag_name: ""$buildNumberToTagReleaseWith"""
 	
 	Import-Module "$baseModulePath\Invoke-GithubApiRequest.psm1"
-	$script:githubRelease = Invoke-GithubApiRequest -uri "https://api.github.com/repos/lloydstone/femah/releases/$githubReleaseId" -method Post -githubToken $githubToken -body $jsonBody
+	$script:githubRelease = Invoke-GithubApiRequest -uri "https://api.github.com/repos/lloydstone/femah/releases/$githubReleaseId" -method Post -githubApiKey $githubApiKey -body $jsonBody
 	Remove-Module Invoke-GithubApiRequest
 	
 	if ($script:githubRelease.tag_name -eq $buildNumberToTagReleaseWith){
@@ -99,6 +142,21 @@ Task Update-GithubReleaseTagName -depends Get-GithubRelease {
 	}
 		
 }
+
+#*================================================================================================
+#* Purpose: Publishes the Nuget and Symbol packages to Nuget.org and Symbolsource.org respectively
+#*================================================================================================
+Task Publish-Packages {
+
+	$packageToPublish = Get-ChildItem "$basePath\BuildOutput" -Filter "*.nupkg" | Sort-Object length | Select-Object -First 1
+	
+	Write-Host "##teamcity[buildNumber '$($script:versionNumber)']"
+	
+	Import-Module "$baseModulePath\Publish-NuGetPackage.psm1"
+	Publish-NuGetPackage -nugetPackagePath "BuildOutput\$($packageToPublish.Name)" -nugetApiKey $nugetApiKey
+	Remove-Module Publish-NuGetPackage
+
+} 
 
 #*================================================================================================
 #* Purpose: A top-level task that orchestrates the Commit phase of the deployment pipeline.
@@ -179,11 +237,12 @@ Task New-Packages {
 
 #*================================================================================================
 #* Purpose: Updates the <releaseNotes></releaseNotes> element within the .nuspec file.
+#* Conditionally runs only if a value is provided for the -githubApiKey parameter
 #*================================================================================================
-Task Update-ReleaseNotesFromGithub -depends Get-GithubRelease {
+Task Update-ReleaseNotesFromGithub -depends Get-GithubRelease -precondition { return ($githubApiKey -ne "") } {
 
 	$femahCoreNuspecPath = "$basePath\Femah.Core\Femah.Core.nuspec"
-	Write-Debug "Updating release notes in $femahCoreNuspecPath for release: $($script:githubRelease.tag_name) "
+	Write-Debug "Updating release notes in ""$femahCoreNuspecPath"" for release with tag_name: ""$($script:githubRelease.tag_name)""."
 	
 	Try {
 		[xml]$x = Get-Content $femahCoreNuspecPath
@@ -202,10 +261,10 @@ Task Update-ReleaseNotesFromGithub -depends Get-GithubRelease {
 #*================================================================================================
 #* Purpose: Retrieves the matching Release from Github for the current [major].[minor] build.
 #*================================================================================================
-Task Get-GithubRelease {
+Task Get-GithubRelease -precondition { return ($githubApiKey -ne "") } {
 
 	Import-Module "$baseModulePath\Invoke-GithubApiRequest.psm1"
-	$releases = Invoke-GithubApiRequest -uri "https://api.github.com/repos/lloydstone/femah/releases" -method GET -githubToken $githubToken
+	$releases = Invoke-GithubApiRequest -uri "https://api.github.com/repos/lloydstone/femah/releases" -method GET -githubApiKey $githubApiKey
 	Remove-Module Invoke-GithubApiRequest
 		
 	$tagName = "v$major.$minor*"
