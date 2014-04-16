@@ -57,7 +57,6 @@ function New-NuGetPackage{
 						$nuGetPath = "$basePath\packages\NuGet.CommandLine.2.7.3\tools\nuget.exe"
 					}
 					
-					Write-Host "Executing Tests for project: $specFilePath"
 					$specFilePath = "$basePath\$specFilePath"
 					
 					if ((Test-Path -Path "$basePath\BuildOutput") -eq $True) { Remove-Item -Path "$basePath\BuildOutput" -Force	-Recurse}
