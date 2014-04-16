@@ -14,12 +14,11 @@ Properties {
 
 	$msbuildPath = $p1
 	$configMode = $p2
-	$solutionFiles = $p3
-	$buildCounter = $p4
-	$gitPath = $p5
-	$publishToLive = $p6
-	$githubApiKey = $p7
-	$nugetApiKey = $p8
+	$buildCounter = $p3
+	$gitPath = $p4
+	$publishToLive = $p5
+	$githubApiKey = $p6
+	$nugetApiKey = $p7
 	
 	$major = 0
 	$minor = 1
@@ -170,7 +169,7 @@ Task Invoke-Commit -depends Invoke-Compile, Invoke-UnitTests, Update-ReleaseNote
 }
 
 #*================================================================================================
-#* Purpose: Performs a full rebuild of the supplied Visual Studio Solution or Project, 
+#* Purpose: Performs a full rebuild of the Femah.sln Visual Studio Solution, 
 #* removing any previously built assemblies and setting the global build number along the way.
 #*================================================================================================
 Task Invoke-Compile -depends Invoke-HardcoreClean, Set-VersionNumber {
@@ -180,13 +179,9 @@ Task Invoke-Compile -depends Invoke-HardcoreClean, Set-VersionNumber {
 		Write-Host "Unknown configMode $configMode supplied.  Valid values are 'Debug' or 'Release', changing to default 'Release'"
 		$configMode = "Release"
 	}
-	Write-Host "configMode : $configMode"
-
-	foreach($solutionFile in $solutionFiles)
-	{
-		Write-Host "Building solution: $solutionFile in $configMode mode"
-		exec { & $msbuildPath $solutionFile /t:ReBuild /t:Clean /p:Configuration=$configMode /p:PlatformTarget=AnyCPU /m}
-	}
+	$solutionFile = "Femah.sln"
+	Write-Host "Building ""$solutionFile"" in ""$configMode"" mode."
+	exec { & $msbuildPath $solutionFile /t:ReBuild /t:Clean /p:Configuration=$configMode /p:PlatformTarget=AnyCPU /m}
 }
 
 #*================================================================================================
