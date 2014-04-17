@@ -24,7 +24,7 @@
 #*==========================================================================================
 #* SCRIPT BODY
 #*==========================================================================================
-param([string]$task = "Invoke-Commit", [string]$msbuildPath = "C:\Windows\Microsoft.NET\Framework\v4.0.30319\msbuild.exe", [string]$configMode = "Release", [string]$buildCounter = "0", [string]$gitPath = "", [switch]$publishToLive, [string]$githubApiKey = "", [string]$nugetApiKey = "")
+param([string]$task = "Invoke-Commit", [string]$msbuildPath = "C:\Windows\Microsoft.NET\Framework\v4.0.30319\msbuild.exe", [string]$configMode = "Release", [string]$buildCounter = "0", [string]$gitPath = "", [bool]$publishToLive = $False, [string]$githubApiKey = "", [string]$nugetApiKey = "")
 
 Write-Host "Using the following parameter values (sensible defaults used where parameter not supplied)"
 Write-Host "task: $task"
