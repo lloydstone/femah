@@ -67,18 +67,6 @@ Task Check-PublishToLiveSwitches {
 }
 
 #*================================================================================================
-#* Purpose: Checks whether we have explicitly supplied the -publishToLive switch, hopefully helping
-#* to avoid accidently pushing to nuget.org
-#*================================================================================================
-Task Check-PublishToLiveSwitch {
-
-	if ($publishToLive -eq $False) {
-		throw "Supply the -publishToLive switch to confirm execution of the Publish-Femah task."
-		return
-	}
-}
-
-#*================================================================================================
 #* Purpose: Updates the status of the matching Release in Github that we intend to publish to 
 #* Nuget.org to be 'Published'.
 #*================================================================================================
