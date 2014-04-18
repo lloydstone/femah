@@ -17,12 +17,14 @@ namespace Femah.Core.Tests
             {
                 //Arrange
                 const string validFeatureType = "Femah.Core.FeatureSwitchTypes.SimpleFeatureSwitch, Femah.Core, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null";
+                
                 var featureSwitch1 = new SimpleFeatureSwitch
                 {
                     Name = "TestFeatureSwitch1",
                     FeatureType = validFeatureType,
                     IsEnabled = true
                 };
+                
                 var featureSwitch2 = new SimpleFeatureSwitch
                 {
                     Name = "TestFeatureSwitch1",
@@ -38,7 +40,7 @@ namespace Femah.Core.Tests
             }
             
             [Test]
-            public void GivenTwoSimpleFeatureSwitches_ReturnsFalse_NamesAreDifferent()
+            public void GivenTwoSimpleFeatureSwitches_ReturnsFalse_IfNamesAreDifferent()
             {
                 //Arrange
                 const string validFeatureType = "Femah.Core.FeatureSwitchTypes.SimpleFeatureSwitch, Femah.Core, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null";
@@ -66,11 +68,13 @@ namespace Femah.Core.Tests
                 //Arrange
                 const string validFeatureType1 = "Femah.Core.FeatureSwitchTypes.SimpleFeatureSwitch, Femah.Core, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null";
                 const string validFeatureType2 = "Femah.Core.FeatureSwitchTypes.PercentageFeatureSwitch, Femah.Core, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null";
+                
                 var featureSwitch1 = new SimpleFeatureSwitch
                 {
                     Name = "TestFeatureSwitch1",
                     FeatureType = validFeatureType1
                 };
+                
                 var featureSwitch2 = new PercentageFeatureSwitch
                 {
                     Name = "TestFeatureSwitch1",
@@ -95,6 +99,7 @@ namespace Femah.Core.Tests
                     FeatureType = validFeatureType,
                     IsEnabled = true
                 };
+
                 var featureSwitch2 = new SimpleFeatureSwitch
                 {
                     Name = "TestFeatureSwitch1",
