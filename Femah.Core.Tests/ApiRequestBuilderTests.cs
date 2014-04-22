@@ -12,7 +12,7 @@ namespace Femah.Core.Tests
         public class TheBuildMethod
         {
             [Test]
-            public void ApiRequestBuilderSetsApiRequestBodyIfHttpContextInputStreamIsNotNull()
+            public void SetsApiRequestBody_IfHttpContextInputStreamIsNotNull()
             {
                 //Arrange
                 var testable = new ApiRequestBuilder();
@@ -25,6 +25,7 @@ namespace Femah.Core.Tests
                 //Build the request Body in JSON
                 const string expectedJsonBody =
                     "{\"IsEnabled\":true,\"Name\":\"TestFeatureSwitch1\",\"FeatureType\":\"SimpleFeatureSwitch\",\"Description\":\"Define a short description of the feature switch type here.\",\"ConfigurationInstructions\":\"Add configuration context and instructions to be displayed in the admin UI\"}";
+                
                 var inputStream = new MemoryStream();
                 var streamWriter = new StreamWriter(inputStream);
                 streamWriter.Write(expectedJsonBody);
