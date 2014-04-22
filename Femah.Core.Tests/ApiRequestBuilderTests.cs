@@ -7,10 +7,34 @@ using NUnit.Framework;
 
 namespace Femah.Core.Tests
 {
+    using System.Net;
+
     public class ApiRequestBuilderTests
     {
         public class TheBuildMethod
         {
+            [Test]
+            public void SetsHttpStatusCodeTo415AndProvidesAccurateErrorMessage_IfContentTypeIsNotSetToApplicationJsonAndRequestIsAPut()
+            {
+                //Arrange
+                var testable = new ApiRequestBuilder();
+
+                var httpContextMock = new Mock<HttpContextBase>();
+                httpContextMock.Setup(x => x.Request.Url)
+                    .Returns(new Uri("http://example.com/femah.axd/api/featureswitches/TestFeatureSwitch1"));
+                httpContextMock.SetupGet(x => x.Request.HttpMethod).Returns("PUT");
+                httpContextMock.SetupGet(x => x.Request.ContentType).Returns("incorrect/contenttype");
+
+                const string expectedJsonBody = "Error: Content-Type 'incorrect/contenttype' of request is not supported, expecting 'application/json'.";
+
+                //Act
+                ApiRequest apiRequest = testable.Build(httpContextMock.Object.Request);
+
+                //Asert
+                Assert.AreEqual(HttpStatusCode.UnsupportedMediaType, apiRequest.ErrorMessageHttpStatusCode);
+                Assert.AreEqual(expectedJsonBody, apiRequest.ErrorMessage);
+            }
+
             [Test]
             public void SetsApiRequestBody_IfHttpContextInputStreamIsNotNull()
             {
