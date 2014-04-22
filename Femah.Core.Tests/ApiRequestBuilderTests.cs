@@ -27,30 +27,23 @@ namespace Femah.Core.Tests
             public void SetsHttpStatusCodeTo500AndProvidesAccurateErrorMessage_IfRequestUrlIsInvalidAndContainsTooManySegments()
             {
                 //Arrange
-                var testable = new ApiRequestBuilder();
-
-                var httpContextMock = new Mock<HttpContextBase>();
-                httpContextMock.Setup(x => x.Request.Url)
-                    .Returns(new Uri("http://example.com/femah.axd/api/invalid/url/structure"));
-                httpContextMock.SetupGet(x => x.Request.HttpMethod).Returns("GET");
+                SetupContextMock("http://example.com/femah.axd/api/invalid/url/structure", "GET");
 
                 const string expectedJsonBody = "Error: The requested Url 'http://example.com/femah.axd/api/invalid/url/structure' does not match the expected format /femah.axd/api/[service]/[parameter].";
 
                 //Act
-                ApiRequest apiRequest = testable.Build(httpContextMock.Object.Request);
+                ApiRequest apiRequest = _sut.Build(_httpContextMock.Object.Request);
 
                 //Asert
                 Assert.AreEqual(HttpStatusCode.InternalServerError, apiRequest.ErrorMessageHttpStatusCode);
                 Assert.AreEqual(expectedJsonBody, apiRequest.ErrorMessage);
             }
-
+            
             [Test]
             public void SetsHttpStatusCodeTo415AndProvidesAccurateErrorMessage_IfContentTypeIsNotSetToApplicationJsonAndRequestIsAPut()
             {
                 //Arrange
-                _httpContextMock.Setup(x => x.Request.Url)
-                    .Returns(new Uri("http://example.com/femah.axd/api/featureswitches/TestFeatureSwitch1"));
-                _httpContextMock.SetupGet(x => x.Request.HttpMethod).Returns("PUT");
+                SetupContextMock("http://example.com/femah.axd/api/featureswitches/TestFeatureSwitch1", "PUT");
                 _httpContextMock.SetupGet(x => x.Request.ContentType).Returns("incorrect/contenttype");
 
                 const string expectedJsonBody = "Error: Content-Type 'incorrect/contenttype' of request is not supported, expecting 'application/json'.";
@@ -67,9 +60,7 @@ namespace Femah.Core.Tests
             public void SetsApiRequestBody_IfHttpContextInputStreamIsNotNull()
             {
                 //Arrange
-                _httpContextMock.Setup(x => x.Request.Url)
-                    .Returns(new Uri("http://example.com/femah.axd/api/featureswitches"));
-                _httpContextMock.SetupGet(x => x.Request.HttpMethod).Returns("GET");
+                SetupContextMock("http://example.com/femah.axd/api/featureswitches", "GET");
 
                 //Build the request Body in JSON
                 const string expectedJsonBody =
@@ -93,6 +84,12 @@ namespace Femah.Core.Tests
                 streamWriter.Write(expectedJsonBody);
                 streamWriter.Flush();
                 return inputStream;
+            }
+
+            private void SetupContextMock(string url, string requestType)
+            {
+                _httpContextMock.Setup(x => x.Request.Url).Returns(new Uri(url));
+                _httpContextMock.SetupGet(x => x.Request.HttpMethod).Returns(requestType);
             }
         }
     }
