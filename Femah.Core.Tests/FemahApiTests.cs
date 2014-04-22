@@ -294,31 +294,6 @@ namespace Femah.Core.Tests
 
         #region ProcessApiRequest
         [Test]
-        public void ProcessPutRequestSetsHttpStatusCodeTo400AndReturnsGenericErrorMessageInResponseBodyIfPutRequestBodyContainsAJsonArrayOfFeatureSwitches()
-        {
-            //Arrange
-            const string validFeatureType = "Femah.Core.FeatureSwitchTypes.SimpleFeatureSwitch, Femah.Core, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null";
-
-            var apiRequest = new ApiRequest
-            {
-                HttpMethod = "PUT",
-                Service = ApiRequest.ApiService.featureswitches,
-                Parameter = "TestFeatureSwitch",
-                Body = string.Format("{{\"IsEnabled\":true,\"Name\":\"TestFeatureSwitch1\",\"FeatureType\":\"{0}\",\"Description\":\"Define a short description of the feature switch type here.\",\"ConfigurationInstructions\":\"Add configuration context and instructions to be displayed in the admin UI\"}},{{\"IsEnabled\":true,\"Name\":\"TestFeatureSwitch2\",\"FeatureType\":\"{0}\",\"Description\":\"Define a short description of the feature switch type here.\",\"ConfigurationInstructions\":\"Add configuration context and instructions to be displayed in the admin UI\"}}", validFeatureType)
-            };
-
-            //TODO: I'd like this to be a more specific error with regards to formatting
-            const string expectedJsonBody = "\"Error: Unable to deserialise the request body.  Either the JSON is invalid or the supplied 'FeatureType' value is incorrect, have you used the AssemblyQualifiedName as the 'FeatureType' in the request?\"";
-
-            //Act
-            ApiResponse apiResponse = ProcessApiRequest.ProcessPutRequest(apiRequest);
-
-            //Assert
-            Assert.AreEqual((int)HttpStatusCode.BadRequest, apiResponse.HttpStatusCode);
-            Assert.AreEqual(expectedJsonBody, apiResponse.Body);
-        }
-        
-        [Test]
         //[Ignore("We are now testing this in the ApiResponseBuilder(), keep this as an integration test maybe?")]
         public void ProcessPutRequestSetsHttpStatusCodeTo304IfPutRequestBodyIsValidJsonButFeatureSwitchHasNoChanges()
         {

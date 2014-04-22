@@ -12,7 +12,28 @@ namespace Femah.Core.Tests
         public class TheProcessPutRequestMethod
         {
             private const string ValidFeatureType = "Femah.Core.FeatureSwitchTypes.SimpleFeatureSwitch, Femah.Core, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null";
+
+            [Test]
+            public void ReturnsGenericErrorMessageInResponseBodyAndSetsHttpStatusCodeTo400_IfPutRequestBodyContainsAJsonArrayOfFeatureSwitches()
+            {
+                //Arrange
+                var requestBody = string.Format("{{\"IsEnabled\":true,\"Name\":\"TestFeatureSwitch1\",\"FeatureType\":\"{0}\",\"Description\":\"Define a short description of the feature switch type here.\",\"ConfigurationInstructions\":\"Add configuration context and instructions to be displayed in the admin UI\"}},{{\"IsEnabled\":true,\"Name\":\"TestFeatureSwitch2\",\"FeatureType\":\"{0}\",\"Description\":\"Define a short description of the feature switch type here.\",\"ConfigurationInstructions\":\"Add configuration context and instructions to be displayed in the admin UI\"}}", ValidFeatureType);
+                const string expectedJsonBody = "\"Error: Unable to deserialise the request body.  Either the JSON is invalid or the supplied 'FeatureType' value is incorrect, have you used the AssemblyQualifiedName as the 'FeatureType' in the request?\"";
+                //TODO: I'd like this to be a more specific error with regards to formatting
                 
+                var apiRequest = new PutApiRequestFactory()
+                    .ForServiceType(ApiRequest.ApiService.featureswitches)
+                    .WithParameterName("TestFeatureSwitch")
+                    .WithBody(requestBody).Build();
+
+                //Act
+                var apiResponse = ProcessApiRequest.ProcessPutRequest(apiRequest);
+
+                //Assert
+                apiResponse.HttpStatusCode.ShouldBe((int)HttpStatusCode.BadRequest);
+                apiResponse.Body.ShouldBe(expectedJsonBody);
+            }
+    
             [Test]
             public void ReturnsUpdatedEntityAndSetsHttpStatusCodeTo200_IfRequestIsValid()
             {
