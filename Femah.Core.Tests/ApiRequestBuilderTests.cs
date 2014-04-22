@@ -1,14 +1,13 @@
-using System;
-using System.IO;
-using System.Web;
 using Femah.Core.Api;
 using Moq;
 using NUnit.Framework;
+using System;
+using System.IO;
+using System.Net;
+using System.Web;
 
 namespace Femah.Core.Tests
 {
-    using System.Net;
-
     public class ApiRequestBuilderTests
     {
         public class TheBuildMethod

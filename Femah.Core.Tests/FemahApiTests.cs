@@ -20,12 +20,6 @@ namespace Femah.Core.Tests
 
         #region ApiRequestBuilder
 
-        
-
-        
-        
-        
-
         [Test]
         public void ApiRequestBuilderSetsErrorMessageHttpStatusCodeTo500AndProvidesAccurateErrorMessageIfRequestUrlIsInvalidAndContainsTooFewSegments()
         {
