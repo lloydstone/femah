@@ -14,6 +14,33 @@ namespace Femah.Core.Tests
             private const string ValidFeatureType = "Femah.Core.FeatureSwitchTypes.SimpleFeatureSwitch, Femah.Core, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null";
 
             [Test]
+            public void ReturnsHttpStatusCodeTo304_IfPutRequestBodyIsValidJsonButFeatureSwitchHasNoChanges()
+            {
+                //Arrange
+                var jsonRequestAndResponse = string.Format(
+                        "{{\"IsEnabled\":true,\"Name\":\"TestFeatureSwitch1\",\"FeatureType\":\"{0}\",\"Description\":\"Define a short description of the feature switch type here.\",\"ConfigurationInstructions\":\"Add configuration context and instructions to be displayed in the admin UI\"}}",
+                        ValidFeatureType);
+
+                var apiRequest = new PutApiRequestFactory()
+                    .WithParameterName("TestFeatureSwitch")
+                    .WithBody(jsonRequestAndResponse).Build();
+
+                var providerMock = BuildSimpleFeatureSwitch(ValidFeatureType, true);
+
+                Femah.Configure()
+                    .FeatureSwitchEnum(typeof(FeatureSwitches))
+                    .Provider(providerMock.Object)
+                    .Initialise();
+
+                //Act
+                var apiResponse = ProcessApiRequest.ProcessPutRequest(apiRequest);
+
+                //Assert
+                apiResponse.HttpStatusCode.ShouldBe((int)HttpStatusCode.NotModified);
+                apiResponse.Body.ShouldBe(string.Empty);
+            }
+
+            [Test]
             public void ReturnsGenericErrorMessageInResponseBodyAndSetsHttpStatusCodeTo400_IfPutRequestBodyContainsAJsonArrayOfFeatureSwitches()
             {
                 //Arrange
@@ -22,7 +49,6 @@ namespace Femah.Core.Tests
                 //TODO: I'd like this to be a more specific error with regards to formatting
                 
                 var apiRequest = new PutApiRequestFactory()
-                    .ForServiceType(ApiRequest.ApiService.featureswitches)
                     .WithParameterName("TestFeatureSwitch")
                     .WithBody(requestBody).Build();
 
@@ -42,7 +68,6 @@ namespace Femah.Core.Tests
                         ValidFeatureType);
 
                 var apiRequest = new PutApiRequestFactory().WithBody(jsonRequestAndResponse)
-                    .ForServiceType(ApiRequest.ApiService.featureswitches)
                     .WithParameterName("TestFeatureSwitch")
                     .Build();
 
@@ -131,12 +156,12 @@ namespace Femah.Core.Tests
                 Assert.AreEqual(jsonRequestAndResponse, apiResponse.Body);
             }
 
-            private static Mock<IFeatureSwitchProvider> BuildSimpleFeatureSwitch(string validFeatureType)
+            private static Mock<IFeatureSwitchProvider> BuildSimpleFeatureSwitch(string validFeatureType, bool enabled = false)
             {
                 var featureSwitch = new SimpleFeatureSwitch
                 {
                     Name = "TestFeatureSwitch1",
-                    IsEnabled = false,
+                    IsEnabled = enabled,
                     FeatureType = validFeatureType
                 };
 
