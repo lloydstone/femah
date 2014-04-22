@@ -24,26 +24,7 @@ namespace Femah.Core.Tests
 
         
         
-        [Test]
-        public void ApiRequestBuilderSetsErrorMessageHttpStatusCodeTo500AndProvidesAccurateErrorMessageIfRequestUrlIsInvalidAndContainsTooManySegments()
-        {
-            //Arrange
-            var testable = new ApiRequestBuilder();
-
-            var httpContextMock = new Mock<HttpContextBase>();
-            httpContextMock.Setup(x => x.Request.Url)
-                .Returns(new Uri("http://example.com/femah.axd/api/invalid/url/structure"));
-            httpContextMock.SetupGet(x => x.Request.HttpMethod).Returns("GET");
-
-            const string expectedJsonBody = "Error: The requested Url 'http://example.com/femah.axd/api/invalid/url/structure' does not match the expected format /femah.axd/api/[service]/[parameter].";
-
-            //Act
-            ApiRequest apiRequest = testable.Build(httpContextMock.Object.Request);
-
-            //Asert
-            Assert.AreEqual(HttpStatusCode.InternalServerError, apiRequest.ErrorMessageHttpStatusCode);
-            Assert.AreEqual(expectedJsonBody, apiRequest.ErrorMessage);
-        }
+        
 
         [Test]
         public void ApiRequestBuilderSetsErrorMessageHttpStatusCodeTo500AndProvidesAccurateErrorMessageIfRequestUrlIsInvalidAndContainsTooFewSegments()
