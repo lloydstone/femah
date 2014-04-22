@@ -54,6 +54,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApiRequestBuilderTests.cs" />
     <Compile Include="FemahApiRequestTests.cs" />
     <Compile Include="FemahApiTests.cs" />
     <Compile Include="FemahTests.cs" />
