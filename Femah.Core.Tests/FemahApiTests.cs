@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using System.Text;
 using System.Web;
 using Femah.Core.Api;
 using Femah.Core.FeatureSwitchTypes;
@@ -359,49 +358,6 @@ namespace Femah.Core.Tests
             //Assert
             Assert.AreEqual((int)HttpStatusCode.NotModified, apiResponse.HttpStatusCode);
             Assert.AreEqual(string.Empty, apiResponse.Body);
-        }
-
-
-        [Test]
-        //[Ignore("We are now testing this in the ApiResponseBuilder(), keep this as an integration test maybe?")]
-        public void ProcessPutRequestSetsHttpStatusCodeTo200AndReturnsUpdatedEntity()
-        {
-            //Arrange
-            const string validFeatureType = "Femah.Core.FeatureSwitchTypes.SimpleFeatureSwitch, Femah.Core, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null";
-            string jsonRequestAndResponse = string.Format(
-                    "{{\"IsEnabled\":true,\"Name\":\"TestFeatureSwitch1\",\"FeatureType\":\"{0}\",\"Description\":\"Define a short description of the feature switch type here.\",\"ConfigurationInstructions\":\"Add configuration context and instructions to be displayed in the admin UI\"}}",
-                    validFeatureType);
-
-            var apiRequest = new ApiRequest
-            {
-                HttpMethod = "PUT",
-                Service = ApiRequest.ApiService.featureswitches,
-                Parameter = "TestFeatureSwitch",
-                Body = jsonRequestAndResponse
-            };
-
-            var featureSwitch = new SimpleFeatureSwitch
-            {
-                Name = "TestFeatureSwitch1",
-                IsEnabled = false,
-                FeatureType = validFeatureType
-            };
-
-            var providerMock = new Mock<IFeatureSwitchProvider>();
-            providerMock.Setup(p => p.Get("TestFeatureSwitch1"))
-                .Returns(featureSwitch);
-
-            Femah.Configure()
-                .FeatureSwitchEnum(typeof(FeatureSwitches))
-                .Provider(providerMock.Object)
-                .Initialise();
-
-            //Act
-            ApiResponse apiResponse = ProcessApiRequest.ProcessPutRequest(apiRequest);
-
-            //Assert
-            Assert.AreEqual((int)HttpStatusCode.OK, apiResponse.HttpStatusCode);
-            Assert.AreEqual(jsonRequestAndResponse, apiResponse.Body);
         }
         #endregion
 
