@@ -110,8 +110,8 @@ namespace Femah.Core.Tests
                 var apiResponse = ProcessApiRequest.ProcessPutRequest(apiRequest);
 
                 //Assert
-                Assert.AreEqual((int) HttpStatusCode.MethodNotAllowed, apiResponse.HttpStatusCode);
-                Assert.AreEqual(expectedJsonBody, apiResponse.Body);
+                apiResponse.HttpStatusCode.ShouldBe((int) HttpStatusCode.MethodNotAllowed);
+                apiResponse.Body.ShouldBe(expectedJsonBody);
             }
 
             [Test]
@@ -152,8 +152,8 @@ namespace Femah.Core.Tests
                 var apiResponse = ProcessApiRequest.ProcessPutRequest(apiRequest);
 
                 //Assert
-                Assert.AreEqual((int) HttpStatusCode.OK, apiResponse.HttpStatusCode);
-                Assert.AreEqual(jsonRequestAndResponse, apiResponse.Body);
+                apiResponse.HttpStatusCode.ShouldBe((int)HttpStatusCode.OK);
+                apiResponse.Body.ShouldBe(jsonRequestAndResponse);
             }
 
             private static Mock<IFeatureSwitchProvider> BuildSimpleFeatureSwitch(string validFeatureType, bool enabled = false)
