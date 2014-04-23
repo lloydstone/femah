@@ -114,52 +114,6 @@ namespace Femah.Core.Tests
         #endregion
 
         #region ApiResponseBuilder
-
-        
-        [Test]
-        public void ApiResponseBuilderSetsHttpStatusCodeTo200AndReturnsDesiredFeatureSwitchStateIfPutRequestIncludesFeatureSwitchChangesToIsEnabledState()
-        {
-            //Arrange
-            const string validFeatureType = "Femah.Core.FeatureSwitchTypes.SimpleFeatureSwitch, Femah.Core, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null";
-            string jsonRequestAndResponse = string.Format(
-                    "{{\"IsEnabled\":false,\"Name\":\"TestFeatureSwitch1\",\"FeatureType\":\"{0}\",\"Description\":\"Define a short description of the feature switch type here.\",\"ConfigurationInstructions\":\"Add configuration context and instructions to be displayed in the admin UI\"}}",
-                    validFeatureType);
-
-            var currentFeatureSwitchState = new SimpleFeatureSwitch
-            {
-                Name = "TestFeatureSwitch1",
-                IsEnabled = true,
-                FeatureType = validFeatureType,
-            };
-
-            var desiredFeatureSwitchState = new SimpleFeatureSwitch
-            {
-                Name = "TestFeatureSwitch1",
-                IsEnabled = false,
-                FeatureType = validFeatureType
-            };
-
-            var providerMock = new Mock<IFeatureSwitchProvider>();
-            providerMock.Setup(p => p.Get("TestFeatureSwitch1"))
-                .Returns(currentFeatureSwitchState);
-
-            Femah.Configure()
-                .FeatureSwitchEnum(typeof(FeatureSwitches))
-                .Provider(providerMock.Object)
-                .Initialise();
-
-            //Act
-            ApiResponse apiResponse;
-            using (var apiResponseBuilder = new ApiResponseBuilder())
-            {
-                apiResponse = apiResponseBuilder.CreateWithUpdatedFeatureSwitch(desiredFeatureSwitchState);
-            }
-
-            //Assert
-            Assert.AreEqual((int)HttpStatusCode.OK, apiResponse.HttpStatusCode);
-            Assert.AreEqual(jsonRequestAndResponse, apiResponse.Body);
-        }
-
         [Test]
         public void ApiResponseBuilderSetsHttpStatusCodeTo200AndReturnsDesiredFeatureSwitchStateIfPutRequestIncludesFeatureSwitchChangesToCustomParameters()
         {
