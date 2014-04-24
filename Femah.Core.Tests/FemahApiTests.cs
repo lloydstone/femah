@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using System.Text;
 using System.Web;
 using Femah.Core.Api;
 using Femah.Core.FeatureSwitchTypes;
@@ -196,118 +195,6 @@ namespace Femah.Core.Tests
             
         }
 
-        #endregion
-
-        #region ProcessApiRequest
-        [Test]
-        public void ProcessPutRequestSetsHttpStatusCodeTo400AndReturnsGenericErrorMessageInResponseBodyIfPutRequestBodyContainsAJsonArrayOfFeatureSwitches()
-        {
-            //Arrange
-            const string validFeatureType = "Femah.Core.FeatureSwitchTypes.SimpleFeatureSwitch, Femah.Core, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null";
-
-            var apiRequest = new ApiRequest
-            {
-                HttpMethod = "PUT",
-                Service = ApiRequest.ApiService.featureswitches,
-                Parameter = "TestFeatureSwitch",
-                Body = string.Format("{{\"IsEnabled\":true,\"Name\":\"TestFeatureSwitch1\",\"FeatureType\":\"{0}\",\"Description\":\"Define a short description of the feature switch type here.\",\"ConfigurationInstructions\":\"Add configuration context and instructions to be displayed in the admin UI\"}},{{\"IsEnabled\":true,\"Name\":\"TestFeatureSwitch2\",\"FeatureType\":\"{0}\",\"Description\":\"Define a short description of the feature switch type here.\",\"ConfigurationInstructions\":\"Add configuration context and instructions to be displayed in the admin UI\"}}", validFeatureType)
-            };
-
-            //TODO: I'd like this to be a more specific error with regards to formatting
-            const string expectedJsonBody = "\"Error: Unable to deserialise the request body.  Either the JSON is invalid or the supplied 'FeatureType' value is incorrect, have you used the AssemblyQualifiedName as the 'FeatureType' in the request?\"";
-
-            //Act
-            ApiResponse apiResponse = ProcessApiRequest.ProcessPutRequest(apiRequest);
-
-            //Assert
-            Assert.AreEqual((int)HttpStatusCode.BadRequest, apiResponse.HttpStatusCode);
-            Assert.AreEqual(expectedJsonBody, apiResponse.Body);
-        }
-        
-        [Test]
-        //[Ignore("We are now testing this in the ApiResponseBuilder(), keep this as an integration test maybe?")]
-        public void ProcessPutRequestSetsHttpStatusCodeTo304IfPutRequestBodyIsValidJsonButFeatureSwitchHasNoChanges()
-        {
-            //Arrange
-            const string validFeatureType = "Femah.Core.FeatureSwitchTypes.SimpleFeatureSwitch, Femah.Core, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null";
-            string jsonRequestAndResponse = string.Format(
-                    "{{\"IsEnabled\":true,\"Name\":\"TestFeatureSwitch1\",\"FeatureType\":\"{0}\",\"Description\":\"Define a short description of the feature switch type here.\",\"ConfigurationInstructions\":\"Add configuration context and instructions to be displayed in the admin UI\"}}",
-                    validFeatureType);
-
-            var apiRequest = new ApiRequest
-            {
-                HttpMethod = "PUT",
-                Service = ApiRequest.ApiService.featureswitches,
-                Parameter = "TestFeatureSwitch",
-                Body = jsonRequestAndResponse
-            };
-
-            var featureSwitch = new SimpleFeatureSwitch
-            {
-                    Name = "TestFeatureSwitch1",
-                    IsEnabled = true,
-                    FeatureType = validFeatureType
-            };
-
-            var providerMock = new Mock<IFeatureSwitchProvider>();
-            providerMock.Setup(p => p.Get("TestFeatureSwitch1"))
-                .Returns(featureSwitch);
-
-            Femah.Configure()
-                .FeatureSwitchEnum(typeof(FeatureSwitches))
-                .Provider(providerMock.Object)
-                .Initialise();
-
-            //Act
-            ApiResponse apiResponse = ProcessApiRequest.ProcessPutRequest(apiRequest);
-
-            //Assert
-            Assert.AreEqual((int)HttpStatusCode.NotModified, apiResponse.HttpStatusCode);
-            Assert.AreEqual(string.Empty, apiResponse.Body);
-        }
-
-
-        [Test]
-        //[Ignore("We are now testing this in the ApiResponseBuilder(), keep this as an integration test maybe?")]
-        public void ProcessPutRequestSetsHttpStatusCodeTo200AndReturnsUpdatedEntity()
-        {
-            //Arrange
-            const string validFeatureType = "Femah.Core.FeatureSwitchTypes.SimpleFeatureSwitch, Femah.Core, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null";
-            string jsonRequestAndResponse = string.Format(
-                    "{{\"IsEnabled\":true,\"Name\":\"TestFeatureSwitch1\",\"FeatureType\":\"{0}\",\"Description\":\"Define a short description of the feature switch type here.\",\"ConfigurationInstructions\":\"Add configuration context and instructions to be displayed in the admin UI\"}}",
-                    validFeatureType);
-
-            var apiRequest = new ApiRequest
-            {
-                HttpMethod = "PUT",
-                Service = ApiRequest.ApiService.featureswitches,
-                Parameter = "TestFeatureSwitch",
-                Body = jsonRequestAndResponse
-            };
-
-            var featureSwitch = new SimpleFeatureSwitch
-            {
-                Name = "TestFeatureSwitch1",
-                IsEnabled = false,
-                FeatureType = validFeatureType
-            };
-
-            var providerMock = new Mock<IFeatureSwitchProvider>();
-            providerMock.Setup(p => p.Get("TestFeatureSwitch1"))
-                .Returns(featureSwitch);
-
-            Femah.Configure()
-                .FeatureSwitchEnum(typeof(FeatureSwitches))
-                .Provider(providerMock.Object)
-                .Initialise();
-
-            //Act
-            ApiResponse apiResponse = ProcessApiRequest.ProcessPutRequest(apiRequest);
-
-            //Assert
-            Assert.AreEqual((int)HttpStatusCode.OK, apiResponse.HttpStatusCode);
-            Assert.AreEqual(jsonRequestAndResponse, apiResponse.Body);
-        }
         #endregion
 
         #region General API (GET methods)
