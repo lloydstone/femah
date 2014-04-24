@@ -113,12 +113,6 @@ namespace Femah.Core.Tests
         
         #endregion
 
-        #region ApiResponseBuilder
-       
-        
-
-        #endregion
-
         #region ProcessApiRequest
         [Test]
         public void ProcessPutRequestSetsHttpStatusCodeTo400AndReturnsGenericErrorMessageInResponseBodyIfPutRequestBodyContainsAJsonArrayOfFeatureSwitches()
