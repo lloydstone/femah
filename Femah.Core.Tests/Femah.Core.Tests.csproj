@@ -66,6 +66,7 @@
     <Compile Include="PutApiRequestFactory.cs" />
     <Compile Include="RoleBasedFeatureSwitchTests.cs" />
     <Compile Include="SimpleFeatureSwitchTests.cs" />
+    <Compile Include="SqlServerProviderTests.cs" />
     <Compile Include="TestableFemahApiHttpHandler.cs" />
     <Compile Include="ProcessApiRequestTests.cs" />
   </ItemGroup>

@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
@@ -34,9 +32,10 @@ namespace Femah.Core.Providers
     /// </summary>
     public class SqlServerProvider : IFeatureSwitchProvider
     {
-        private string _connectionString;
-        private string _tableName = "femahSwitches";
+        private const string _tableName = "femahSwitches";
         static List<Type> _featureSwitchtypes = null;
+
+        public string ConnectionString { get; private set; }
 
         /// <summary>
         /// Configure the SqlServerProvider.
@@ -44,7 +43,7 @@ namespace Femah.Core.Providers
         /// <param name="connString">The connection string to use to connect to the SQL Server.</param>
         public void Configure(string connString)
         {
-            _connectionString = connString;
+            ConnectionString = connString;
         }
 
         #region IFeatureSwitchProvider Implementation
@@ -55,7 +54,7 @@ namespace Femah.Core.Providers
         /// <param name="featureSwitches">Names of the feature switches in the application.</param>
         public void Initialise(IEnumerable<string> featureSwitches)
         {
-            using (var conn = new SqlConnection(_connectionString))
+            using (var conn = new SqlConnection(ConnectionString))
             {
                 conn.Open();
 
@@ -85,7 +84,7 @@ namespace Femah.Core.Providers
         {
             IFeatureSwitch featureSwitch;
 
-            using (var conn = new SqlConnection(_connectionString))
+            using (var conn = new SqlConnection(ConnectionString))
             {
                 conn.Open();
                 featureSwitch = this.GetSwitch(name, conn);
@@ -100,7 +99,7 @@ namespace Femah.Core.Providers
         /// <param name="featureSwitch">The feature to be saved</param>
         public void Save(IFeatureSwitch featureSwitch)
         {
-            using (var conn = new SqlConnection(_connectionString))
+            using (var conn = new SqlConnection(ConnectionString))
             {
                 conn.Open();
                 this.SaveOrUpdateSwitch(featureSwitch, conn);
@@ -115,7 +114,7 @@ namespace Femah.Core.Providers
         {
             List<IFeatureSwitch> featureSwitches;
 
-            using (var conn = new SqlConnection(_connectionString))
+            using (var conn = new SqlConnection(ConnectionString))
             {
                 conn.Open();
                 featureSwitches = this.GetAllSwitches(conn);
@@ -409,7 +408,7 @@ namespace Femah.Core.Providers
         {
             get
             {
-                return String.Format("DELETE FROM {0} WHERE name = @SwitchName", this._tableName);
+                return String.Format("DELETE FROM {0} WHERE name = @SwitchName", _tableName);
             }
         }
 

@@ -32,6 +32,5 @@ namespace Femah.Core
         /// </summary>
         /// <returns>A list of zero or more instances of IFeatureSwitch</returns>
         List<IFeatureSwitch> AllFeatureSwitches();
-
     }
 }
