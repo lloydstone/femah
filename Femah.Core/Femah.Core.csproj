@@ -64,7 +64,14 @@
     <Compile Include="FemahContextFactory.cs" />
     <Compile Include="Configuration\FemahFluentConfiguration.cs" />
     <Compile Include="FemahException.cs" />
+    <Compile Include="Providers\ISqlCommand.cs" />
+    <Compile Include="Providers\ISqlConnection.cs" />
+    <Compile Include="Providers\ISqlConnectionFactory.cs" />
     <Compile Include="Providers\SqlServerProvider.cs" />
+    <Compile Include="Providers\SqlServerProviderCommand.cs" />
+    <Compile Include="Providers\SqlServerProviderConnection.cs" />
+    <Compile Include="Providers\SqlServerProviderConnectionFactory.cs" />
+    <Compile Include="Providers\SqlServerProviderSqlDefinitions.cs" />
     <Compile Include="UI\FemahHttpHandlerFactory.cs" />
     <Compile Include="IFemahContext.cs" />
     <Compile Include="IFemahContextFactory.cs" />

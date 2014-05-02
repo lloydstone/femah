@@ -11,6 +11,8 @@ using Femah.Core.FeatureSwitchTypes;
 
 namespace Femah.Core.Providers
 {
+    using System.Data.Common;
+
     /// <summary>
     /// A feature switch provider that stores feature switches in a SQL Server database.
     /// TODO: Autogenerate table when it doesn't exist.
@@ -32,10 +34,16 @@ namespace Femah.Core.Providers
     /// </summary>
     public class SqlServerProvider : IFeatureSwitchProvider
     {
+        private readonly ISqlConnectionFactory _connectionFactory;
         private const string _tableName = "femahSwitches";
         static List<Type> _featureSwitchtypes = null;
 
         public string ConnectionString { get; private set; }
+
+        public SqlServerProvider(ISqlConnectionFactory connectionFactory)
+        {
+            _connectionFactory = connectionFactory;
+        }
 
         /// <summary>
         /// Configure the SqlServerProvider.
@@ -54,26 +62,25 @@ namespace Femah.Core.Providers
         /// <param name="featureSwitches">Names of the feature switches in the application.</param>
         public void Initialise(IEnumerable<string> featureSwitches)
         {
-            using (var conn = new SqlConnection(ConnectionString))
+            using (var conn = _connectionFactory.CreateConnection(ConnectionString))
             {
                 conn.Open();
 
                 // Ensure all listed feature switches exist in the database.
                 foreach (var featureSwitchName in featureSwitches)
                 {
-                    var featureSwitch = this.Get(featureSwitchName);
+                    var featureSwitch = Get(featureSwitchName);
                     if (featureSwitch == null)
                     {
                         featureSwitch = new SimpleFeatureSwitch { Name = featureSwitchName, IsEnabled = false };
                     }
-                    this.SaveOrUpdateSwitch(featureSwitch, conn);
+                    SaveOrUpdateSwitch(featureSwitch, conn);
                 }
 
                 // Remove any feature switches from database that aren't valid feature switches.
                 DeleteUnlistedSwitches(featureSwitches, conn);
             }
         }
-
 
         /// <summary>
         /// Get a feature switch.
@@ -84,10 +91,10 @@ namespace Femah.Core.Providers
         {
             IFeatureSwitch featureSwitch;
 
-            using (var conn = new SqlConnection(ConnectionString))
+            using (var conn = _connectionFactory.CreateConnection(ConnectionString))
             {
                 conn.Open();
-                featureSwitch = this.GetSwitch(name, conn);
+                featureSwitch = GetSwitch(name, conn);
             }
 
             return featureSwitch;
@@ -99,10 +106,10 @@ namespace Femah.Core.Providers
         /// <param name="featureSwitch">The feature to be saved</param>
         public void Save(IFeatureSwitch featureSwitch)
         {
-            using (var conn = new SqlConnection(ConnectionString))
+            using (var conn = _connectionFactory.CreateConnection(ConnectionString))
             {
                 conn.Open();
-                this.SaveOrUpdateSwitch(featureSwitch, conn);
+                SaveOrUpdateSwitch(featureSwitch, conn);
             }
         }
 
@@ -114,10 +121,10 @@ namespace Femah.Core.Providers
         {
             List<IFeatureSwitch> featureSwitches;
 
-            using (var conn = new SqlConnection(ConnectionString))
+            using (var conn = _connectionFactory.CreateConnection(ConnectionString))
             {
                 conn.Open();
-                featureSwitches = this.GetAllSwitches(conn);
+                featureSwitches = GetAllSwitches(conn);
             }
 
             return featureSwitches;
@@ -137,12 +144,12 @@ namespace Femah.Core.Providers
         /// </summary>
         /// <param name="conn">An open connection to the database.</param>
         /// <returns>A list of feature switches</returns>
-        protected List<IFeatureSwitch> GetAllSwitches(SqlConnection conn)
+        protected List<IFeatureSwitch> GetAllSwitches(ISqlConnection conn)
         {
-            var cmd = new SqlCommand(this.SelectAllSwitchesSql, conn);
+            var cmd = conn.CreateCommand(SelectAllSwitchesSql);
 
             var reader = cmd.ExecuteReader();
-            return this.ReadAllSwitches(reader);
+            return ReadAllSwitches(reader);
         }
 
 
@@ -152,14 +159,14 @@ namespace Femah.Core.Providers
         /// <param name="name">The name of the feature switch to get</param>
         /// <param name="conn">An open connection to the dataase</param>
         /// <returns>The feature switch if found, or null if not found</returns>
-        protected IFeatureSwitch GetSwitch(string name, SqlConnection conn)
+        protected IFeatureSwitch GetSwitch(string name, ISqlConnection conn)
         {
             IFeatureSwitch featureSwitch;
 
-            var cmd = new SqlCommand(this.SelectSwitchSql, conn);
+            var cmd = conn.CreateCommand(SelectSwitchSql);
             var param = new SqlParameter("@NameParam", SqlDbType.NVarChar);
             param.Value = name;
-            cmd.Parameters.Add(param);
+            cmd.AddParameter(param);
 
             using (var reader = cmd.ExecuteReader())
             {
@@ -180,7 +187,7 @@ namespace Femah.Core.Providers
         /// </summary>
         /// <param name="reader">A SqlDataReader from which the feature switches should be read.</param>
         /// <returns>A list of zero or more feature switches.</returns>
-        protected List<IFeatureSwitch> ReadAllSwitches(SqlDataReader reader)
+        protected List<IFeatureSwitch> ReadAllSwitches(DbDataReader reader)
         {
             var switches = new List<IFeatureSwitch>();
 
@@ -188,7 +195,7 @@ namespace Femah.Core.Providers
             {
                 while (reader.Read())
                 {
-                    switches.Add(this.ReadSwitch(reader));
+                    switches.Add(ReadSwitch(reader));
                 }
             }
 
@@ -202,7 +209,7 @@ namespace Femah.Core.Providers
         /// </summary>
         /// <param name="reader">The SqlDataReader from which the switch should be read.</param>
         /// <returns>A feature switch.</returns>
-        protected IFeatureSwitch ReadSwitch(SqlDataReader reader)
+        protected IFeatureSwitch ReadSwitch(DbDataReader reader)
         {
             if (reader["assemblyName"] == DBNull.Value || reader["typeName"] == DBNull.Value)
             {
@@ -233,7 +240,7 @@ namespace Femah.Core.Providers
 
             if (reader["switchXml"] != DBNull.Value)
             {
-                StringReader xmlStringReader = new StringReader(reader["switchXml"].ToString());
+                var xmlStringReader = new StringReader(reader["switchXml"].ToString());
                 var xmlReader = XmlReader.Create(xmlStringReader);
                 var deserializer = new XmlSerializer(featureSwitch.GetType());
                 if (deserializer.CanDeserialize(xmlReader))
@@ -251,48 +258,48 @@ namespace Femah.Core.Providers
         /// </summary>
         /// <param name="featureSwitch">The feature switch to be written to the database</param>
         /// <param name="conn">An open connection to the database</param>
-        protected void SaveOrUpdateSwitch(IFeatureSwitch featureSwitch, SqlConnection conn)
+        protected void SaveOrUpdateSwitch(IFeatureSwitch featureSwitch, ISqlConnection conn)
         {
             var nameParam = new SqlParameter("@Param1", SqlDbType.NVarChar);
             nameParam.Value = featureSwitch.Name;
-            var cmd = new SqlCommand(this.SwitchCountSql, conn);
-            cmd.Parameters.Add(nameParam);
+            var cmd = conn.CreateCommand(SwitchCountSql);
+            cmd.AddParameter(nameParam);
 
-            Int32 rowCount = (Int32) cmd.ExecuteScalar();
+            var rowCount = (Int32) cmd.ExecuteScalar();
             if (rowCount >= 1)
             {
                 // Update.
-                cmd = new SqlCommand(this.UpdateSwitchSql, conn);
+                cmd = conn.CreateCommand(UpdateSwitchSql);
             }
             else
             {
                 // Insert.
-                cmd = new SqlCommand(this.InsertSwitchSql, conn);
+                cmd = conn.CreateCommand(InsertSwitchSql);
             }
 
             nameParam = new SqlParameter("@SwitchName", SqlDbType.NVarChar);
             nameParam.Value = featureSwitch.Name;
-            cmd.Parameters.Add(nameParam);
+            cmd.AddParameter(nameParam);
 
             var param = new SqlParameter("@IsEnabled", SqlDbType.Bit);
             param.Value = featureSwitch.IsEnabled;
-            cmd.Parameters.Add(param);
+            cmd.AddParameter(param);
 
             param = new SqlParameter("@AssemblyName", SqlDbType.NVarChar);
             param.Value = featureSwitch.GetType().Assembly.FullName;
-            cmd.Parameters.Add(param);
+            cmd.AddParameter(param);
 
             param = new SqlParameter("@TypeName", SqlDbType.NVarChar);
             param.Value = featureSwitch.GetType().FullName;
-            cmd.Parameters.Add(param);
+            cmd.AddParameter(param);
 
             param = new SqlParameter("@SwitchXml", SqlDbType.Xml);
-            XmlSerializer serializer = new XmlSerializer(featureSwitch.GetType());
+            var serializer = new XmlSerializer(featureSwitch.GetType());
             var sb = new StringBuilder();
             var writer = new StringWriter(sb);
             serializer.Serialize(writer, featureSwitch);
             param.Value = sb.ToString();
-            cmd.Parameters.Add(param);
+            cmd.AddParameter(param);
                 
             cmd.ExecuteNonQuery();
         }
@@ -302,14 +309,12 @@ namespace Femah.Core.Providers
         /// </summary>
         /// <param name="name">Name of the feature switch to delete.</param>
         /// <param name="conn">An open connection to a SQL Server database.</param>
-        protected void DeleteSwitch(string name, SqlConnection conn)
+        protected void DeleteSwitch(string name, ISqlConnection conn)
         {
-            var cmd = new SqlCommand(this.DeleteSwitchSql, conn);
+            var cmd = conn.CreateCommand(DeleteSwitchSql);
 
-            var param = new SqlParameter("@SwitchName", SqlDbType.NVarChar);
-            param.Value = name;
-            cmd.Parameters.Add(param);
-
+            var param = new SqlParameter("@SwitchName", SqlDbType.NVarChar) {Value = name};
+            cmd.AddParameter(param);
             cmd.ExecuteNonQuery();
         }
 
@@ -318,10 +323,10 @@ namespace Femah.Core.Providers
         /// </summary>
         /// <param name="switchList">The names of feature switches NOT to be deleted.</param>
         /// <param name="conn">An open connection to a SQL Server database.</param>
-        private void DeleteUnlistedSwitches(IEnumerable<string> switchList, SqlConnection conn)
+        private void DeleteUnlistedSwitches(IEnumerable<string> switchList, ISqlConnection conn)
         {
-            var cmd = new SqlCommand(this.SelectAllSwitchesSql, conn);
-
+            var cmd = conn.CreateCommand(SelectAllSwitchesSql);
+            
             var switchesToDelete = new List<string>();
 
             using (var reader = cmd.ExecuteReader())
@@ -353,7 +358,7 @@ namespace Femah.Core.Providers
         {
             get
             {
-                return String.Format("SELECT id, name, isEnabled, assemblyName, typeName, switchXml FROM {0}", _tableName);
+                return String.Format(SqlServerProviderSqlDefinitions.SelectAllSwitches, _tableName);
             }
         }
 
@@ -364,7 +369,7 @@ namespace Femah.Core.Providers
         {
             get
             {
-                return String.Format("SELECT id, name, isEnabled, assemblyName, typeName, switchXml FROM {0} WHERE name = @NameParam", _tableName);
+                return String.Format(SqlServerProviderSqlDefinitions.SelectSwitch, _tableName);
             }
         }
 
@@ -375,7 +380,7 @@ namespace Femah.Core.Providers
         {
             get
             {
-                return String.Format("SELECT COUNT(*) FROM {0} WHERE name = @Param1", _tableName);
+                return String.Format(SqlServerProviderSqlDefinitions.SwitchCount, _tableName);
             }
         }
 
@@ -386,7 +391,7 @@ namespace Femah.Core.Providers
         {
             get
             {
-                return String.Format("UPDATE {0} SET isEnabled = @IsEnabled, assemblyName = @AssemblyName, typeName = @TypeName, switchXml = @SwitchXml WHERE name = @SwitchName", _tableName);
+                return String.Format(SqlServerProviderSqlDefinitions.UpdateSwitch, _tableName);
             }
         }
 
@@ -397,7 +402,7 @@ namespace Femah.Core.Providers
         {
             get
             {
-                return String.Format("INSERT INTO {0} (name, isEnabled, assemblyName, typeName, switchXml ) VALUES (@SwitchName, @IsEnabled, @AssemblyName, @TypeName, @SwitchXml)", _tableName);
+                return String.Format(SqlServerProviderSqlDefinitions.InsertSwitch, _tableName);
             }
         }
 
@@ -408,10 +413,9 @@ namespace Femah.Core.Providers
         {
             get
             {
-                return String.Format("DELETE FROM {0} WHERE name = @SwitchName", _tableName);
+                return String.Format(SqlServerProviderSqlDefinitions.DeleteSwitch, _tableName);
             }
         }
-
         #endregion
     }
 }
