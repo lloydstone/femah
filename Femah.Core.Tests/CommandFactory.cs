@@ -20,9 +20,8 @@ namespace Femah.Core.Tests
         {
             var nullReaderMock = new Mock<DbDataReader>();
             nullReaderMock.Setup(s => s.HasRows).Returns(null);
-            var nullRowsCommand = new Mock<ISqlCommand>();
-            nullRowsCommand.Setup(s => s.ExecuteReader()).Returns(nullReaderMock.Object);
-            return nullRowsCommand.Object;
+            var nullRowsCommand = Mock.Of<ISqlCommand>(s => s.ExecuteReader() == nullReaderMock.Object);
+            return nullRowsCommand;
         }
 
         public static NameRecordingCommand CreateNameRecordingCommand()
