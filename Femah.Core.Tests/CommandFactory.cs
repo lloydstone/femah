@@ -2,10 +2,11 @@ using System;
 using System.Data.Common;
 using Moq;
 using Femah.Core.Providers;
+using System.Collections.Generic;
 
 namespace Femah.Core.Tests
 {
-    public class CommandFactory
+    internal class CommandFactory
     {
         public static ISqlCommand CreateNoSwitchesCommand()
         {
@@ -24,9 +25,14 @@ namespace Femah.Core.Tests
             return nullRowsCommand;
         }
 
-        public static NameRecordingCommand CreateNameRecordingCommand()
+        public static ValueRecordingCommand CreateValueRecordingCommand()
         {
-            return new NameRecordingCommand();
+            return new ValueRecordingCommand();
+        }
+
+        public static ExistingSwitchesCommand CreateExistingSwitchesCommand(IList<string> featureNames)
+        {
+            return new ExistingSwitchesCommand(featureNames);
         }
     }
 }
