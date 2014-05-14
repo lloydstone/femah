@@ -1,18 +1,17 @@
-﻿using System;
+﻿using Femah.Core.FeatureSwitchTypes;
+using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
-using Femah.Core.FeatureSwitchTypes;
 
 namespace Femah.Core.Providers
 {
-    using System.Data.Common;
-
     /// <summary>
     /// A feature switch provider that stores feature switches in a SQL Server database.
     /// TODO: Autogenerate table when it doesn't exist.
