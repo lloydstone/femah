@@ -64,6 +64,9 @@
     <Compile Include="FemahTests.cs" />
     <Compile Include="InProcProviderTests.cs" />
     <Compile Include="InvalidRequestTestData.cs" />
+    <Compile Include="SqlProviderFakes\ExecuteSwitchNonQueryCommandFake.cs" />
+    <Compile Include="SqlProviderFakes\ExecuteReaderCommandFake.cs" />
+    <Compile Include="SqlProviderFakes\SqlConnectionFake.cs" />
     <Compile Include="ValueRecordingCommand.cs" />
     <Compile Include="PercentageFeatureSwitchTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
