@@ -64,8 +64,10 @@
     <Compile Include="FemahTests.cs" />
     <Compile Include="InProcProviderTests.cs" />
     <Compile Include="InvalidRequestTestData.cs" />
-    <Compile Include="SqlProviderFakes\ExecuteSwitchNonQueryCommandFake.cs" />
-    <Compile Include="SqlProviderFakes\ExecuteReaderCommandFake.cs" />
+    <Compile Include="SqlProviderFakes\ExecuteNonQueryCommandFake.cs" />
+    <Compile Include="SqlProviderFakes\SelectAllSwitchesCommandFake.cs" />
+    <Compile Include="SqlProviderFakes\SwitchCountCommandFake.cs" />
+    <Compile Include="SqlProviderFakes\SelectSwitchCommandFake.cs" />
     <Compile Include="SqlProviderFakes\SqlConnectionFake.cs" />
     <Compile Include="ValueRecordingCommand.cs" />
     <Compile Include="PercentageFeatureSwitchTests.cs" />

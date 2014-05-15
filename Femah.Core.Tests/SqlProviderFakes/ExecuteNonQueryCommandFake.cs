@@ -5,12 +5,12 @@ using System.Data.SqlClient;
 
 namespace Femah.Core.Tests.SqlProviderFakes
 {
-    internal class ExecuteSwitchNonQueryCommandFake : CommandMockBase
+    internal class ExecuteNonQueryCommandFake : CommandMockBase
     {
         private readonly SqlConnectionFake _connectionFake;
         private readonly List<string> _parameters = new List<string>();
 
-        public ExecuteSwitchNonQueryCommandFake(SqlConnectionFake connectionFake, Action<List<string>, string> executeAction)
+        public ExecuteNonQueryCommandFake(SqlConnectionFake connectionFake, Action<List<string>, string> executeAction)
         {
             _connectionFake = connectionFake;
 
