@@ -56,9 +56,7 @@
   <ItemGroup>
     <Compile Include="ApiRequestBuilderTests.cs" />
     <Compile Include="ApiResponseBuilderTests.cs" />
-    <Compile Include="CommandFactory.cs" />
     <Compile Include="CommandMockBase.cs" />
-    <Compile Include="ExistingSwitchesCommand.cs" />
     <Compile Include="FemahApiRequestTests.cs" />
     <Compile Include="FemahApiTests.cs" />
     <Compile Include="FemahTests.cs" />
@@ -69,7 +67,6 @@
     <Compile Include="SqlProviderFakes\SwitchCountCommandFake.cs" />
     <Compile Include="SqlProviderFakes\SelectSwitchCommandFake.cs" />
     <Compile Include="SqlProviderFakes\SqlConnectionFake.cs" />
-    <Compile Include="ValueRecordingCommand.cs" />
     <Compile Include="PercentageFeatureSwitchTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PutApiRequestFactory.cs" />
