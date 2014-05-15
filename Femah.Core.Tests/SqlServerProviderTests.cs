@@ -27,7 +27,6 @@ namespace Femah.Core.Tests
         {
             private SqlServerProvider _sut;
             private Mock<ISqlConnectionFactory> _connectionFactory;
-            private Mock<ISqlConnection> _sqlConnection;
             private const string TableName = "femahSwitches";
             private readonly string[] _featureNames = {"Feature1", "Feature2", "Feature3"};
             private const string ConnectionString = "Server=myServerAddress;Database=myDataBase;Trusted_Connection=True;";
@@ -35,9 +34,7 @@ namespace Femah.Core.Tests
             [SetUp]
             public void Init()
             {
-                _sqlConnection = new Mock<ISqlConnection>();
                 _connectionFactory = new Mock<ISqlConnectionFactory>();
-                _connectionFactory.Setup(x => x.CreateConnection(ConnectionString)).Returns(_sqlConnection.Object);
                 _sut = new SqlServerProvider(_connectionFactory.Object);
             }
 
@@ -50,32 +47,22 @@ namespace Femah.Core.Tests
                 _sut.Configure(ConnectionString);
                 _sut.Initialise(_featureNames);
 
+                _featureNames.Count().ShouldBe(connectionFake.Features.Count);
                 _featureNames.ShouldContain(x => connectionFake.Features.Contains(x));
             }
 
             [Test]
             public void WhenSuppliedWithFeatureNames_AndIfDataStoreContainsDifferentFeatureNames_TheNewFeaturesAreSetup_AndOldFeaturesRemoved()
             {
-                var oldFeatureNames = new[] {"OldFeature1", "OldFeature2"};
-
-                var nullRowsCommand = CommandFactory.CreateNullRowsCommand();
-                AddCommandDefinition(SelectSwitchSql, nullRowsCommand);
-
-                var noSwitchesCommand = CommandFactory.CreateNoSwitchesCommand();
-                AddCommandDefinition(SwitchCountSql, noSwitchesCommand);
-
-                var existingSwitchesCommand = CommandFactory.CreateExistingSwitchesCommand(oldFeatureNames);
-                AddCommandDefinition(SelectAllSwitchesSql, existingSwitchesCommand);
-
-                var valueRecorder = CommandFactory.CreateValueRecordingCommand();
-                AddCommandDefinition(DeleteSwitchSql, valueRecorder);
-                AddCommandDefinition(InsertSwitchSql, valueRecorder);
-
+                var oldFeatureNames = new List<string> {"OldFeature1", "OldFeature2"};
+                var connectionFake = new SqlConnectionFake(TableName) { Features = oldFeatureNames };
+                _connectionFactory.Setup(x => x.CreateConnection(ConnectionString)).Returns(connectionFake);
+                
                 _sut.Configure(ConnectionString);
                 _sut.Initialise(_featureNames);
 
-                _featureNames.ShouldContain(x => valueRecorder.Contains(x));
-                oldFeatureNames.ShouldContain(x => valueRecorder.Contains(x));
+                _featureNames.Count().ShouldBe(connectionFake.Features.Count);
+                _featureNames.ShouldContain(x => connectionFake.Features.Contains(x));
             }
 
             // TODO: Calling initialize without setting connection string throws
@@ -85,11 +72,6 @@ namespace Femah.Core.Tests
             
             // TODO: Passing in feature names with same existing switches, keeps same switches
             // TODO: Passing in feature names with same and different existing switches, keeps same switches, removes others
-
-            private void AddCommandDefinition(string commandSql, ISqlCommand returnCommand)
-            {
-                _sqlConnection.Setup(x => x.CreateCommand(commandSql)).Returns(returnCommand);
-            }
 
             public string SelectSwitchSql { get { return SqlServerProviderSqlDefinitions.CreateSelectSwitchSql(TableName); } }
             public string SwitchCountSql { get { return SqlServerProviderSqlDefinitions.CreateSwitchCountSql(TableName); } }
