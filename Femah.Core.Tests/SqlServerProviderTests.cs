@@ -1,7 +1,9 @@
 ﻿using Femah.Core.Providers;
+using Femah.Core.Tests.SqlProviderFakes;
 using Moq;
 using NUnit.Framework;
 using Shouldly;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Femah.Core.Tests
@@ -25,55 +27,57 @@ namespace Femah.Core.Tests
         {
             private SqlServerProvider _sut;
             private Mock<ISqlConnectionFactory> _connectionFactory;
-            private Mock<ISqlConnection> _sqlConnection;
             private const string TableName = "femahSwitches";
-
+            private readonly string[] _featureNames = {"Feature1", "Feature2", "Feature3"};
+            private const string ConnectionString = "Server=myServerAddress;Database=myDataBase;Trusted_Connection=True;";
+            
             [SetUp]
             public void Init()
             {
                 _connectionFactory = new Mock<ISqlConnectionFactory>();
-                _sqlConnection = new Mock<ISqlConnection>();
                 _sut = new SqlServerProvider(_connectionFactory.Object);
             }
 
             [Test]
             public void WhenSuppliedWithFeatureNames_AndIfDataStoreIsInitiallyEmpty_SetsUpAllNewFeatureSwitchesInDataStore()
             {
-                var featureNames = new[] {"Feature1", "Feature2", "Feature3"};
-                const string connectionString = "Server=myServerAddress;Database=myDataBase;Trusted_Connection=True;";
-                _connectionFactory.Setup(x => x.CreateConnection(connectionString)).Returns(_sqlConnection.Object);
+                var connectionFake = new SqlConnectionFake(TableName) {Features = new List<string>()};
+                _connectionFactory.Setup(x => x.CreateConnection(ConnectionString)).Returns(connectionFake);
 
-                var nullRowsCommand = CommandFactory.CreateNullRowsCommand();
-                AddCommandDefinition(SelectSwitchSql, nullRowsCommand);
+                _sut.Configure(ConnectionString);
+                _sut.Initialise(_featureNames);
 
-                var noSwitchesCommand = CommandFactory.CreateNoSwitchesCommand();
-                AddCommandDefinition(SwitchCountSql, noSwitchesCommand);
-                AddCommandDefinition(SelectAllSwitchesSql, noSwitchesCommand);
+                _featureNames.Count().ShouldBe(connectionFake.Features.Count);
+                _featureNames.ShouldContain(x => connectionFake.Features.Contains(x));
+            }
 
-                var nameRecorder = CommandFactory.CreateNameRecordingCommand();
-                AddCommandDefinition(InsertSwitchSql, nameRecorder.ToISqlCommand());
+            [Test]
+            public void WhenSuppliedWithFeatureNames_AndIfDataStoreContainsDifferentFeatureNames_TheNewFeaturesAreSetup_AndOldFeaturesRemoved()
+            {
+                var oldFeatureNames = new List<string> {"OldFeature1", "OldFeature2"};
+                var connectionFake = new SqlConnectionFake(TableName) { Features = oldFeatureNames };
+                _connectionFactory.Setup(x => x.CreateConnection(ConnectionString)).Returns(connectionFake);
                 
-                _sut.Configure(connectionString);
-                _sut.Initialise(featureNames);
+                _sut.Configure(ConnectionString);
+                _sut.Initialise(_featureNames);
 
-                featureNames.ShouldContain(x => nameRecorder.Contains(x));
+                _featureNames.Count().ShouldBe(connectionFake.Features.Count);
+                _featureNames.ShouldContain(x => connectionFake.Features.Contains(x));
             }
 
             // TODO: Calling initialize without setting connection string throws
             // TODO: Sets up passed in switches
-            // TODO: removes switched that do not exist in list but do in db
             // TODO: if switch does not exist already, simple switch is created
             // TODO: if switch does exist, it is updated
+            
+            // TODO: Passing in feature names with same existing switches, keeps same switches
+            // TODO: Passing in feature names with same and different existing switches, keeps same switches, removes others
 
-            private void AddCommandDefinition(string commandSql, ISqlCommand returnCommand)
-            {
-                _sqlConnection.Setup(x => x.CreateCommand(commandSql)).Returns(returnCommand);
-            }
-
-            public string SelectSwitchSql { get { return string.Format(SqlServerProviderSqlDefinitions.SelectSwitch, TableName); } }
-            public string SwitchCountSql { get { return string.Format(SqlServerProviderSqlDefinitions.SwitchCount, TableName); } }
-            public string InsertSwitchSql { get { return string.Format(SqlServerProviderSqlDefinitions.InsertSwitch, TableName); } }
-            public string SelectAllSwitchesSql { get { return string.Format(SqlServerProviderSqlDefinitions.SelectAllSwitches, TableName); } }
+            public string SelectSwitchSql { get { return SqlServerProviderSqlDefinitions.CreateSelectSwitchSql(TableName); } }
+            public string SwitchCountSql { get { return SqlServerProviderSqlDefinitions.CreateSwitchCountSql(TableName); } }
+            public string InsertSwitchSql { get { return SqlServerProviderSqlDefinitions.CreateInsertSwitchSql(TableName); } }
+            public string SelectAllSwitchesSql { get { return SqlServerProviderSqlDefinitions.CreateSelectAllSwitchesSql(TableName); } }
+            public string DeleteSwitchSql { get { return SqlServerProviderSqlDefinitions.CreateDeleteSwitchSql(TableName); } }
         }
     }
 }

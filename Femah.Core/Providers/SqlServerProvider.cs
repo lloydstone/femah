@@ -1,18 +1,17 @@
-﻿using System;
+﻿using Femah.Core.FeatureSwitchTypes;
+using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
-using Femah.Core.FeatureSwitchTypes;
 
 namespace Femah.Core.Providers
 {
-    using System.Data.Common;
-
     /// <summary>
     /// A feature switch provider that stores feature switches in a SQL Server database.
     /// TODO: Autogenerate table when it doesn't exist.
@@ -358,7 +357,7 @@ namespace Femah.Core.Providers
         {
             get
             {
-                return String.Format(SqlServerProviderSqlDefinitions.SelectAllSwitches, _tableName);
+                return SqlServerProviderSqlDefinitions.CreateSelectAllSwitchesSql(_tableName);
             }
         }
 
@@ -369,7 +368,7 @@ namespace Femah.Core.Providers
         {
             get
             {
-                return String.Format(SqlServerProviderSqlDefinitions.SelectSwitch, _tableName);
+                return SqlServerProviderSqlDefinitions.CreateSelectSwitchSql(_tableName);
             }
         }
 
@@ -380,7 +379,7 @@ namespace Femah.Core.Providers
         {
             get
             {
-                return String.Format(SqlServerProviderSqlDefinitions.SwitchCount, _tableName);
+                return SqlServerProviderSqlDefinitions.CreateSwitchCountSql(_tableName);
             }
         }
 
@@ -391,7 +390,7 @@ namespace Femah.Core.Providers
         {
             get
             {
-                return String.Format(SqlServerProviderSqlDefinitions.UpdateSwitch, _tableName);
+                return SqlServerProviderSqlDefinitions.CreateUpdateSwitchSql(_tableName);
             }
         }
 
@@ -402,7 +401,7 @@ namespace Femah.Core.Providers
         {
             get
             {
-                return String.Format(SqlServerProviderSqlDefinitions.InsertSwitch, _tableName);
+                return SqlServerProviderSqlDefinitions.CreateInsertSwitchSql(_tableName);
             }
         }
 
@@ -413,7 +412,7 @@ namespace Femah.Core.Providers
         {
             get
             {
-                return String.Format(SqlServerProviderSqlDefinitions.DeleteSwitch, _tableName);
+                return SqlServerProviderSqlDefinitions.CreateDeleteSwitchSql(_tableName);
             }
         }
         #endregion

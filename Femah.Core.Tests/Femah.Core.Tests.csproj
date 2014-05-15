@@ -56,13 +56,17 @@
   <ItemGroup>
     <Compile Include="ApiRequestBuilderTests.cs" />
     <Compile Include="ApiResponseBuilderTests.cs" />
-    <Compile Include="CommandFactory.cs" />
+    <Compile Include="CommandMockBase.cs" />
     <Compile Include="FemahApiRequestTests.cs" />
     <Compile Include="FemahApiTests.cs" />
     <Compile Include="FemahTests.cs" />
     <Compile Include="InProcProviderTests.cs" />
     <Compile Include="InvalidRequestTestData.cs" />
-    <Compile Include="NameRecordingCommand.cs" />
+    <Compile Include="SqlProviderFakes\ExecuteNonQueryCommandFake.cs" />
+    <Compile Include="SqlProviderFakes\SelectAllSwitchesCommandFake.cs" />
+    <Compile Include="SqlProviderFakes\SwitchCountCommandFake.cs" />
+    <Compile Include="SqlProviderFakes\SelectSwitchCommandFake.cs" />
+    <Compile Include="SqlProviderFakes\SqlConnectionFake.cs" />
     <Compile Include="PercentageFeatureSwitchTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PutApiRequestFactory.cs" />
