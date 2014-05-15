@@ -357,7 +357,7 @@ namespace Femah.Core.Providers
         {
             get
             {
-                return String.Format(SqlServerProviderSqlDefinitions.SelectAllSwitches, _tableName);
+                return SqlServerProviderSqlDefinitions.CreateSelectAllSwitchesSql(_tableName);
             }
         }
 
@@ -368,7 +368,7 @@ namespace Femah.Core.Providers
         {
             get
             {
-                return String.Format(SqlServerProviderSqlDefinitions.SelectSwitch, _tableName);
+                return SqlServerProviderSqlDefinitions.CreateSelectSwitchSql(_tableName);
             }
         }
 
@@ -379,7 +379,7 @@ namespace Femah.Core.Providers
         {
             get
             {
-                return String.Format(SqlServerProviderSqlDefinitions.SwitchCount, _tableName);
+                return SqlServerProviderSqlDefinitions.CreateSwitchCountSql(_tableName);
             }
         }
 
@@ -390,7 +390,7 @@ namespace Femah.Core.Providers
         {
             get
             {
-                return String.Format(SqlServerProviderSqlDefinitions.UpdateSwitch, _tableName);
+                return SqlServerProviderSqlDefinitions.CreateUpdateSwitchSql(_tableName);
             }
         }
 
@@ -401,7 +401,7 @@ namespace Femah.Core.Providers
         {
             get
             {
-                return String.Format(SqlServerProviderSqlDefinitions.InsertSwitch, _tableName);
+                return SqlServerProviderSqlDefinitions.CreateInsertSwitchSql(_tableName);
             }
         }
 
@@ -412,7 +412,7 @@ namespace Femah.Core.Providers
         {
             get
             {
-                return String.Format(SqlServerProviderSqlDefinitions.DeleteSwitch, _tableName);
+                return SqlServerProviderSqlDefinitions.CreateDeleteSwitchSql(_tableName);
             }
         }
         #endregion
