@@ -22,13 +22,13 @@ namespace Femah.Core.Tests
                 sut.ConnectionString.ShouldBe(connectionString);
             }
         }
-
+        
         public class TheInitializeMethod
         {
             private SqlServerProvider _sut;
             private Mock<ISqlConnectionFactory> _connectionFactory;
             private const string TableName = "femahSwitches";
-            private readonly string[] _featureNames = {"Feature1", "Feature2", "Feature3"};
+            private List<Switch> _features;
             private const string ConnectionString = "Server=myServerAddress;Database=myDataBase;Trusted_Connection=True;";
             
             [SetUp]
@@ -36,42 +36,56 @@ namespace Femah.Core.Tests
             {
                 _connectionFactory = new Mock<ISqlConnectionFactory>();
                 _sut = new SqlServerProvider(_connectionFactory.Object);
+                _features = CreateSimpleFeatures(new[] {"Feature1", "Feature2", "Feature3"});
             }
 
             [Test]
             public void WhenSuppliedWithFeatureNames_AndIfDataStoreIsInitiallyEmpty_SetsUpAllNewFeatureSwitchesInDataStore()
             {
-                var connectionFake = new SqlConnectionFake(TableName) {Features = new List<string>()};
+                var connectionFake = new SqlConnectionFake(TableName) {Features = new List<Switch>()};
                 _connectionFactory.Setup(x => x.CreateConnection(ConnectionString)).Returns(connectionFake);
 
                 _sut.Configure(ConnectionString);
-                _sut.Initialise(_featureNames);
+                _sut.Initialise(_features.Select(x => x.Name));
 
-                _featureNames.Count().ShouldBe(connectionFake.Features.Count);
-                _featureNames.ShouldContain(x => connectionFake.Features.Contains(x));
+                _features.Count().ShouldBe(connectionFake.Features.Count);
+                _features.ShouldContain(x => connectionFake.Features.Contains(x, new SwitchComparer()));
             }
 
             [Test]
             public void WhenSuppliedWithFeatureNames_AndIfDataStoreContainsDifferentFeatureNames_TheNewFeaturesAreSetup_AndOldFeaturesRemoved()
             {
-                var oldFeatureNames = new List<string> {"OldFeature1", "OldFeature2"};
+                var oldFeatureNames = CreateSimpleFeatures(new[] {"OldFeature1", "OldFeature2"});
                 var connectionFake = new SqlConnectionFake(TableName) { Features = oldFeatureNames };
                 _connectionFactory.Setup(x => x.CreateConnection(ConnectionString)).Returns(connectionFake);
                 
                 _sut.Configure(ConnectionString);
-                _sut.Initialise(_featureNames);
+                _sut.Initialise(_features.Select(x => x.Name));
 
-                _featureNames.Count().ShouldBe(connectionFake.Features.Count);
-                _featureNames.ShouldContain(x => connectionFake.Features.Contains(x));
+                _features.Count().ShouldBe(connectionFake.Features.Count);
+                _features.ShouldContain(x => connectionFake.Features.Contains(x, new SwitchComparer()));
             }
 
-            // TODO: Calling initialize without setting connection string throws
-            // TODO: Sets up passed in switches
-            // TODO: if switch does not exist already, simple switch is created
-            // TODO: if switch does exist, it is updated
-            
-            // TODO: Passing in feature names with same existing switches, keeps same switches
-            // TODO: Passing in feature names with same and different existing switches, keeps same switches, removes others
+            [Test]
+            public void WhenSuppliedWithFeatureNames_AndIfDataStoreContainsSameAndDifferentFeatureNames_TheRequestedFeaturesAreRetained_AndOldFeaturesRemoved()
+            {
+                var existingFeatureNames = CreateSimpleFeatures(new [] { "OldFeature1", "OldFeature2" });
+                existingFeatureNames.AddRange(_features);
+
+                var connectionFake = new SqlConnectionFake(TableName) { Features = existingFeatureNames };
+                _connectionFactory.Setup(x => x.CreateConnection(ConnectionString)).Returns(connectionFake);
+
+                _sut.Configure(ConnectionString);
+                _sut.Initialise(_features.Select(x => x.Name));
+
+                _features.Count().ShouldBe(connectionFake.Features.Count);
+                _features.ShouldContain(x => connectionFake.Features.Contains(x, new SwitchComparer()));
+            }
+
+            private static List<Switch> CreateSimpleFeatures(IEnumerable<string> names)
+            {
+                return names.Select(Switch.CreateSimpleSwitch).ToList();
+            }
 
             public string SelectSwitchSql { get { return SqlServerProviderSqlDefinitions.CreateSelectSwitchSql(TableName); } }
             public string SwitchCountSql { get { return SqlServerProviderSqlDefinitions.CreateSwitchCountSql(TableName); } }
