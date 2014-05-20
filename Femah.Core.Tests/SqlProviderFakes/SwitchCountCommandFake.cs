@@ -15,7 +15,7 @@ namespace Femah.Core.Tests.SqlProviderFakes
             Command.Setup(x => x.AddParameter(It.IsAny<SqlParameter>()))
                 .Callback<SqlParameter>(x => _switchToSelect = x.Value as string);
             Command.Setup(x => x.ExecuteScalar())
-                .Returns(() => _connectionFake.Features.Count(x => x == _switchToSelect) as object);
+                .Returns(() => _connectionFake.Features.Count(x => x.Name == _switchToSelect) as object);
         }
     }
 }

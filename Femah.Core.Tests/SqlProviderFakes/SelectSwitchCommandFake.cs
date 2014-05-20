@@ -22,7 +22,8 @@ namespace Femah.Core.Tests.SqlProviderFakes
         private DbDataReader CreateDataReader()
         {
             var dataReader = new Mock<DbDataReader>();
-            dataReader.Setup(s => s.HasRows).Returns(() => _connectionFake.Features.Contains(_switchToSelect));
+            dataReader.Setup(s => s.HasRows)
+                .Returns(() => _connectionFake.Features.Any(x => x.Name == _switchToSelect));
             dataReader.Setup(x => x.Read()).Returns(() =>
             {
                 var currentState = _isFirstRead;
@@ -30,7 +31,15 @@ namespace Femah.Core.Tests.SqlProviderFakes
                 return currentState;
             });
 
-            dataReader.SetupGet(x => x["name"]).Returns(() => _connectionFake.Features.Where(x => x == _switchToSelect));
+            dataReader.SetupGet(x => x["name"])
+                .Returns(() => _connectionFake.Features.First(x => x.Name == _switchToSelect).Name);
+
+            dataReader.SetupGet(x => x["assemblyName"])
+                .Returns(() => _connectionFake.Features.First(x => x.Name == _switchToSelect).AssemblyName);
+
+            dataReader.SetupGet(x => x["isEnabled"])
+                .Returns(() => _connectionFake.Features.First(x => x.Name == _switchToSelect).IsEnabled);
+
             return dataReader.Object;
         }
     }

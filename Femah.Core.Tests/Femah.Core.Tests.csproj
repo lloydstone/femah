@@ -62,8 +62,10 @@
     <Compile Include="FemahTests.cs" />
     <Compile Include="InProcProviderTests.cs" />
     <Compile Include="InvalidRequestTestData.cs" />
-    <Compile Include="SqlProviderFakes\ExecuteNonQueryCommandFake.cs" />
+    <Compile Include="SqlProviderFakes\DeleteSwitchCommandFake.cs" />
+    <Compile Include="SqlProviderFakes\InsertSwitchCommandFake.cs" />
     <Compile Include="SqlProviderFakes\SelectAllSwitchesCommandFake.cs" />
+    <Compile Include="SqlProviderFakes\Switch.cs" />
     <Compile Include="SqlProviderFakes\SwitchCountCommandFake.cs" />
     <Compile Include="SqlProviderFakes\SelectSwitchCommandFake.cs" />
     <Compile Include="SqlProviderFakes\SqlConnectionFake.cs" />
@@ -72,7 +74,9 @@
     <Compile Include="PutApiRequestFactory.cs" />
     <Compile Include="RoleBasedFeatureSwitchTests.cs" />
     <Compile Include="SimpleFeatureSwitchTests.cs" />
+    <Compile Include="SqlProviderFakes\UpdateSwitchCommandFake.cs" />
     <Compile Include="SqlServerProviderTests.cs" />
+    <Compile Include="SwitchComparer.cs" />
     <Compile Include="TestableFemahApiHttpHandler.cs" />
     <Compile Include="ProcessApiRequestTests.cs" />
   </ItemGroup>

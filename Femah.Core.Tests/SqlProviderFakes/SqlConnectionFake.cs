@@ -7,16 +7,13 @@ namespace Femah.Core.Tests.SqlProviderFakes
     class SqlConnectionFake : ISqlConnection
     {
         private readonly string _tableName;
-        public List<string> Features { get; set; }
+        public List<Switch> Features { get; set; }
         public Action OpenAction { get; set; }
-
-        private readonly Action<List<string>, string> _deleteAction = (x,y) => x.Remove(y);
-        private readonly Action<List<string>, string> _insertAction = (x,y) => x.Add(y);
 
         public SqlConnectionFake(string tableName)
         {
             _tableName = tableName;
-            Features = new List<string>();
+            Features = new List<Switch>();
         }
 
         public void Open()
@@ -31,12 +28,12 @@ namespace Femah.Core.Tests.SqlProviderFakes
         {
             if (command == SqlServerProviderSqlDefinitions.CreateInsertSwitchSql(_tableName))
             {
-                return new ExecuteNonQueryCommandFake(this, _insertAction);
+                return new InsertSwitchCommandFake(this);
             }
             
             if (command == SqlServerProviderSqlDefinitions.CreateDeleteSwitchSql(_tableName))
             {
-                return new ExecuteNonQueryCommandFake(this, _deleteAction);
+                return new DeleteSwitchCommandFake(this);
             }
 
             if (command == SqlServerProviderSqlDefinitions.CreateSelectAllSwitchesSql(_tableName))
@@ -52,6 +49,11 @@ namespace Femah.Core.Tests.SqlProviderFakes
             if (command == SqlServerProviderSqlDefinitions.CreateSelectSwitchSql(_tableName))
             {
                 return new SelectSwitchCommandFake(this);
+            }
+
+            if (command == SqlServerProviderSqlDefinitions.CreateUpdateSwitchSql(_tableName))
+            {
+                return new UpdateSwitchCommandFake(this);
             }
 
             throw new NotSupportedException(string.Format("Command {0} is not supported", command));

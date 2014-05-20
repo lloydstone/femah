@@ -25,7 +25,7 @@ namespace Femah.Core.Tests.SqlProviderFakes
                 return _dataPointer < _connectionFake.Features.Count;
             });
 
-            dataReader.SetupGet(x => x["name"]).Returns(() => _connectionFake.Features[_dataPointer]);
+            dataReader.SetupGet(x => x["name"]).Returns(() => _connectionFake.Features[_dataPointer].Name);
             return dataReader.Object;
         }
     }
